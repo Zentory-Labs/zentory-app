@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Background layers */
+  --background: #0b0b0d;
+  --background-2: #141417;
+  --background-card: #1c1c21;
+  --foreground: #eaeaea;
+  --foreground-muted: #bfc3c7;
+  --foreground-dim: #6a6f75;
+
+  /* Primary accent — signature red glow */
+  --primary: #8b1e2d;
+  --primary-bright: #c2353f;
+  --primary-dim: rgba(139, 30, 45, 0.2);
+  --primary-foreground: #eaeaea;
+
+  /* Secondary */
+  --secondary: rgba(194, 53, 63, 0.1);
+  --secondary-foreground: #eaeaea;
+
+  /* Metallic / gold */
+  --gold: #b08d57;
+  --gold-muted: #8c6a3b;
+  --gold-dark: #5c4630;
+  --gold-dim: rgba(176, 141, 87, 0.15);
+
+  /* Cool contrast */
+  --cool: #2a2f3a;
+  --cool-dim: rgba(58, 123, 213, 0.15);
+
+  /* Borders */
+  --border: #2a2f3a;
+  --border-bright: rgba(194, 53, 63, 0.35);
+  --input: rgba(42, 47, 58, 0.6);
+
+  /* Rings */
+  --ring: #8b1e2d;
+  --radius: 0.75rem;
+
+  /* Semantic */
+  --profit: #b08d57;
+  --loss: #c2353f;
+}
+
+/* Glass utility classes */
+.glass {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-card {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+}
+
+.glass-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #030508; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b1e2d 0%, #b08d57 100%);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { opacity: 0.9; }
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+.animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+/* Gradient text utilities */
+.gradient-text {
+  background: linear-gradient(135deg, #c2353f 0%, #8b1e2d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-gold {
+  background: linear-gradient(135deg, #b08d57 0%, #e8c88a 50%, #8c6a3b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-red-gold {
+  background: linear-gradient(135deg, #c2353f 0%, #b08d57 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Ambient glow utilities */
+.glow-red { box-shadow: 0 0 60px rgba(139, 30, 45, 0.3); }
+.glow-gold { box-shadow: 0 0 40px rgba(176, 141, 87, 0.2); }
+.glow-sm-red { box-shadow: 0 0 20px rgba(139, 30, 45, 0.25); }
+
+body {
+  background-color: #0b0b0d;
+  color: var(--foreground);
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Dot grid — fine graph-paper pattern */
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    /* Subtle horizontal scan lines — trading terminal aesthetic */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.012) 3px,
+      rgba(255, 255, 255, 0.012) 4px
+    );
+  background-size: 40px 40px, 100% 4px;
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ambient corner glows — gold top-left, crimson bottom-right */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+body::before {
+  top: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(176, 141, 87, 0.04) 0%, transparent 70%);
+}
+body::after {
+  bottom: -20%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(139, 30, 45, 0.06) 0%, transparent 70%);
+}
+
+/* Ensure root div doesn't override body background */
+#__next, main {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}

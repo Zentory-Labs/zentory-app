@@ -1,0 +1,57 @@
+GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
+
+Copyright (C) 2026 ZENTORY Labs
+https://github.com/Zentory-Labs/zentory-app
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+---
+
+ADDITIONAL TERMS FOR ZENTORY LABS DAPP
+
+In addition to the rights granted under the GNU Affero General Public
+License (AGPL-3.0), the following additional terms apply to any
+program, application, service, or offering that Uses the ZENTORY
+dApp source code ("ZENTORY App") in whole or in part:
+
+1. Any hosted or managed version of the ZENTORY App, or any service
+   that uses the ZENTORY App to interact with the ZENTORY Protocol
+   on behalf of end users (including any "white-label" or rebranded
+   version), must:
+
+   a) Prominently display the ZENTORY Labs name and mark in
+      human-readable form: "Powered by ZENTORY Protocol —
+      https://github.com/Zentory-Labs/zentory-app";
+
+   b) Maintain and publish a public, freely accessible repository
+      of any and all modifications made to the ZENTORY App source
+      code under AGPL-3.0 terms;
+
+   c) Not misrepresent the source of the service or the identity
+      of ZENTORY Labs in any way that implies affiliation,
+      endorsement, or official status without prior written
+      consent from ZENTORY Labs.
+
+2. "Using" the ZENTORY App in whole or in part, for the purposes
+   of this additional terms, includes but is not limited to:
+   copying, modifying, deploying, running, linking to, importing
+   the source code or any component thereof, or offering a service
+   that depends on any of the foregoing.
+
+3. ZENTORY Labs reserves the right to offer separate commercial
+   licenses for uses of the ZENTORY App that are not permitted
+   under these additional terms.
+
+For questions about commercial licensing, contact: contact@zentorylabs.io

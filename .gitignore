@@ -1,0 +1,34 @@
+node_modules/
+.next/
+out/
+dist/
+
+# env files — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*
+
+# Playwright
+test-results/
+playwright-report/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Sentry
+sentry.client.config.ts
+sentry.server.config.ts
+sentry.edge.config.ts
+instrumentation.ts

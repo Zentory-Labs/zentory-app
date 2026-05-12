@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+.build/
+dist/
+.next/
+out/
+
+# Tests
+**/*.test.ts
+**/*.spec.ts
+**/*.test.tsx
+**/*.spec.tsx
+test-results/
+playwright-report/
+
+# Docs
+docs/
+*.md
+!README.md
+
+# Scripts
+scripts/
+*.sh
+*.ps1
+
+# Config (non-public)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
