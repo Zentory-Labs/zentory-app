@@ -293,7 +293,7 @@ export default function StateOfProtocolPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
-              All contracts are deployed on HyperEVM Testnet (Chain 998). Mainnet deployment imminent.
+              All 26 contracts are deployed on HyperEVM Testnet (Chain 998). Mainnet deployment targeted for Q4 2026 after external audit.
             </span>
           </div>
         </SectionCard>
