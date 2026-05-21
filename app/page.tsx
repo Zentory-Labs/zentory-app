@@ -376,7 +376,7 @@ export default function Home() {
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-start items-start mb-10">
               <a
-                href="/"
+                href="/vaults/zBTC"
                 className="px-8 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-[1.03]"
                 style={{
                   background: "#8b1e2d",
@@ -471,7 +471,7 @@ export default function Home() {
               </div>
               <div className="mt-6 pt-5 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 <a
-                  href="/"
+                  href="/vaults/zBTC"
                   className="block w-full py-3 rounded-xl text-center text-xs font-semibold uppercase tracking-widest transition-all hover:scale-[1.02]"
                   style={{
                     background: "#8b1e2d",

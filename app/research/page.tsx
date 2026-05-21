@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useAccount } from "wagmi";
 import { getResearch } from "@/lib/research";
 import type { Research } from "@/lib/research";
 import ResearchTable from "@/components/ResearchTable";
-import TradeLoggerForm from "./TradeLoggerForm";
 
 // ─── Performance Metrics ─────────────────────────────────────
 
@@ -100,7 +98,6 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
 // ─── Main Page ─────────────────────────────────────────────
 
 export default function ResearchPage() {
-  const { address, isConnected } = useAccount();
   const [research, setResearch] = useState<Research[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,12 +149,6 @@ export default function ResearchPage() {
               Multi-asset market structure analysis. Published research from the ZENT network. Not investment advice.
             </p>
           </div>
-          {isConnected && address && (
-            <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl px-4 py-2">
-              <span className="font-mono text-xs text-white/60">Keeper: </span>
-              <span className="font-mono text-xs" style={{ color: "#b08d57" }}>{address.slice(0, 6)}…{address.slice(-4)}</span>
-            </div>
-          )}
         </div>
 
         {/* Performance metrics */}
@@ -187,36 +178,37 @@ export default function ResearchPage() {
           )}
         </section>
 
-        {/* Trade form — keeper only */}
-        {isConnected ? (
-          <div className="glass-card p-6" style={{ borderColor: "rgba(139, 30, 45, 0.3)" }}>
-            <TradeLoggerForm />
+        {/* Public signal submission — coming Q3 2026 */}
+        <div
+          className="rounded-2xl p-8"
+          style={{ background: "rgba(176, 141, 87, 0.04)", border: "1px solid rgba(176, 141, 87, 0.2)" }}
+        >
+          <div
+            className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold mb-4"
+            style={{ background: "rgba(176,141,87,0.12)", borderColor: "rgba(176,141,87,0.3)", color: "#b08d57" }}
+          >
+            Coming Q3 2026
           </div>
-        ) : (
-          <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-8 text-center">
-            <div className="mb-4 flex justify-center">
-              <div
-                className="h-12 w-12 rounded-full flex items-center justify-center border"
-                style={{ background: "rgba(139, 30, 45, 0.12)", borderColor: "rgba(139, 30, 45, 0.25)" }}
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  style={{ color: "#c2353f" }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Keeper Access Required</h3>
-            <p className="text-sm text-white/50 max-w-sm mx-auto">
-              Connect your wallet to publish research and execute trades on-chain.
-              Only the keeper wallet can execute transactions.
-            </p>
+          <h3 className="text-xl font-bold mb-3" style={{ color: "#eaeaea" }}>
+            Public signal submission via SignalRegistry
+          </h3>
+          <p className="text-sm mb-4 max-w-2xl" style={{ color: "rgba(234,234,234,0.65)" }}>
+            Quants will submit signals directly to the on-chain
+            {" "}<code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>SignalRegistry</code>{" "}
+            contract via EIP-712 signature: <strong className="text-white/80">asset, direction, confidence</strong>, and a ZENT conviction stake.
+            Accuracy is settled every 4 hours by <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code> using Chainlink price feeds.
+          </p>
+          <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.55)" }}>
+            <strong className="text-white/80">Why no &ldquo;size&rdquo; field?</strong> Signal authors don&rsquo;t pick the trade
+            size — the vault does, scaled by the author&rsquo;s conviction (ZENT staked) and the vault&rsquo;s own
+            risk mandate (see <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>StrategyExecutor.maxPositionSize</code>).
+            That keeps signal submission cheap, signer-agnostic, and free from front-running on size disclosure.
+          </p>
+          <div className="mt-6 text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>
+            Until then, signals come from the ZENTORY engine. Track build progress on{" "}
+            <a href="/state-of-protocol" className="underline" style={{ color: "#b08d57" }}>State of Protocol</a>.
           </div>
-        )}
+        </div>
       </main>
     </div>
   );

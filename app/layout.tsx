@@ -8,11 +8,26 @@ import LegalDisclaimer from "@/components/LegalDisclaimer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Zentory Protocol",
+  metadataBase: new URL("https://app.zentorylabs.com"),
+  title: {
+    default: "ZENTORY Protocol — Alpha Vaults + Signal Arena on HyperEVM",
+    template: "%s · ZENTORY",
+  },
   description:
-    "AI-powered algorithmic trading vaults built on Hyperliquid. Generate alpha through intelligent trend-following strategies.",
-  icons: {
-    icon: "/favicon.ico",
+    "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM. Deposit BTC, ETH, SOL or XRP and earn alpha. Your keys, always.",
+  openGraph: {
+    title: "ZENTORY Protocol — Alpha Vaults + Signal Arena on HyperEVM",
+    description:
+      "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM. Deposit BTC, ETH, SOL or XRP and earn alpha. Your keys, always.",
+    url: "https://app.zentorylabs.com",
+    siteName: "ZENTORY",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZENTORY Protocol",
+    description:
+      "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM.",
   },
 };
 
