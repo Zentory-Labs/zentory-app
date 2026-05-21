@@ -360,7 +360,7 @@ export default function Home() {
               className="text-5xl sm:text-6xl md:text-7xl lg:text-6xl xl:text-8xl font-bold mb-6 tracking-tight leading-none"
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
-              <span className="gradient-text-gold">The Multi-Asset Alpha Vault</span>
+              <span className="gradient-text-gold">Non-custodial Alpha Vaults on HyperEVM</span>
             </h1>
 
             {/* Subtitle */}
@@ -368,9 +368,10 @@ export default function Home() {
               className="text-base md:text-lg xl:text-xl mb-6 font-light leading-relaxed"
               style={{ color: "rgba(234, 234, 234, 0.75)" }}
             >
-              Stake BTC, SOL, ETH, XRP or HYPE. Access systematic yield from proprietary algorithms.
+              Deposit BTC, ETH, SOL or XRP. Earn yield in the underlying asset through
+              systematic on-chain strategies.
               <br />
-              Your keys, your crypto — always.
+              Your keys, your crypto — redeem anytime.
             </p>
 
             {/* CTA buttons */}

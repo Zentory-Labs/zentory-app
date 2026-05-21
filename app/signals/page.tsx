@@ -98,9 +98,12 @@ export default function SignalsPage() {
     setLoading(true);
     setError(null);
     try {
+      // Prefer the configured Alchemy URL (rotated, rate-limit-friendly) over
+      // the public testnet RPC which throttles aggressively under demo load.
+      const rpcUrl = process.env.NEXT_PUBLIC_HYPEREVM_RPC;
       const publicClient = createPublicClient({
         chain: HYPEREVM_TESTNET,
-        transport: http(),
+        transport: http(rpcUrl),
       });
 
       const SIGNAL_TOPIC0 = "0x7d8a7739c884cee63d3f5dd59938ec9e356acfe8327ab9111a1a32e19d11ac20";

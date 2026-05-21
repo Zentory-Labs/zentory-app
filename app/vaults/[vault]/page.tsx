@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState, useEffect, useCallback } from "react";
+import { notFound } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "viem";
 import Link from "next/link";
@@ -104,6 +105,9 @@ function fmtPct(v: number | undefined): string {
 
 export default function VaultDetailPage({ params }: { params: Promise<{ vault: string }> }) {
   const { vault: vaultKey } = use(params);
+  // Unknown vault key (e.g. /vaults/foo) → render Next.js 404 page before
+  // touching any wagmi hooks downstream that assume a valid config.
+  if (!VAULT_CONFIG[vaultKey]) notFound();
   const { address: user, isConnected } = useAccount();
   const config = VAULT_CONFIG[vaultKey];
 

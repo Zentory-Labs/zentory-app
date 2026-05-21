@@ -636,7 +636,7 @@ export default function DashboardPage() {
 
       {/* Disclaimer */}
       <div className="text-center text-xs py-8" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
-        Historical data shown is illustrative seed data for demonstration purposes. Past performance does not guarantee future results.
+        Testnet only · Chain 998 · Charts populate once the indexer has run against the active Supabase project. Past performance does not guarantee future results.
       </div>
     </div>
   );

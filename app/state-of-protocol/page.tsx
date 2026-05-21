@@ -5,8 +5,8 @@ import { useState } from "react";
 // ─── Static Data ───────────────────────────────────────────────────────────────
 
 const PROTOCOL_STATS = [
-  { label: "Network", value: "HyperEVM Testnet (Chain 998)", sub: "Mainnet imminent" },
-  { label: "Contracts Deployed", value: "4", sub: "ZENT, Staking, Registry, Scoring" },
+  { label: "Network", value: "HyperEVM Testnet (Chain 998)", sub: "Mainnet Q4 2026 after external audit" },
+  { label: "Contracts Deployed", value: "26", sub: "Vaults, Staking, Registry, Scoring, Fees, Governance" },
   { label: "Testnet TVL", value: "$0", sub: "Pre-mainnet" },
   { label: "Total Signals", value: "—", sub: "Live after mainnet" },
   { label: "Epochs Settled", value: "0", sub: "Live after mainnet" },
@@ -14,12 +14,22 @@ const PROTOCOL_STATS = [
   { label: "Total Value Secured", value: "$0", sub: "Non-custodial architecture" },
 ];
 
+// Selection of canonical contracts shown in the public table. Full list of all
+// 26 deployed contracts lives in zentory-protocol/DEPLOYMENTS.md.
 const CONTRACTS = [
   { name: "ZENT Token", address: "0x271cd48c1297CacCD810c7B1BCD904f459df7117", chain: "HyperEVM", verified: true },
-  { name: "ZENT Staking", address: "0x4E2e7Fd3C85c05697b24743e580B03abCD6d0c65", chain: "HyperEVM", verified: true },
+  { name: "ZENT Staking (veZENT)", address: "0x4E2e7Fd3C85c05697b24743e580B03abCD6d0c65", chain: "HyperEVM", verified: true },
+  { name: "zBTC Vault (ERC-4626)", address: "0x93669daC07321FF397cf5734Ae8364EA24addF45", chain: "HyperEVM", verified: true },
+  { name: "zETH Vault (ERC-4626)", address: "0xbe8a9d22560A1b126554b70Aaca2D763B2E70C4e", chain: "HyperEVM", verified: true },
+  { name: "zSOL Vault (ERC-4626)", address: "0xb62BA9d0a14aC9f9601891179B3Da52bE71Ce052", chain: "HyperEVM", verified: true },
+  { name: "zXRP Vault (ERC-4626)", address: "0x8B15204D88a9Bb155bE6798522983A3B5F7d7cB0", chain: "HyperEVM", verified: true },
+  { name: "Strategy Executor", address: "0xACd862ef134d772B0Ca53A97f53CCdD00ABc05CF", chain: "HyperEVM", verified: true },
+  { name: "HyperCore Adapter", address: "0xdad9175f6d2da1709Ba3f73711e69022538D21A7", chain: "HyperEVM", verified: true },
   { name: "Signal Registry", address: "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c", chain: "HyperEVM", verified: true },
   { name: "Epoch Scoring", address: "0xC9F7345574e8734247556Ed4e30B11851E285bA4", chain: "HyperEVM", verified: true },
-  { name: "Subscription Vault", address: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d", chain: "HyperEVM", verified: false },
+  { name: "Subscription Vault", address: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d", chain: "HyperEVM", verified: true },
+  { name: "Zent Governor", address: "0x21ba1F7C028B1ADc78e75Ac187B08b1BDd567118", chain: "HyperEVM", verified: true },
+  { name: "Timelock (48h)", address: "0x1504cA3C050C88CcCa67696d642F634fc381fD03", chain: "HyperEVM", verified: true },
 ];
 
 const SECURITY = [
@@ -35,15 +45,14 @@ const VAULT_ASSETS = [
   { asset: "BTC", status: "Supported", tvl: "—", apy: "—" },
   { asset: "ETH", status: "Supported", tvl: "—", apy: "—" },
   { asset: "SOL", status: "Supported", tvl: "—", apy: "—" },
-  { asset: "XRP", status: "Coming Soon", tvl: "—", apy: "—" },
+  { asset: "XRP", status: "Supported", tvl: "—", apy: "—" },
   { asset: "HYPE", status: "Coming Soon", tvl: "—", apy: "—" },
 ];
 
 const REVENUE_STREAMS = [
-  { stream: "Vault Performance Fee", rate: "15%", status: "Designed", detail: "Taken on profitable epochs only" },
-  { stream: "Research Subscriptions", rate: "10–100 ZENT/mo", status: "Designed", detail: "4 tiers from Free to Institutional" },
-  { stream: "Premium Research", rate: "Per-report pricing", status: "Designed", detail: "On-demand quant research" },
-  { stream: "ZENT Buyback & Burn", rate: "50% of treasury", status: "Smart contract ready", detail: "Deployed on mainnet launch" },
+  { stream: "Vault Performance Fee", rate: "15%", status: "Designed", detail: "Charged on positive yield above high-water mark" },
+  { stream: "Research Subscriptions", rate: "100–2000 ZENT/mo", status: "Designed", detail: "3 tiers paid in ZENT via SubscriptionVault" },
+  { stream: "ZENT Buyback & Burn", rate: "50% of vault fees", status: "Smart contract ready", detail: "Automated via FeeDistributor on mainnet launch" },
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────

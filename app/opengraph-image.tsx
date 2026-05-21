@@ -17,8 +17,10 @@ const TEXT = "#eaeaea";
 const TEXT_DIM = "rgba(234,234,234,0.6)";
 
 export default async function OpenGraphImage() {
+  // Use the LIGHT logo on the dark OG background — the dark logo file is
+  // meant for light backgrounds and would render nearly invisible here.
   const logoData = await readFile(
-    join(process.cwd(), "public", "zentory_logo_dark.png")
+    join(process.cwd(), "public", "zentory_logo_light.png")
   );
   const logoSrc = `data:image/png;base64,${logoData.toString("base64")}`;
 

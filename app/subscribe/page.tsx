@@ -725,7 +725,7 @@ export default function SubscriptionVaultPage() {
                       className="text-xs mt-0.5"
                       style={{ color: "rgba(234,234,234,0.4)" }}
                     >
-                      ≈ ${tier.priceUsd}/month at ZENT ~${ZENT_USD}
+                      USD price set post-listing · testnet only
                     </div>
                   </div>
 

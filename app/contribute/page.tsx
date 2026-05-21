@@ -1,23 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useAccount } from "wagmi";
-import { useRouter } from "next/navigation";
-
 export default function ContributePage() {
-  const { isConnected } = useAccount();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isConnected) {
-      router.push("/contribute/dashboard");
-    }
-  }, [isConnected, router]);
-
-  function handleConnect() {
-    window.dispatchEvent(new Event("open-wallet-modal"));
-  }
-
   return (
     <div className="w-full min-h-[60vh] flex flex-col items-center justify-center text-center px-6">
       {/* Ambient glow */}
@@ -35,17 +18,16 @@ export default function ContributePage() {
         </svg>
       </div>
 
-      {/* Badge */}
+      {/* Coming soon badge */}
       <div
         className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold mb-6"
         style={{
-          background: "rgba(176,141,87,0.08)",
+          background: "rgba(176,141,87,0.12)",
           borderColor: "rgba(176,141,87,0.3)",
           color: "#b08d57",
         }}
       >
-        <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#b08d57", boxShadow: "0 0 8px #b08d57" }} />
-        Quant Research Network
+        Coming Q3 2026
       </div>
 
       {/* Heading */}
@@ -56,15 +38,24 @@ export default function ContributePage() {
         Contribute Research
       </h1>
       <p
-        className="text-base leading-relaxed max-w-lg mb-10"
-        style={{ color: "rgba(234,234,234,0.55)", fontFamily: "'Montserrat', sans-serif" }}
+        className="text-base leading-relaxed max-w-lg mb-3"
+        style={{ color: "rgba(234,234,234,0.7)", fontFamily: "'Montserrat', sans-serif" }}
       >
-        Build a publicly verifiable on-chain track record. Stake ZENT as a bond against accuracy. Receive ZENT credits for premium access when your research contributes to the ZENT Alpha Vault.
+        Build a publicly verifiable on-chain track record. Stake ZENT as a bond against
+        accuracy. Earn payouts on profitable epochs.
+      </p>
+      <p
+        className="text-sm leading-relaxed max-w-lg mb-10"
+        style={{ color: "rgba(234,234,234,0.45)", fontFamily: "'Montserrat', sans-serif" }}
+      >
+        Public quant onboarding opens when the on-chain signal pipeline
+        (SignalRegistry + EpochScoring + keeper bot) finishes integration.
+        Until then, signals are produced by the ZENTORY engine.
       </p>
 
-      {/* connect button */}
-      <button
-        onClick={handleConnect}
+      {/* Waitlist external link instead of broken Connect button */}
+      <a
+        href="mailto:contact@zentorylabs.io?subject=Quant%20Contributor%20Application"
         className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
         style={{
           background: "linear-gradient(135deg, #b08d57 0%, #8b6635 100%)",
@@ -73,8 +64,8 @@ export default function ContributePage() {
           boxShadow: "0 0 40px rgba(176,141,87,0.25)",
         }}
       >
-        Connect Wallet
-      </button>
+        Apply via email
+      </a>
 
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 max-w-3xl">
