@@ -116,6 +116,12 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   const [withdrawShares, setWithdrawShares] = useState("");
   const [navHistory, setNavHistory] = useState<VaultNavSnapshot[]>([]);
   const [fills, setFills] = useState<HlUserFillRow[]>([]);
+  // Gate wallet-dependent UI until after mount so SSR ("not connected") matches
+  // the first client render. Without this, wagmi hydrating from localStorage
+  // shows a different tree on the second client render and React fails to bind
+  // event handlers (Deposit click does nothing).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const vault = config?.vaultAddress as `0x${string}` | undefined;
   const asset = config?.assetAddress as `0x${string}` | undefined;
@@ -297,7 +303,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       </div>
 
       {/* Deposit / Withdraw */}
-      {isConnected ? (
+      {mounted && isConnected ? (
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Action card */}
           <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>

@@ -64,6 +64,11 @@ function LockBar({ lockEnd, lockStart }: { lockEnd: bigint; lockStart: bigint })
 
 export default function StakePage() {
   const { address, isConnected } = useAccount();
+  // Gate wallet-dependent UI until after mount to avoid SSR/client hydration
+  // mismatch — wagmi reads from localStorage after first paint and the tree
+  // would diverge, breaking onClick handlers.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const totalStaked = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "totalStaked" } as any);
   const minStake = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "minStake" } as any);
@@ -133,7 +138,7 @@ export default function StakePage() {
     }
   }
 
-  if (!isConnected) {
+  if (!mounted || !isConnected) {
     return (
       <div className="min-h-screen relative flex items-center justify-center" style={{ background: "#05070c" }}>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />

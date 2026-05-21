@@ -119,6 +119,9 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
   const { switchChain } = useSwitchChain();
   const [state, setState] = useState<SubscribeState>("idle");
   const [error, setError] = useState<string | null>(null);
+  // SSR/hydration guard — see vault page for the full explanation.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const wrongNetwork = isConnected && chainId && chainId !== HYPER_EVM_CHAIN_ID;
 
@@ -187,7 +190,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
 
   const isWorking = state === "approving" || state === "subscribing";
 
-  if (!isConnected) {
+  if (!mounted || !isConnected) {
     return (
       <div className="space-y-2">
         {wrongNetwork && (
