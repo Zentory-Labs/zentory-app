@@ -94,8 +94,16 @@ export function WalletButton() {
   const [connectionTimeoutId, setConnectionTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
-  const wrongNetwork = isConnected && chainId !== HYPER_EVM_CHAIN_ID;
-  const noWallet = typeof window !== "undefined" && !(window as Window & { ethereum?: unknown }).ethereum;
+  // SSR/hydration guard — wagmi resolves isConnected/address asynchronously
+  // from localStorage on the client. Rendering the Connected branch before
+  // mount produces a different tree than the server did, throwing React
+  // error #418 and (critically) preventing onClick handlers across the
+  // entire app from binding correctly.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const wrongNetwork = mounted && isConnected && chainId !== HYPER_EVM_CHAIN_ID;
+  const noWallet = mounted && !(window as Window & { ethereum?: unknown }).ethereum;
 
   // Clear connection error when modal opens
   useEffect(() => {
@@ -171,7 +179,7 @@ export function WalletButton() {
     switchChain({ chainId: HYPER_EVM_CHAIN_ID });
   }
 
-  if (isConnected && address) {
+  if (mounted && isConnected && address) {
     return (
       <div className="flex items-center gap-3">
         {/* Network indicator dot */}
