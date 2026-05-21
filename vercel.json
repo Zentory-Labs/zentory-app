@@ -13,11 +13,5 @@
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "@supabase_anon_key",
     "SENTRY_DSN": "@sentry_dsn"
   },
-  "regions": ["iad1"],
-  "crons": [
-    {
-      "path": "/api/cron/heartbeat",
-      "schedule": "*/30 * * * *"
-    }
-  ]
+  "regions": ["iad1"]
 }
