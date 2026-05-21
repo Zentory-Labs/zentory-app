@@ -180,9 +180,9 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   });
 
   // ─── Write contracts ────────────────────────────────────────────────
-  const { writeContract: approve, data: approveHash } = useWriteContract();
-  const { writeContract: deposit, data: depositHash } = useWriteContract();
-  const { writeContract: withdraw, data: withdrawHash } = useWriteContract();
+  const { writeContract: approve, data: approveHash, error: approveError } = useWriteContract();
+  const { writeContract: deposit, data: depositHash, error: depositError } = useWriteContract();
+  const { writeContract: withdraw, data: withdrawHash, error: withdrawError } = useWriteContract();
 
   const { isLoading: isApproveLoading } = useWaitForTransactionReceipt({ hash: approveHash });
   const { isLoading: isDepositLoading, isSuccess: isDepositSuccess } = useWaitForTransactionReceipt({ hash: depositHash });
@@ -225,12 +225,20 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
 
   // ─── Handlers ────────────────────────────────────────────────────
   const handleApprove = useCallback(() => {
+    // eslint-disable-next-line no-console
+    console.log("[zentory] handleApprove", { asset, vault, depositAmtBn: depositAmtBn?.toString() });
     if (!asset || !depositAmtBn || !vault) return;
     approve({ address: asset, abi: erc20Abi, functionName: "approve", args: [vault, depositAmtBn] });
   }, [asset, vault, depositAmtBn, approve]);
 
   const handleDeposit = useCallback(() => {
-    if (!vault || !depositAmtBn || !user) return;
+    // eslint-disable-next-line no-console
+    console.log("[zentory] handleDeposit", { vault, user, depositAmtBn: depositAmtBn?.toString() });
+    if (!vault || !depositAmtBn || !user) {
+      // eslint-disable-next-line no-console
+      console.warn("[zentory] handleDeposit early-return guard tripped", { hasVault: !!vault, hasUser: !!user, depositAmtBn: depositAmtBn?.toString() });
+      return;
+    }
     deposit({ address: vault, abi: VAULT_ABI, functionName: "deposit", args: [depositAmtBn, user] });
   }, [vault, depositAmtBn, user, deposit]);
 
@@ -359,7 +367,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                 {needsApproval ? (
                   <button
                     onClick={handleApprove}
-                    disabled={isApproveLoading || !depositAmtBn}
+                    disabled={isApproveLoading}
                     className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
                     style={{ background: "rgba(240,192,64,0.15)", color: "#f0c040", border: "1px solid rgba(240,192,64,0.3)" }}
                   >
@@ -368,12 +376,18 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                 ) : (
                   <button
                     onClick={handleDeposit}
-                    disabled={!depositAmount || parseFloat(depositAmount) === 0 || isDepositLoading || !!isCircuitBreaker.data}
+                    disabled={isDepositLoading || !!isCircuitBreaker.data}
                     className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
                     style={{ background: "#f0c040", color: "#050507" }}
                   >
                     {isDepositLoading ? "Depositing..." : "Deposit"}
                   </button>
+                )}
+
+                {(approveError || depositError) && (
+                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "monospace" }}>
+                    {(approveError || depositError)?.message?.split("\n")[0] ?? String(approveError ?? depositError)}
+                  </div>
                 )}
 
                 {isDepositSuccess && (
@@ -406,12 +420,18 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
 
                 <button
                   onClick={handleWithdraw}
-                  disabled={!withdrawShares || parseFloat(withdrawShares) === 0 || isWithdrawLoading || !!isCircuitBreaker.data}
+                  disabled={isWithdrawLoading || !!isCircuitBreaker.data}
                   className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
                   style={{ background: "#7c5cff", color: "#fff" }}
                 >
                   {isWithdrawLoading ? "Withdrawing..." : "Withdraw"}
                 </button>
+
+                {withdrawError && (
+                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "monospace" }}>
+                    {withdrawError?.message?.split("\n")[0] ?? String(withdrawError)}
+                  </div>
+                )}
 
                 {isWithdrawSuccess && (
                   <div className="text-center text-sm" style={{ color: "#4ade80" }}>
