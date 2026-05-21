@@ -12,7 +12,7 @@ const WhitelistPopup = dynamic(() => import("./WhitelistPopup"), { ssr: false })
 const NAV_LINKS = [
   { href: "/", label: "Vaults" },
   { href: "/research", label: "Research" },
-  { href: "/markets", label: "Markets" },
+  { href: "/faucet", label: "Faucet" },
   { href: "/subscribe", label: "Subscribe" },
   { href: "/contribute", label: "Contribute" },
 ];

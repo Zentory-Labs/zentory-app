@@ -457,10 +457,10 @@ export default function Home() {
               </div>
               <div className="space-y-4">
                 {[
-                  { label: "Total Value Locked", value: "$0", sub: "Pre-mainnet" },
-                  { label: "Yield Metric", value: "—", sub: "Variable — launch TBD" },
-                  { label: "Supported Assets", value: "BTC · ETH · SOL", sub: "XRP · HYPE coming" },
-                  { label: "Strategy", value: "Premium/Discount", sub: "Non-directional alpha" },
+                  { label: "Network", value: "HyperEVM 998", sub: "Testnet" },
+                  { label: "Live Vaults", value: "4", sub: "zBTC · zETH · zSOL · zXRP" },
+                  { label: "Performance Fee", value: "15%", sub: "On yield generated" },
+                  { label: "Custody", value: "Non-custodial", sub: "ERC-4626 shares, redeem anytime" },
                 ].map(({ label, value, sub }) => (
                   <div key={label} className="flex flex-col gap-0.5">
                     <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>{label}</span>

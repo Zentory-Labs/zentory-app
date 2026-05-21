@@ -406,12 +406,12 @@ export default function SignalsPage() {
         </div>
       )}
 
-      {/* Ghost Portfolio hint */}
+      {/* Ghost Portfolio — coming Q3 2026, intentionally not linked yet */}
       <div
         className="mt-8 rounded-2xl p-6"
-        style={{ background: "rgba(124,92,255,0.05)", border: "1px solid rgba(124,92,255,0.2)" }}
+        style={{ background: "rgba(124,92,255,0.04)", border: "1px solid rgba(124,92,255,0.18)" }}
       >
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-2">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
             style={{ background: "rgba(124,92,255,0.2)", color: "#7c5cff", fontFamily: "'Space Mono', monospace" }}
@@ -421,17 +421,17 @@ export default function SignalsPage() {
           <div>
             <div className="text-sm font-semibold" style={{ color: "#eaeaea" }}>Ghost Portfolio</div>
             <div className="text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
-              See what following these signals would have returned vs. holding
+              On-chain attribution — coming Q3 2026
             </div>
           </div>
-          <a
-            href="/dashboard"
-            className="ml-auto px-4 py-2 rounded-lg text-xs font-semibold"
-            style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff", border: "1px solid rgba(124,92,255,0.3)", fontFamily: "'Montserrat', sans-serif" }}
-          >
-            View Dashboard →
-          </a>
         </div>
+        <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.55)" }}>
+          Once enough signals resolve, every vault page will plot a third line —
+          <strong className="text-white/80"> GHOST</strong> — showing what following the on-chain
+          signals would have returned versus the <strong className="text-white/80">HOLD</strong>{" "}
+          baseline and the <strong className="text-white/80">ACTUAL</strong> vault NAV. Attribution
+          rules are documented in whitepaper §8.
+        </p>
       </div>
     </div>
   );

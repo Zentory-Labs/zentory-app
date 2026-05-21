@@ -48,21 +48,6 @@ const GRADE_COLORS: Record<string, string> = {
   "D": "#ef4444",
 };
 
-// ─── Mock fallback data ───────────────────────────────────────────────────────
-
-const MOCK_PROVIDERS: LeaderboardProvider[] = [
-  { rank: 1, provider: "0x3F07a390aB123a4567890dEFe9D4C2f3b0d1234a", providerShort: "0x3F07...234a", totalSignals: 47, resolvedSignals: 38, accuracyPercent: 81.2, accuracyGrade: "A+", zentEarned: "12453.8210", lastSignal: "2h ago", assetClasses: ["CRYPTO_PERP"] },
-  { rank: 2, provider: "0x71B2eF4E21abcd1234567890Dee9F4C2f3b0d5678", providerShort: "0x71B2...5678", totalSignals: 39, resolvedSignals: 29, accuracyPercent: 74.4, accuracyGrade: "A", zentEarned: "9841.2301", lastSignal: "5h ago", assetClasses: ["CRYPTO_PERP", "EQUITY"] },
-  { rank: 3, provider: "0xA129bC7d3F5678901234567890DeF9A4B2c3D4e5", providerShort: "0xA129...4e5", totalSignals: 62, resolvedSignals: 44, accuracyPercent: 68.9, accuracyGrade: "B", zentEarned: "7654.1002", lastSignal: "1h ago", assetClasses: ["CRYPTO_PERP"] },
-  { rank: 4, provider: "0xdE81Bc7901234567890DeF9A4B2c3D4e5F6a7b8", providerShort: "0xdE81...7b8", totalSignals: 31, resolvedSignals: 21, accuracyPercent: 61.3, accuracyGrade: "B", zentEarned: "5420.5500", lastSignal: "8h ago", assetClasses: ["EQUITY", "FOREX"] },
-  { rank: 5, provider: "0xf123AbCd901234567890DeF9A4B2c3D4e5F6a7b8", providerShort: "0xf123...7b8", totalSignals: 24, resolvedSignals: 15, accuracyPercent: 57.8, accuracyGrade: "C", zentEarned: "3210.0000", lastSignal: "12h ago", assetClasses: ["CRYPTO_PERP", "COMMODITY"] },
-  { rank: 6, provider: "0xa234BcDeF01234567890DeF9A4B2c3D4e5F6a7b9", providerShort: "0xa234...7b9", totalSignals: 18, resolvedSignals: 11, accuracyPercent: 52.1, accuracyGrade: "C", zentEarned: "2100.7500", lastSignal: "18h ago", assetClasses: ["FOREX"] },
-  { rank: 7, provider: "0xb345CdEf01234567890DeF9A4B2c3D4e5F6a7b0", providerShort: "0xb345...7b0", totalSignals: 15, resolvedSignals: 9, accuracyPercent: 48.6, accuracyGrade: "D", zentEarned: "1200.5000", lastSignal: "22h ago", assetClasses: ["EQUITY"] },
-  { rank: 8, provider: "0xc456DeFa01234567890DeF9A4B2c3D4e5F6a7b1", providerShort: "0xc456...7b1", totalSignals: 12, resolvedSignals: 7, accuracyPercent: 44.2, accuracyGrade: "D", zentEarned: "800.2500", lastSignal: "1d ago", assetClasses: ["CRYPTO_PERP"] },
-  { rank: 9, provider: "0xd567EfAb01234567890DeF9A4B2c3D4e5F6a7b2", providerShort: "0xd567...7b2", totalSignals: 9, resolvedSignals: 5, accuracyPercent: 41.0, accuracyGrade: "D", zentEarned: "500.0000", lastSignal: "2d ago", assetClasses: ["COMMODITY"] },
-  { rank: 10, provider: "0xe678FgBc01234567890DeF9A4B2c3D4e5F6a7b3", providerShort: "0xe678...7b3", totalSignals: 7, resolvedSignals: 4, accuracyPercent: 38.5, accuracyGrade: "D", zentEarned: "300.0000", lastSignal: "3d ago", assetClasses: ["CRYPTO_PERP"] },
-];
-
 // ─── Sparkline ────────────────────────────────────────────────────────────────
 
 function Sparkline({ data, color = "#b08d57" }: { data: number[]; color?: string }) {
@@ -434,32 +419,12 @@ export default function LeaderboardPage() {
         }));
         setProviders(withSparkline);
       } else {
-        // Use mock data when no real data available
-        const withSparkline = MOCK_PROVIDERS.map((p, i) => ({
-          ...p,
-          sparklineData: [
-            55 + Math.sin(i) * 15 + Math.random() * 10,
-            58 + Math.sin(i + 1) * 15 + Math.random() * 10,
-            60 + Math.sin(i + 2) * 15 + Math.random() * 10,
-            57 + Math.sin(i + 3) * 15 + Math.random() * 10,
-            63 + Math.sin(i + 4) * 15 + Math.random() * 10,
-            65 + Math.sin(i + 5) * 15 + Math.random() * 10,
-            62 + Math.sin(i + 6) * 15 + Math.random() * 10,
-            68 + Math.sin(i + 7) * 15 + Math.random() * 10,
-            70 + Math.sin(i + 8) * 15 + Math.random() * 10,
-            72 + Math.sin(i + 9) * 15 + Math.random() * 10,
-          ],
-        }));
-        setProviders(withSparkline);
+        setProviders([]);
       }
       setLastUpdated(new Date());
     } catch (err) {
       console.error("[Leaderboard] fetch error:", err);
-      // Fallback to mock on error
-      setProviders(MOCK_PROVIDERS.map((p, i) => ({
-        ...p,
-        sparklineData: Array.from({ length: 10 }, (_, j) => 55 + Math.sin(i + j) * 15 + Math.random() * 10),
-      })));
+      setProviders([]);
       setLastUpdated(new Date());
     } finally {
       setLoading(false);
@@ -572,6 +537,35 @@ export default function LeaderboardPage() {
             {filteredProviders.length} provider{filteredProviders.length !== 1 ? "s" : ""}
           </span>
         </div>
+
+        {/* ── Empty state when no real provider data is indexed yet ── */}
+        {!loading && providers.length === 0 && (
+          <section
+            className="rounded-2xl p-10 text-center"
+            style={{ background: "rgba(176,141,87,0.04)", border: "1px solid rgba(176,141,87,0.2)" }}
+          >
+            <div
+              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold mb-4"
+              style={{ background: "rgba(176,141,87,0.12)", borderColor: "rgba(176,141,87,0.3)", color: "#b08d57" }}
+            >
+              Coming Q3 2026
+            </div>
+            <h3 className="text-xl font-bold mb-2" style={{ color: "#eaeaea" }}>
+              The Conviction Leaderboard is still indexing
+            </h3>
+            <p className="text-sm max-w-xl mx-auto" style={{ color: "rgba(234,234,234,0.6)" }}>
+              Quants submit EIP-712 signed signals to{" "}
+              <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>SignalRegistry</code>;
+              accuracy is settled every 4&nbsp;hours by{" "}
+              <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code>.
+              Once the first wave of signals has resolved, this leaderboard will rank quants by
+              conviction-weighted accuracy. The ranking is on-chain — no edits, no deletions, no screenshots.
+            </p>
+            <div className="text-xs mt-6" style={{ color: "rgba(234,234,234,0.4)" }}>
+              Track Auto-Follow + Volatility Brackets launches in <a href="/state-of-protocol" className="underline" style={{ color: "#b08d57" }}>State of Protocol</a>.
+            </div>
+          </section>
+        )}
 
         {/* ── Top 3 Podium ── */}
         {top3.length > 0 && (

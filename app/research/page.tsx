@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAccount } from "wagmi";
 import { getResearch } from "@/lib/research";
-import type { Research, Asset } from "@/lib/research";
+import type { Research } from "@/lib/research";
 import ResearchTable from "@/components/ResearchTable";
 import TradeLoggerForm from "./TradeLoggerForm";
 
@@ -17,115 +17,28 @@ const DEMO_BANNER = (
 );
 
 function ResearchPerformanceBar({ research }: { research: Research[] }) {
-  const stats = useMemo(() => {
-    const executed = research.filter((s) => s.status === "executed");
-    if (executed.length === 0) return null;
+  const executedCount = useMemo(
+    () => research.filter((s) => s.status === "executed").length,
+    [research]
+  );
 
-    // Real P&L would come from keeper_audit + on-chain price feeds
-    const ASSET_PRICES: Record<Asset, number> = { BTC: 96500, ETH: 3420, SOL: 140, XRP: 2.3 };
-    const returns = executed.map((s) => {
-      const directionMultiplier = s.direction === "LONG" ? 1 : s.direction === "SHORT" ? -1 : 0;
-      // Return 0 until real P&L data (entry/exit prices) is available from on-chain keeper_audit
-      const priceChange = 0;
-      return priceChange;
-    });
-
-    const totalReturn = returns.reduce((a, b) => a + b, 0);
-    const avgReturn = totalReturn / returns.length;
-    const wins = returns.filter((r) => r > 0).length;
-    const winRate = returns.length ? (wins / returns.length) * 100 : 0;
-    const bestTrade = returns.length ? Math.max(...returns) * 100 : 0;
-    const worstTrade = returns.length ? Math.min(...returns) * 100 : 0;
-    const bestResearch = returns.length ? executed[returns.indexOf(Math.max(...returns))] : null;
-    const worstResearch = returns.length ? executed[returns.indexOf(Math.min(...returns))] : null;
-
-    return {
-      totalTrades: executed.length,
-      winRate,
-      avgReturn: avgReturn * 100,
-      totalPnl: totalReturn * 100,
-      bestTrade,
-      worstTrade,
-      bestResearch,
-      worstResearch,
-      longs: executed.filter((s) => s.direction === "LONG").length,
-      shorts: executed.filter((s) => s.direction === "SHORT").length,
-      closes: executed.filter((s) => s.direction === "CLOSE").length,
-    };
-  }, [research]);
-
-  if (!stats) {
-    return (
-      <div className="glass-card p-6">
-        <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
-          Performance Summary
-        </p>
-        <div className="flex items-center justify-center py-8">
-          <p className="text-sm text-white/40 italic" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-            Live performance data will appear after the first epoch settles.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const metricCards = [
-    {
-      label: "Total Trades",
-      value: String(stats.totalTrades),
-      sub: `${stats.longs}L · ${stats.shorts}S · ${stats.closes}CL`,
-      accent: "#eaeaea",
-    },
-    {
-      label: "Win Rate",
-      value: `${stats.winRate.toFixed(1)}%`,
-      sub: `${Math.round(stats.totalTrades * stats.winRate / 100)} / ${stats.totalTrades} wins`,
-      accent: stats.winRate >= 55 ? "#22c55e" : "#ef4444",
-    },
-    {
-      label: "Avg Return",
-      value: `${stats.avgReturn >= 0 ? "+" : ""}${stats.avgReturn.toFixed(3)}%`,
-      sub: "per trade",
-      accent: stats.avgReturn >= 0 ? "#22c55e" : "#ef4444",
-    },
-    {
-      label: "Total P&L",
-      value: `${stats.totalPnl >= 0 ? "+" : ""}${stats.totalPnl.toFixed(2)}%`,
-      sub: "cumulative",
-      accent: stats.totalPnl >= 0 ? "#22c55e" : "#ef4444",
-    },
-    {
-      label: "Best Trade",
-      value: `+${stats.bestTrade.toFixed(2)}%`,
-      sub: `${stats.bestResearch?.asset} ${stats.bestResearch?.direction}`,
-      accent: "#22c55e",
-    },
-    {
-      label: "Worst Trade",
-      value: `${stats.worstTrade.toFixed(2)}%`,
-      sub: `${stats.worstResearch?.asset} ${stats.worstResearch?.direction}`,
-      accent: "#ef4444",
-    },
-  ];
-
+  // P&L attribution requires per-signal entry/exit prices indexed from
+  // hl_user_fills + on-chain price feeds. Until that pipeline is live we do
+  // not synthesize numbers — an empty state is more honest than a 0% win rate.
   return (
     <div className="glass-card p-6">
       <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
         Performance Summary
       </p>
-      {DEMO_BANNER}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        {metricCards.map(({ label, value, sub, accent }) => (
-          <div
-            key={label}
-            className="rounded-xl p-3 text-center"
-            style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}
-          >
-            <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>
-            <div className="text-lg font-bold" style={{ color: accent, fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
-            <div className="text-xs mt-0.5" style={{ color: "rgba(106,111,117,0.6)", fontFamily: "'Montserrat', sans-serif" }}>{sub}</div>
-          </div>
-        ))}
+      <div className="flex flex-col items-center justify-center py-8 gap-2">
+        <p className="text-sm text-white/60" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          {executedCount > 0
+            ? `${executedCount} executed signal${executedCount === 1 ? "" : "s"} — awaiting epoch settlement.`
+            : "No executed signals yet."}
+        </p>
+        <p className="text-xs text-white/35 italic max-w-md text-center" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          Live P&amp;L populates once on-chain fill prices are indexed and the first 4-hour epoch settles via EpochScoring.
+        </p>
       </div>
     </div>
   );

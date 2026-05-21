@@ -301,8 +301,6 @@ function ZENTTokenMetrics() {
   const supply = Number(((totalSupply.data as bigint) ?? 0n) / 10n ** 18n);
   const staked = Number(((totalStaked.data as bigint) ?? 0n) / 10n ** 18n);
   const stakePct = supply > 0 ? (staked / supply) * 100 : 0;
-  const ZENT_PRICE = 0.08; // mock
-  const marketCap = supply * ZENT_PRICE;
 
   const chartData = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
@@ -328,10 +326,10 @@ function ZENTTokenMetrics() {
 
       <div className="grid grid-cols-4 gap-3 mb-5">
         {[
-          { label: "Total Supply", value: totalSupply.isLoading ? "—" : `${(supply / 1e6).toFixed(1)}B`, sub: "ZENT" },
-          { label: "Market Cap", value: totalSupply.isLoading ? "—" : `$${(marketCap / 1e6).toFixed(1)}M`, sub: `@ $${ZENT_PRICE}` },
-          { label: "Staked", value: totalStaked.isLoading ? "—" : `${(staked / 1e6).toFixed(1)}B`, sub: `${stakePct.toFixed(1)}% of supply` },
-          { label: "Price", value: `$${ZENT_PRICE}`, sub: "Mock price" },
+          { label: "Total Supply", value: totalSupply.isLoading ? "—" : `${(supply / 1e9).toFixed(2)}B`, sub: "ZENT (fixed)" },
+          { label: "Market Cap", value: "TBD", sub: "Pre-listing" },
+          { label: "Staked", value: totalStaked.isLoading ? "—" : `${(staked / 1e6).toFixed(1)}M`, sub: `${stakePct.toFixed(1)}% of supply` },
+          { label: "Price", value: "TBD", sub: "Pre-listing" },
         ].map(({ label, value, sub }) => (
           <div key={label} className="rounded-xl p-3 text-center" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
             <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>

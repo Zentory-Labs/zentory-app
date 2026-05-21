@@ -1,5 +1,10 @@
-// Deployed contract addresses on HyperEVM testnet (chain 998)
-// Verified live on-chain — deployed 2026-04-27 by 0x3F07367008158dC272Dd8A38812e1460eF5a390a
+// Deployed contract addresses on HyperEVM testnet (chain 998).
+// Canonical source of truth: zentory-protocol/DEPLOYMENTS.md and the Foundry
+// broadcast logs under zentory-protocol/contracts/broadcast/*/998/run-latest.json.
+//
+// HyperCoreAdapter + StrategyExecutor were re-deployed in Phase 5 (2026-04-27)
+// to apply hardening fixes from docs/reports/pentest-2026-04-26.md. Older
+// addresses from ResumeDeployment.s.sol are deprecated.
 export const addresses = {
   // Core
   ZENT: "0x271cd48c1297CacCD810c7B1BCD904f459df7117",
@@ -11,7 +16,7 @@ export const addresses = {
   zXRP: "0x8B15204D88a9Bb155bE6798522983A3B5F7d7cB0",
   zSOL: "0xb62BA9d0a14aC9f9601891179B3Da52bE71Ce052",
 
-  // Mock assets (for testnet — replace with real tokens on mainnet)
+  // Mock assets (testnet only — replace with real tokens on mainnet)
   WETH: "0x80F727AF3f7932718fEb25FC28818Ad103040BD2",
   WBTC: "0x08890A5B7D6D157Da65C04C19150fF7d124eaE40",
   WXRP: "0xe1Fe75622Bd5D962c72c1D0A621E5fa6656a4371",
@@ -32,9 +37,9 @@ export const addresses = {
   Zentroller: "0x24f9401284CE16CFe61e40C1F9e3fb37d15B878E",
   ZentGovernor: "0x21ba1F7C028B1ADc78e75Ac187B08b1BDd567118",
 
-  // Keeper
-  HyperCoreAdapter: "0xfFc1Da47f780973e935Bb9F5a9d455aE7A5f7eac",
-  StrategyExecutor: "0x427c94150f3f700Dc2EDf7bCc97155A467E41F21",
+  // Strategy execution (Phase 5 hardened — see top-of-file note)
+  HyperCoreAdapter: "0xdad9175f6d2da1709Ba3f73711e69022538D21A7",
+  StrategyExecutor: "0xACd862ef134d772B0Ca53A97f53CCdD00ABc05CF",
 
   // ─── Research Network (deployed 2026-04-28 via deploy_signal_network.s.sol) ────────
   SignalRegistry:    "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c",
