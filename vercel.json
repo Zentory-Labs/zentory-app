@@ -16,7 +16,7 @@
   "regions": ["iad1"],
   "crons": [
     {
-      "path": "api/cron/heartbeat",
+      "path": "/api/cron/heartbeat",
       "schedule": "*/30 * * * *"
     }
   ]
