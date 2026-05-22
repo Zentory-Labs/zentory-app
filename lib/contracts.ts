@@ -21,7 +21,7 @@ export const addresses = {
   // Mock assets (testnet only — replace with real tokens on mainnet)
   WETH: "0x80F727AF3f7932718fEb25FC28818Ad103040BD2",
   WBTC: "0x08890A5B7D6D157Da65C04C19150fF7d124eaE40",
-  WXRP: "0xe1Fe75622Bd5D962c72c1D0A621E5fa6656a4371",
+  WXRP: "0xe1Fe75622Bd5D962c72c1D0A621e5fa6656a4371",
   WSOL: "0x2b9d5bBD8C5FEfc71E985d993C13db2770469972",
 
   // Staking & Fees
