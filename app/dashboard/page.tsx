@@ -302,15 +302,13 @@ function ZENTTokenMetrics() {
   const staked = Number(((totalStaked.data as bigint) ?? 0n) / 10n ** 18n);
   const stakePct = supply > 0 ? (staked / supply) * 100 : 0;
 
-  const chartData = Array.from({ length: 30 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (29 - i));
-    return {
-      date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      supply: supply * (0.98 + Math.random() * 0.02),
-      staked: staked * (0.95 + Math.random() * 0.05),
-    };
-  });
+  // Deterministic chart data — no Math.random / new Date() in render
+  // (those broke SSR/client hydration across the app).
+  const chartData = Array.from({ length: 30 }, (_, i) => ({
+    date: `D-${29 - i}`,
+    supply,
+    staked,
+  }));
 
   return (
     <div

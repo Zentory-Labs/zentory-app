@@ -314,7 +314,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "NAV / Share", value: fmtBn(navPerShare.data, 18, 6) },
+          { label: "NAV / Share", value: fmtBn(navPerShare.data, config.decimals, 6) },
           { label: "TVL", value: `${tvlRaw.toFixed(2)} ${config.symbol.replace("z","")}` },
           { label: "Your Shares", value: userSharesRaw.toFixed(4) },
           { label: "Your Assets", value: `${userAssetRaw.toFixed(4)} ${config.symbol.replace("z","")}` },
@@ -470,8 +470,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
             {[
               ["Contract", vault ?? "—"],
               ["Asset", asset ?? "—"],
-              ["NAV / Share", fmtBn(navPerShare.data, 18, 6)],
-              ["High Water Mark", fmtBn(hwm.data, 18, 6)],
+              ["NAV / Share", fmtBn(navPerShare.data, config.decimals, 6)],
+              ["High Water Mark", fmtBn(hwm.data, config.decimals, 6)],
               ["Circuit Breaker", isCircuitBreaker.data ? "Active" : "Inactive"],
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between items-center text-sm border-b border-[#2a2f3a] pb-3 last:border-0">
