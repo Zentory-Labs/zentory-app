@@ -6,6 +6,9 @@ import { geoBlockCheck } from "@/lib/geo-blocking";
 export async function GET(request: Request) {
   const block = geoBlockCheck(request);
   if (block) return block;
+  // Supabase is intentionally offline pre-mainnet. Return an empty list so the
+  // public /research page renders an honest empty state instead of a red
+  // "Failed to load research." banner.
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -16,12 +19,12 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("[GET /api/research]", error.message);
-      return NextResponse.json({ error: "Failed to fetch research" }, { status: 500 });
+      return NextResponse.json([], { status: 200 });
     }
     return NextResponse.json(data ?? []);
   } catch (err) {
     console.error("[GET /api/research]", err);
-    return NextResponse.json({ error: "Failed to fetch research" }, { status: 500 });
+    return NextResponse.json([], { status: 200 });
   }
 }
 

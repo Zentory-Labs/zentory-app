@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, parseAbiItem } from "viem";
 import { addresses, HYPEREVM_TESTNET } from "@/lib/contracts";
 
-const SIGNAL_SUBMITTED_ABI = [
-  "event SignalSubmitted(bytes32 indexed signalId, address indexed provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt)",
-] as const;
+// viem's getLogs needs a parsed AbiEvent object, not a raw human-readable
+// string. Passing the string verbatim throws "Event not found on ABI" — that
+// was the visible error on /signals.
+const SIGNAL_SUBMITTED_EVENT = parseAbiItem(
+  "event SignalSubmitted(bytes32 indexed signalId, address indexed provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt)"
+);
 
 const ASSET_CLASS_LABEL: Record<number, string> = {
   0: "Crypto Spot",
@@ -106,13 +109,12 @@ export default function SignalsPage() {
         transport: http(rpcUrl),
       });
 
-      const SIGNAL_TOPIC0 = "0x7d8a7739c884cee63d3f5dd59938ec9e356acfe8327ab9111a1a32e19d11ac20";
       const LATEST_BLOCK = await publicClient.getBlockNumber();
       const FROM_BLOCK = LATEST_BLOCK > 10000n ? LATEST_BLOCK - 10000n : 0n;
 
       const logs = await publicClient.getLogs({
         address: addresses.SignalRegistry,
-        event: SIGNAL_SUBMITTED_ABI[0] as any,
+        event: SIGNAL_SUBMITTED_EVENT,
         fromBlock: FROM_BLOCK,
         toBlock: "latest",
       });
