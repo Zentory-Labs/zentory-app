@@ -3,7 +3,7 @@
 import { use, useState, useEffect, useCallback } from "react";
 import { notFound } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { erc20Abi } from "viem";
+import { erc20Abi, parseAbi } from "viem";
 import Link from "next/link";
 import {
   AreaChart,
@@ -14,7 +14,13 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { addresses, VAULT_ABI } from "@/lib/contracts";
+import { addresses, VAULT_ABI as VAULT_ABI_HUMAN } from "@/lib/contracts";
+
+// VAULT_ABI in lib/contracts.ts is a string array of human-readable signatures.
+// wagmi/viem requires a proper ABI object — parse once at module level so reads
+// AND writes both receive a usable shape (the prior raw-string ABI silently
+// failed all writeContract calls with "Cannot use 'in' operator").
+const VAULT_ABI = parseAbi(VAULT_ABI_HUMAN as unknown as string[]);
 import { getVaultNavHistory, type VaultNavSnapshot } from "@/lib/vault-stats";
 import { getRecentHlUserFills, type HlUserFillRow } from "@/lib/execution-trace";
 
