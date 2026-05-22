@@ -2,7 +2,7 @@
 
 import type { Research } from "@/lib/research";
 
-const EXPLORER_BASE = "https://hypurrscan.io/tx";
+const EXPLORER_BASE = "https://testnet.purrsec.com/tx";
 
 function formatTimestamp(ts: number): string {
   return new Date(ts).toLocaleString("en-US", {

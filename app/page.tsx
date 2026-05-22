@@ -19,9 +19,10 @@ const STAKING_ABI_VIEM = STAKING_ABI;
 
 function getAssetDecimals(asset: string): number {
   // These correspond to the mock assets deployed on HyperEVM testnet.
-  // ETH/SOL mocks are 18, BTC mock is 8, XRP mock is 6.
+  // ETH mock is 18, SOL mock is 9 (matches native SOL), BTC is 8, XRP is 6.
   if (asset === "BTC") return 8;
   if (asset === "XRP") return 6;
+  if (asset === "SOL") return 9;
   return 18;
 }
 
@@ -197,7 +198,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
           Live
         </span>
         <a
-          href={`https://hypurrscan.io/address/${vault}`}
+          href={`https://testnet.purrsec.com/address/${vault}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 text-xs transition-colors"
@@ -462,7 +463,7 @@ export default function Home() {
                 {[
                   { label: "Network", value: "HyperEVM 998", sub: "Testnet" },
                   { label: "Live Vaults", value: "4", sub: "zBTC · zETH · zSOL · zXRP" },
-                  { label: "Performance Fee", value: "15%", sub: "On yield generated" },
+                  { label: "Performance Fee", value: "20%", sub: "On yield above high-water mark" },
                   { label: "Custody", value: "Non-custodial", sub: "ERC-4626 shares, redeem anytime" },
                 ].map(({ label, value, sub }) => (
                   <div key={label} className="flex flex-col gap-0.5">

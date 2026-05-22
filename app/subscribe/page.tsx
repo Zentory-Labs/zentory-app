@@ -306,7 +306,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
 
       {(approveHash || subscribeHash) && (
         <a
-          href={`https://hypurrscan.io/tx/${subscribeHash || approveHash}`}
+          href={`https://testnet.purrsec.com/tx/${subscribeHash || approveHash}`}
           target="_blank"
           rel="noopener noreferrer"
           className="block text-xs text-center transition-colors"

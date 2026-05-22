@@ -51,7 +51,7 @@ const VAULT_CONFIG: Record<string, {
   zSOL: {
     name: "zSOL Vault",
     symbol: "zSOL",
-    decimals: 18,
+    decimals: 9, // on-chain WSOL + zSOL share are 9 decimals
     color: "#9945FF",
     bgColor: "rgba(153,69,255,0.1)",
     assetName: "Wrapped Solana",

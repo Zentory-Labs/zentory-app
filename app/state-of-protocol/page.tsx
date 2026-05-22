@@ -23,8 +23,8 @@ const CONTRACTS = [
   { name: "zETH Vault (ERC-4626)", address: "0xbe8a9d22560A1b126554b70Aaca2D763B2E70C4e", chain: "HyperEVM", verified: true },
   { name: "zSOL Vault (ERC-4626)", address: "0xb62BA9d0a14aC9f9601891179B3Da52bE71Ce052", chain: "HyperEVM", verified: true },
   { name: "zXRP Vault (ERC-4626)", address: "0x8B15204D88a9Bb155bE6798522983A3B5F7d7cB0", chain: "HyperEVM", verified: true },
-  { name: "Strategy Executor", address: "0xACd862ef134d772B0Ca53A97f53CCdD00ABc05CF", chain: "HyperEVM", verified: true },
-  { name: "HyperCore Adapter", address: "0xdad9175f6d2da1709Ba3f73711e69022538D21A7", chain: "HyperEVM", verified: true },
+  { name: "Strategy Executor", address: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF", chain: "HyperEVM", verified: true },
+  { name: "HyperCore Adapter", address: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7", chain: "HyperEVM", verified: true },
   { name: "Signal Registry", address: "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c", chain: "HyperEVM", verified: true },
   { name: "Epoch Scoring", address: "0xC9F7345574e8734247556Ed4e30B11851E285bA4", chain: "HyperEVM", verified: true },
   { name: "Subscription Vault", address: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d", chain: "HyperEVM", verified: true },
@@ -50,7 +50,7 @@ const VAULT_ASSETS = [
 ];
 
 const REVENUE_STREAMS = [
-  { stream: "Vault Performance Fee", rate: "15%", status: "Designed", detail: "Charged on positive yield above high-water mark" },
+  { stream: "Vault Performance Fee", rate: "20%", status: "Designed", detail: "Charged on positive yield above high-water mark" },
   { stream: "Research Subscriptions", rate: "100–2000 ZENT/mo", status: "Designed", detail: "3 tiers paid in ZENT via SubscriptionVault" },
   { stream: "ZENT Buyback & Burn", rate: "50% of vault fees", status: "Smart contract ready", detail: "Automated via FeeDistributor on mainnet launch" },
 ];

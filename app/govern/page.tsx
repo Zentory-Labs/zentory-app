@@ -210,22 +210,22 @@ export default function GovernPage() {
         {/* Links */}
         <div className="text-center space-y-2">
           <a
-            href={`https://hypurrscan.io/address/${addresses.ZentGovernor}`}
+            href={`https://testnet.purrsec.com/address/${addresses.ZentGovernor}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-xs hover:underline transition-colors"
             style={{ color: "#b08d57" }}
           >
-            View ZentGovernor on HypurrScan →
+            View ZentGovernor on Purrsec →
           </a>
           <a
-            href={`https://hypurrscan.io/address/${addresses.Timelock}`}
+            href={`https://testnet.purrsec.com/address/${addresses.Timelock}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-xs hover:underline transition-colors"
             style={{ color: "#b08d57" }}
           >
-            View Timelock on HypurrScan →
+            View Timelock on Purrsec →
           </a>
         </div>
       </main>

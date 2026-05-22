@@ -40,8 +40,8 @@ export const addresses = {
   ZentGovernor: "0x21ba1F7C028B1ADc78e75Ac187B08b1BDd567118",
 
   // Strategy execution (Phase 5 hardened — see top-of-file note)
-  HyperCoreAdapter: "0xdad9175f6d2da1709Ba3f73711e69022538D21A7",
-  StrategyExecutor: "0xACd862ef134d772B0Ca53A97f53CCdD00ABc05CF",
+  HyperCoreAdapter: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7",
+  StrategyExecutor: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF",
 
   // ─── Research Network (deployed 2026-04-28 via deploy_signal_network.s.sol) ────────
   SignalRegistry:    "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c",
@@ -273,9 +273,9 @@ export const HYPEREVM_TESTNET = {
   },
   blockExplorers: {
     default: {
-      name: "HypurrScan",
-      url: "https://hypurrscan.io",
-      apiUrl: "https://api.hypurrscan.io",
+      name: "Purrsec",
+      url: "https://testnet.purrsec.com",
+      apiUrl: "https://testnet.purrsec.com/api",
     },
   },
 } as const;

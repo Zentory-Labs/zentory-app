@@ -38,6 +38,7 @@ const VAULTS = [addresses.zBTC, addresses.zETH, addresses.zSOL, addresses.zXRP] 
 function getAssetDecimals(asset: string): number {
   if (asset === "BTC") return 8;
   if (asset === "XRP") return 6;
+  if (asset === "SOL") return 9;
   return 18;
 }
 
@@ -531,7 +532,7 @@ function ExecutionTraceSection() {
                     <td className="py-2 pr-3 font-mono text-[11px]">{a.nonce ?? "—"}</td>
                     <td className="py-2">
                       <a
-                        href={`https://hypurrscan.io/tx/${a.tx_hash}`}
+                        href={`https://testnet.purrsec.com/tx/${a.tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-mono text-[11px] underline"

@@ -287,7 +287,7 @@ export default function AdminPage() {
               <div key={label} className="flex justify-between items-center text-sm">
                 <span className="text-white/50">{label}</span>
                 <a
-                  href={`https://hypurrscan.io/address/${addr}`}
+                  href={`https://testnet.purrsec.com/address/${addr}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-mono text-xs transition-colors"

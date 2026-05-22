@@ -51,8 +51,8 @@ const ASSETS: Array<{
     label: "Wrapped Solana",
     description: "Testnet mock WSOL — deposit into zSOLVault",
     address: addresses.WSOL as `0x${string}`,
-    decimals: 18,
-    amount: 100n * 10n ** 18n, // 100 WSOL
+    decimals: 9, // on-chain WSOL is 9 decimals (matches SOL native)
+    amount: 100n * 10n ** 9n, // 100 WSOL
     amountLabel: "100 WSOL",
     accent: "#9945FF",
   },

@@ -297,13 +297,13 @@ export default function StakePage() {
         {/* Contract link */}
         <div className="text-center">
           <a
-            href={`https://hypurrscan.io/address/${addresses.ZENTStaking}`}
+            href={`https://testnet.purrsec.com/address/${addresses.ZENTStaking}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs hover:underline transition-colors"
             style={{ color: "#b08d57" }}
           >
-            View ZENTStaking on HypurrScan →
+            View ZENTStaking on Purrsec →
           </a>
         </div>
       </main>
