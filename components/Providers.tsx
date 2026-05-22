@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { injected, coinbaseWallet, walletConnect, metaMask } from "wagmi/connectors";
@@ -51,9 +51,22 @@ const wagmiConfig = createConfig({
 });
 
 export default function Providers({ children }: { children: ReactNode }) {
+  // wagmi hydrates from localStorage (lastConnector / persisted state). Server
+  // can't see that and produces a different tree than the client's first
+  // paint, throwing React error #418 across the whole app.
+  //
+  // Trade-off: this gates ALL children behind `mounted`, so the page is
+  // briefly blank on first paint (~50ms) instead of rendering an SSR'd
+  // version that then fails to hydrate. The user sees a faster perceived
+  // "settled" state and the console no longer spams #418.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        {mounted ? children : null}
+      </QueryClientProvider>
     </WagmiProvider>
   );
 }
