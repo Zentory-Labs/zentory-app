@@ -187,7 +187,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   const { writeContract: deposit, data: depositHash, error: depositError } = useWriteContract();
   const { writeContract: withdraw, data: withdrawHash, error: withdrawError } = useWriteContract();
 
-  const { isLoading: isApproveLoading } = useWaitForTransactionReceipt({ hash: approveHash });
+  const { isLoading: isApproveLoading, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({ hash: approveHash });
   const { isLoading: isDepositLoading, isSuccess: isDepositSuccess } = useWaitForTransactionReceipt({ hash: depositHash });
   const { isLoading: isWithdrawLoading, isSuccess: isWithdrawSuccess } = useWaitForTransactionReceipt({ hash: withdrawHash });
 
@@ -255,12 +255,13 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   }, [vault, withdrawSharesBn, user, withdraw]);
 
   useEffect(() => {
-    if (isDepositSuccess || isWithdrawSuccess) {
+    if (isApproveSuccess || isDepositSuccess || isWithdrawSuccess) {
       if (isDepositSuccess) setDepositAmount("");
       if (isWithdrawSuccess) setWithdrawShares("");
       // wagmi doesn't auto-invalidate same-block reads on this RPC. Manually
       // refetch user + vault state so the UI reflects the new on-chain truth
-      // without a full page reload.
+      // without a full page reload. Also refetch on Approve success so the
+      // Approve→Deposit button transition happens without a page refresh.
       userAssetBalance.refetch();
       userShares.refetch();
       allowance.refetch();
@@ -270,7 +271,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       isCircuitBreaker.refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDepositSuccess, isWithdrawSuccess]);
+  }, [isApproveSuccess, isDepositSuccess, isWithdrawSuccess]);
 
   // ─── Not found ───────────────────────────────────────────────────
   if (!config) {
