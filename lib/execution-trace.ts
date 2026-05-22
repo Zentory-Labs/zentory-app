@@ -1,5 +1,10 @@
 import { createClient } from "@/utils/supabase/client";
 
+function supabaseDisabled(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return !url || !url.includes(".supabase.co");
+}
+
 export interface VaultTradingAccountRow {
   vault_address: string;
   hl_user_address: string;
@@ -45,45 +50,48 @@ export interface HlUserFillRow {
 }
 
 export async function getVaultTradingAccounts(): Promise<VaultTradingAccountRow[]> {
+  if (supabaseDisabled()) return [];
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("vault_trading_accounts")
-    .select("*")
-    .order("vault_address", { ascending: true });
-
-  if (error) {
-    console.error("[execution-trace] vault_trading_accounts:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("vault_trading_accounts")
+      .select("*")
+      .order("vault_address", { ascending: true });
+    if (error) return [];
+    return (data as VaultTradingAccountRow[]) ?? [];
+  } catch {
     return [];
   }
-  return (data as VaultTradingAccountRow[]) ?? [];
 }
 
 export async function getRecentExecutionAttempts(limit = 40): Promise<ExecutionAttemptRow[]> {
+  if (supabaseDisabled()) return [];
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("execution_attempts")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error("[execution-trace] execution_attempts:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("execution_attempts")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error) return [];
+    return (data as ExecutionAttemptRow[]) ?? [];
+  } catch {
     return [];
   }
-  return (data as ExecutionAttemptRow[]) ?? [];
 }
 
 export async function getRecentHlUserFills(limit = 80): Promise<HlUserFillRow[]> {
+  if (supabaseDisabled()) return [];
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("hl_user_fills")
-    .select("id,vault_address,hl_user_address,source,coin,px,sz,side,dir,fee,closed_pnl,time_ms,hash,inserted_at,fill_key")
-    .order("time_ms", { ascending: false, nullsFirst: false })
-    .limit(limit);
-
-  if (error) {
-    console.error("[execution-trace] hl_user_fills:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("hl_user_fills")
+      .select("id,vault_address,hl_user_address,source,coin,px,sz,side,dir,fee,closed_pnl,time_ms,hash,inserted_at,fill_key")
+      .order("time_ms", { ascending: false, nullsFirst: false })
+      .limit(limit);
+    if (error) return [];
+    return (data as HlUserFillRow[]) ?? [];
+  } catch {
     return [];
   }
-  return (data as HlUserFillRow[]) ?? [];
 }

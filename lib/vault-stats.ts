@@ -1,5 +1,13 @@
 import { createClient } from "@/utils/supabase/client";
 
+// Returns true if the Supabase URL looks unreachable (env empty or hostname
+// that DNS can't resolve). Used to silently short-circuit indexer reads
+// instead of spamming the console with ERR_NAME_NOT_RESOLVED.
+function supabaseDisabled(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return !url || !url.includes(".supabase.co");
+}
+
 export interface VaultNavSnapshot {
   id: string;
   vault_symbol: string;
@@ -39,22 +47,23 @@ export async function getVaultNavHistory(
   vaultSymbol: string,
   days = 30
 ): Promise<VaultNavSnapshot[]> {
+  if (supabaseDisabled()) return [];
   const supabase = createClient();
   const since = new Date();
   since.setDate(since.getDate() - days);
 
-  const { data, error } = await supabase
-    .from("vault_nav_history")
-    .select("*")
-    .eq("vault_symbol", vaultSymbol)
-    .gte("snapshot_at", since.toISOString())
-    .order("snapshot_at", { ascending: true });
-
-  if (error) {
-    console.error("[vault-stats] getVaultNavHistory:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("vault_nav_history")
+      .select("*")
+      .eq("vault_symbol", vaultSymbol)
+      .gte("snapshot_at", since.toISOString())
+      .order("snapshot_at", { ascending: true });
+    if (error) return [];
+    return (data as VaultNavSnapshot[]) ?? [];
+  } catch {
     return [];
   }
-  return (data as VaultNavSnapshot[]) ?? [];
 }
 
 /** Fetch deposit/withdrawal flow for a vault, last N days */
@@ -62,22 +71,23 @@ export async function getVaultFlow(
   vaultSymbol: string,
   days = 30
 ): Promise<VaultFlow[]> {
+  if (supabaseDisabled()) return [];
   const supabase = createClient();
   const since = new Date();
   since.setDate(since.getDate() - days);
 
-  const { data, error } = await supabase
-    .from("vault_flow")
-    .select("*")
-    .eq("vault_symbol", vaultSymbol)
-    .gte("date", since.toISOString().split("T")[0])
-    .order("date", { ascending: true });
-
-  if (error) {
-    console.error("[vault-stats] getVaultFlow:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("vault_flow")
+      .select("*")
+      .eq("vault_symbol", vaultSymbol)
+      .gte("date", since.toISOString().split("T")[0])
+      .order("date", { ascending: true });
+    if (error) return [];
+    return (data as VaultFlow[]) ?? [];
+  } catch {
     return [];
   }
-  return (data as VaultFlow[]) ?? [];
 }
 
 /** Fetch daily performance metrics for a vault */
@@ -85,22 +95,23 @@ export async function getVaultPerformance(
   vaultSymbol: string,
   days = 30
 ): Promise<VaultPerformance[]> {
+  if (supabaseDisabled()) return [];
   const supabase = createClient();
   const since = new Date();
   since.setDate(since.getDate() - days);
 
-  const { data, error } = await supabase
-    .from("vault_performance")
-    .select("*")
-    .eq("vault_symbol", vaultSymbol)
-    .gte("date", since.toISOString().split("T")[0])
-    .order("date", { ascending: true });
-
-  if (error) {
-    console.error("[vault-stats] getVaultPerformance:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("vault_performance")
+      .select("*")
+      .eq("vault_symbol", vaultSymbol)
+      .gte("date", since.toISOString().split("T")[0])
+      .order("date", { ascending: true });
+    if (error) return [];
+    return (data as VaultPerformance[]) ?? [];
+  } catch {
     return [];
   }
-  return (data as VaultPerformance[]) ?? [];
 }
 
 /** Fetch aggregate stats across all vaults */

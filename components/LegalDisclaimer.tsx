@@ -1,23 +1,26 @@
-import Link from 'next/link'
-
 interface LegalDisclaimerProps {
   variant?: 'footer' | 'inline' | 'banner'
   className?: string
 }
 
+// Terms / Privacy live on the marketing site only — link out to avoid 404s
+// from the dApp's Next.js router prefetching nonexistent local routes.
+const TERMS_URL = 'https://zentorylabs.com/terms-of-service'
+const PRIVACY_URL = 'https://zentorylabs.com/privacy-policy'
+
 const footerText = (
   <>
     This website and all materials have been prepared for general informational purposes only and do not constitute financial, legal, tax, or investment advice. No offer or solicitation to buy or sell any security, token, or product is made. Zentory Labs Token and Zentory Labs Models involve risk; past or hypothetical performance does not guarantee future results. Access may be restricted by jurisdiction. You should seek independent legal, tax, and financial advice before making any decision. By using this site you agree to our{' '}
-    <Link href="/terms-of-service" className="underline hover:text-inherit">Terms of Service</Link>
+    <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-inherit">Terms of Service</a>
     {' '}and{' '}
-    <Link href="/privacy-policy" className="underline hover:text-inherit">Privacy Policy</Link>.
+    <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-inherit">Privacy Policy</a>.
   </>
 )
 
 const inlineText = (
   <>
     Not financial or legal advice. No offer or solicitation. High risk. Seek independent advice. See{' '}
-    <Link href="/terms-of-service" className="underline">Terms</Link> and risk disclosures.
+    <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" className="underline">Terms</a> and risk disclosures.
   </>
 )
 

@@ -1,3 +1,5 @@
+import { parseAbi } from "viem";
+
 // Deployed contract addresses on HyperEVM testnet (chain 998).
 // Canonical source of truth: zentory-protocol/DEPLOYMENTS.md and the Foundry
 // broadcast logs under zentory-protocol/contracts/broadcast/*/998/run-latest.json.
@@ -49,7 +51,13 @@ export const addresses = {
 
 // ─── ABIs ───────────────────────────────────────────────────────────────────
 
-export const ZENT_ABI = [
+// All ABIs below are pre-parsed via viem's `parseAbi` so they're directly
+// usable by wagmi's useReadContract / useWriteContract without each consumer
+// having to parse them locally. Passing a raw human-readable string array
+// causes wagmi to throw "Cannot use 'in' operator to search for 'name'" or
+// silently return undefined.
+
+export const ZENT_ABI = parseAbi([
   "function name() view returns (string)",
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
@@ -59,20 +67,33 @@ export const ZENT_ABI = [
   "function allowance(address,address) view returns (uint256)",
   "function approve(address,uint256) returns (bool)",
   "function transferFrom(address,address,uint256) returns (bool)",
-] as const;
+]);
 
-export const VAULT_ABI = [
+export const VAULT_ABI = parseAbi([
+  // ERC-20 share-token methods (vault shares are ERC-20-compatible)
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function decimals() view returns (uint8)",
+  "function balanceOf(address) view returns (uint256)",
+  "function transfer(address,uint256) returns (bool)",
+  "function allowance(address,address) view returns (uint256)",
+  "function approve(address,uint256) returns (bool)",
+  "function transferFrom(address,address,uint256) returns (bool)",
+  // ERC-4626
   "function asset() view returns (address)",
   "function totalAssets() view returns (uint256)",
   "function totalSupply() view returns (uint256)",
   "function convertToShares(uint256) view returns (uint256)",
   "function convertToAssets(uint256) view returns (uint256)",
+  "function previewDeposit(uint256) view returns (uint256)",
+  "function previewRedeem(uint256) view returns (uint256)",
   "function deposit(uint256,address) returns (uint256)",
   "function mint(uint256,address) returns (uint256)",
   "function withdraw(uint256,address,address) returns (uint256)",
   "function redeem(uint256,address,address) returns (uint256)",
   "function maxDeposit(address) view returns (uint256)",
   "function maxMint(address) view returns (uint256)",
+  // Zentory extensions
   "function highWaterMark() view returns (uint256)",
   "function getNavPerShare() view returns (uint256)",
   "function currentDirection() view returns (int8)",
@@ -81,11 +102,12 @@ export const VAULT_ABI = [
   "function performanceFee() view returns (uint256)",
   "function isCircuitBreakerActive() view returns (bool)",
   "function hasRole(bytes32,address) view returns (bool)",
+  // Events
   "event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares)",
   "event Withdraw(address indexed caller, address indexed receiver, address indexed owner, uint256 assets, uint256 shares)",
-] as const;
+]);
 
-export const STAKING_ABI = [
+export const STAKING_ABI = parseAbi([
   "function stake(uint256,uint64) returns (uint64)",
   "function increaseAmount(uint256)",
   "function extendLock(uint64) returns (uint64)",
@@ -98,9 +120,9 @@ export const STAKING_ABI = [
   "function minStake() view returns (uint256)",
   "event Staked(address indexed user, uint256 amount, uint64 lockEnd)",
   "event Withdrawn(address indexed user, uint256 amount)",
-] as const;
+]);
 
-export const GOVERNOR_ABI = [
+export const GOVERNOR_ABI = parseAbi([
   "function name() view returns (string)",
   "function version() view returns (string)",
   "function quorum(uint256) view returns (uint256)",
@@ -113,9 +135,9 @@ export const GOVERNOR_ABI = [
   "function state(uint256) view returns (uint8)",
   "function proposalDeadline(uint256) view returns (uint256)",
   "function proposalSnapshot(uint256) view returns (uint256)",
-] as const;
+]);
 
-export const EXECUTOR_ABI = [
+export const EXECUTOR_ABI = parseAbi([
   "function paused() view returns (bool)",
   "function maxPositionSize(address) view returns (uint256)",
   "function maxLeverageBPS(address) view returns (uint256)",
@@ -131,17 +153,17 @@ export const EXECUTOR_ABI = [
   "function GUARDIAN_ROLE() view returns (bytes32)",
   "event ManualTradeRecorded(address indexed vault, bool indexed isBuy, uint64 size, uint64 price, address indexed keeper)",
   "event PausedSet(bool paused)",
-] as const;
+]);
 
-export const HYPERCORE_ADAPTER_ABI = [
+export const HYPERCORE_ADAPTER_ABI = parseAbi([
   "function sendLimitOrder(uint8,bool,uint64,uint64,bool,uint8,uint128)",
   "function vaultRegistry(address) view returns (uint8)",
   "function lastTradePrice(uint8) view returns (uint256)",
-] as const;
+]);
 
 // ─── Signal Network ABIs ──────────────────────────────────────────────────────
 
-export const SIGNAL_REGISTRY_ABI = [
+export const SIGNAL_REGISTRY_ABI = parseAbi([
   // Core submit
   "function submitSignal(address provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt, bytes calldata signature) returns (bytes32 signalId)",
   "function submitSignalBatch(tuple(bytes32 signalId, address provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 submittedAt, uint256 expiresAt, bytes signature, uint8 status)[] calldata batch) returns (bytes32[] ids)",
@@ -161,9 +183,9 @@ export const SIGNAL_REGISTRY_ABI = [
   // Events
   "event SignalSubmitted(bytes32 indexed signalId, address indexed provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt)",
   "event SignalScored(bytes32 indexed signalId, address indexed provider, uint256 accuracyBps, int256 payout)",
-] as const;
+]);
 
-export const EPOCH_SCORING_ABI = [
+export const EPOCH_SCORING_ABI = parseAbi([
   "function checkUpkeep(bytes calldata) view returns (bool upkeepNeeded, bytes memory performData)",
   "function performUpkeep(bytes calldata performData)",
   "function settleEpoch()",
@@ -182,9 +204,9 @@ export const EPOCH_SCORING_ABI = [
   "event EpochSettled(uint256 indexed epochId, uint256 totalSignals, uint256 settledSignals)",
   "event PayoutApplied(bytes32 indexed signalId, address indexed provider, int256 payout)",
   "event KeeperCallExecuted(uint256 upkeepId, bytes performData)",
-] as const;
+]);
 
-export const SUBSCRIPTION_VAULT_ABI = [
+export const SUBSCRIPTION_VAULT_ABI = parseAbi([
   // Subscribe
   "function subscribe(uint256 tierId, uint32 months) returns (uint256 tokenId)",
   "function renewSubscription(uint256 tokenId, uint32 months) returns (uint32 newExpiration)",
@@ -207,7 +229,7 @@ export const SUBSCRIPTION_VAULT_ABI = [
   "event Subscribed(address indexed subscriber, uint256 indexed tokenId, uint256 tierId, uint32 duration, uint256 zentPaid)",
   "event RenewalPaid(uint256 indexed tokenId, uint256 zentPaid, uint32 newExpiration)",
   "event Cancelled(uint256 indexed tokenId, uint256 refundZENT, uint32 refundSeconds)",
-] as const;
+]);
 
 // ─── Subscription Tiers ───────────────────────────────────────────────────────
 

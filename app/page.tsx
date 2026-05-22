@@ -2,16 +2,18 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { createPublicClient, formatUnits, http, parseAbi } from "viem";
+import { createPublicClient, formatUnits, http } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import { VideoHero } from "@/components/VideoHero";
 import { addresses, ZENT_ABI, VAULT_ABI, STAKING_ABI, vaultMeta, HYPEREVM_TESTNET } from "@/lib/contracts";
 
 const VAULTS = [addresses.zBTC, addresses.zETH, addresses.zSOL, addresses.zXRP] as const;
 
-const VAULT_ABI_VIEM = parseAbi(VAULT_ABI as unknown as string[]);
-const ZENT_ABI_VIEM = parseAbi(ZENT_ABI as unknown as string[]);
-const STAKING_ABI_VIEM = parseAbi(STAKING_ABI as unknown as string[]);
+// lib/contracts.ts now exports already-parsed ABIs. The _VIEM aliases stay for
+// backward-compat references below; future code should just use the imports.
+const VAULT_ABI_VIEM = VAULT_ABI;
+const ZENT_ABI_VIEM = ZENT_ABI;
+const STAKING_ABI_VIEM = STAKING_ABI;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
