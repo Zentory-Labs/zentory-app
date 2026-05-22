@@ -297,13 +297,13 @@ export default function StakePage() {
         {/* Contract link */}
         <div className="text-center">
           <a
-            href={`https://testnet.purrsec.com/address/${addresses.ZENTStaking}`}
+            href={`https://app.hyperliquid-testnet.xyz/explorer/address/${addresses.ZENTStaking}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs hover:underline transition-colors"
             style={{ color: "#b08d57" }}
           >
-            View ZENTStaking on Purrsec →
+            View ZENTStaking on Hyperliquid Explorer →
           </a>
         </div>
       </main>

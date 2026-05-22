@@ -186,7 +186,7 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
         </div>
       </div>
       <a
-        href={`https://testnet.purrsec.com/address/${contract.address}`}
+        href={`https://app.hyperliquid-testnet.xyz/explorer/address/${contract.address}`}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1.5 text-xs font-semibold transition-all hover:scale-[1.02] w-fit"

@@ -198,7 +198,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
           Live
         </span>
         <a
-          href={`https://testnet.purrsec.com/address/${vault}`}
+          href={`https://app.hyperliquid-testnet.xyz/explorer/address/${vault}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 text-xs transition-colors"

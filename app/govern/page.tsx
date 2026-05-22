@@ -210,22 +210,22 @@ export default function GovernPage() {
         {/* Links */}
         <div className="text-center space-y-2">
           <a
-            href={`https://testnet.purrsec.com/address/${addresses.ZentGovernor}`}
+            href={`https://app.hyperliquid-testnet.xyz/explorer/address/${addresses.ZentGovernor}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-xs hover:underline transition-colors"
             style={{ color: "#b08d57" }}
           >
-            View ZentGovernor on Purrsec →
+            View ZentGovernor on Hyperliquid Explorer →
           </a>
           <a
-            href={`https://testnet.purrsec.com/address/${addresses.Timelock}`}
+            href={`https://app.hyperliquid-testnet.xyz/explorer/address/${addresses.Timelock}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-xs hover:underline transition-colors"
             style={{ color: "#b08d57" }}
           >
-            View Timelock on Purrsec →
+            View Timelock on Hyperliquid Explorer →
           </a>
         </div>
       </main>

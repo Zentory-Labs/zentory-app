@@ -273,9 +273,9 @@ export const HYPEREVM_TESTNET = {
   },
   blockExplorers: {
     default: {
-      name: "Purrsec",
-      url: "https://testnet.purrsec.com",
-      apiUrl: "https://testnet.purrsec.com/api",
+      name: "Hyperliquid Explorer",
+      url: "https://app.hyperliquid-testnet.xyz/explorer",
+      apiUrl: "https://app.hyperliquid-testnet.xyz/explorer",
     },
   },
 } as const;

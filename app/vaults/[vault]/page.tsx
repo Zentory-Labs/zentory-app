@@ -483,13 +483,13 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
               </div>
             ))}
             <a
-              href={`https://testnet.purrsec.com/address/${vault}`}
+              href={`https://app.hyperliquid-testnet.xyz/explorer/address/${vault}`}
               target="_blank"
               rel="noopener noreferrer"
               className="block text-center py-2 rounded-lg text-xs mt-2"
               style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "1px solid #2a2f3a" }}
             >
-              View on Purrsec Explorer →
+              View on Hyperliquid Explorer →
             </a>
           </div>
         </div>
