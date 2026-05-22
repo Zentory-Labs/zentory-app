@@ -552,11 +552,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
 
         {fills.length === 0 ? (
           <div className="text-center py-8 text-sm" style={{ color: "rgba(106,111,117,0.7)" }}>
-            No fills indexed yet. Run{" "}
-            <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#f0c040" }}>
-              poll_hyperliquid_fills.py
-            </code>{" "}
-            to start ingesting fills from Hyperliquid.
+            No fills to display yet — venue ingestion goes live with mainnet (Q4 2026).
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -601,7 +597,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
         )}
 
         <div className="mt-4 flex gap-4 text-xs" style={{ color: "rgba(106,111,117,0.6)" }}>
-          <span>Fills from Hyperliquid via <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)" }}>poll_hyperliquid_fills.py</code></span>
+          <span>Venue fills sourced from Hyperliquid testnet</span>
           <Link href="/signals" className="underline" style={{ color: "#7c5cff" }}>View Signal Arena →</Link>
         </div>
       </div>

@@ -119,15 +119,26 @@ function MetricCard({
 
 function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
   const [nav, setNav] = useState<VaultNavSnapshot[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const meta = vaultMeta[vault];
   const vaultSymbol = meta.symbol;
 
   useEffect(() => {
-    getVaultNavHistory(vaultSymbol, 14).then(setNav);
+    getVaultNavHistory(vaultSymbol, 14).then((rows) => {
+      setNav(rows);
+      setLoaded(true);
+    });
   }, [vaultSymbol]);
 
+  if (!loaded) {
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#6a6f75" }}>Loading NAV history…</div>;
+  }
   if (!nav.length) {
-    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#6a6f75" }}>Loading NAV history...</div>;
+    return (
+      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#6a6f75" }}>
+        NAV history populates once the off-chain indexer is live (post-mainnet).
+      </div>
+    );
   }
 
   const assetDec = getAssetDecimals(meta.asset);
@@ -179,15 +190,26 @@ function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
 
 function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
   const [flow, setFlow] = useState<VaultFlow[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const meta = vaultMeta[vault];
   const vaultSymbol = meta.symbol;
 
   useEffect(() => {
-    getVaultFlow(vaultSymbol, 14).then(setFlow);
+    getVaultFlow(vaultSymbol, 14).then((rows) => {
+      setFlow(rows);
+      setLoaded(true);
+    });
   }, [vaultSymbol]);
 
+  if (!loaded) {
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#6a6f75" }}>Loading flow data…</div>;
+  }
   if (!flow.length) {
-    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#6a6f75" }}>Loading flow data...</div>;
+    return (
+      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#6a6f75" }}>
+        Deposit/withdrawal flow populates once the indexer is live.
+      </div>
+    );
   }
 
   const dec = getAssetDecimals(meta.asset);
@@ -364,15 +386,40 @@ function ZENTTokenMetrics() {
 
 function ProtocolTVLOverview() {
   const [stats, setStats] = useState<Awaited<ReturnType<typeof getProtocolStats>> | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    getProtocolStats().then(setStats);
+    getProtocolStats()
+      .then(setStats)
+      .catch(() => undefined)
+      .finally(() => setLoaded(true));
   }, []);
 
-  if (!stats) {
+  if (!loaded) {
     return (
       <div className="rounded-2xl p-6 flex items-center justify-center h-48" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-        <span className="text-sm" style={{ color: "#6a6f75" }}>Loading protocol stats...</span>
+        <span className="text-sm" style={{ color: "#6a6f75" }}>Loading protocol stats…</span>
+      </div>
+    );
+  }
+
+  // Off-chain indexer offline (Supabase project intentionally paused until
+  // post-mainnet). Show an honest empty state instead of leaving the spinner
+  // running forever. Live on-chain stats are still shown in the vault cards
+  // below — this section is specifically for historical/aggregate views.
+  if (!stats || !stats.vaults.length) {
+    return (
+      <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+        <div className="text-center py-12">
+          <div className="text-sm font-semibold mb-2" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+            Off-chain analytics offline
+          </div>
+          <p className="text-xs max-w-md mx-auto" style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}>
+            Aggregate TVL, deposits, withdrawals and historical alpha come from the
+            indexer, which goes live alongside mainnet (Q4 2026). Live on-chain vault
+            state is shown in the cards below.
+          </p>
+        </div>
       </div>
     );
   }
@@ -476,7 +523,7 @@ function ExecutionTraceSection() {
         </div>
         {!hasTraceData && (
           <span className="text-xs px-3 py-1 rounded-full border" style={{ borderColor: "#2a2f3a", color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}>
-            Run DB migration + indexer scripts to populate
+            Indexer ingestion goes live with mainnet
           </span>
         )}
       </div>
@@ -513,7 +560,7 @@ function ExecutionTraceSection() {
             Recent on-chain attempts
           </p>
           {attempts.length === 0 ? (
-            <p className="text-sm" style={{ color: "#6a6f75" }}>No rows yet — run <span className="font-mono text-xs">index_strategy_executor_events.py</span>.</p>
+            <p className="text-sm" style={{ color: "#6a6f75" }}>No on-chain executions to display yet.</p>
           ) : (
             <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
               <thead>
@@ -554,7 +601,7 @@ function ExecutionTraceSection() {
           </p>
           {fills.length === 0 ? (
             <p className="text-sm" style={{ color: "#6a6f75" }}>
-              No fills yet — fund HL test accounts and run <span className="font-mono text-xs">poll_hyperliquid_fills.py</span>.
+              No venue fills to display yet.
             </p>
           ) : (
             <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
