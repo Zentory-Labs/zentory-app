@@ -162,8 +162,11 @@ export const HYPERCORE_ADAPTER_ABI = parseAbi([
 ]);
 
 // ─── Signal Network ABIs ──────────────────────────────────────────────────────
+// NOTE: these two ABIs use complex tuple types that viem's parseAbi doesn't
+// fully support (named fields inside `tuple(...)[]` arrays). Kept as raw
+// human-readable strings; consumers must call parseAbi locally if needed.
 
-export const SIGNAL_REGISTRY_ABI = parseAbi([
+export const SIGNAL_REGISTRY_ABI = ([
   // Core submit
   "function submitSignal(address provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt, bytes calldata signature) returns (bytes32 signalId)",
   "function submitSignalBatch(tuple(bytes32 signalId, address provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 submittedAt, uint256 expiresAt, bytes signature, uint8 status)[] calldata batch) returns (bytes32[] ids)",
@@ -183,7 +186,7 @@ export const SIGNAL_REGISTRY_ABI = parseAbi([
   // Events
   "event SignalSubmitted(bytes32 indexed signalId, address indexed provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt)",
   "event SignalScored(bytes32 indexed signalId, address indexed provider, uint256 accuracyBps, int256 payout)",
-]);
+] as const);
 
 export const EPOCH_SCORING_ABI = parseAbi([
   "function checkUpkeep(bytes calldata) view returns (bool upkeepNeeded, bytes memory performData)",
@@ -206,7 +209,7 @@ export const EPOCH_SCORING_ABI = parseAbi([
   "event KeeperCallExecuted(uint256 upkeepId, bytes performData)",
 ]);
 
-export const SUBSCRIPTION_VAULT_ABI = parseAbi([
+export const SUBSCRIPTION_VAULT_ABI = ([
   // Subscribe
   "function subscribe(uint256 tierId, uint32 months) returns (uint256 tokenId)",
   "function renewSubscription(uint256 tokenId, uint32 months) returns (uint32 newExpiration)",
@@ -229,7 +232,7 @@ export const SUBSCRIPTION_VAULT_ABI = parseAbi([
   "event Subscribed(address indexed subscriber, uint256 indexed tokenId, uint256 tierId, uint32 duration, uint256 zentPaid)",
   "event RenewalPaid(uint256 indexed tokenId, uint256 zentPaid, uint32 newExpiration)",
   "event Cancelled(uint256 indexed tokenId, uint256 refundZENT, uint32 refundSeconds)",
-]);
+] as const);
 
 // ─── Subscription Tiers ───────────────────────────────────────────────────────
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { privateKeyToAccount } from "viem/accounts";
-import { createPublicClient, createWalletClient, http, parseAbi } from "viem";
+import { createPublicClient, createWalletClient, http } from "viem";
 import { strategyExecutorABI, HYPEREVM_TESTNET } from "@/lib/contracts";
 import { addresses } from "@/lib/contracts";
 import { geoBlockCheck } from "@/lib/geo-blocking";
@@ -13,7 +13,8 @@ const API_KEY = process.env.KEEPER_API_KEY ?? "";
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 10;
 const _rate = new Map<string, { windowStart: number; count: number }>();
-const EXECUTOR_ABI = parseAbi(strategyExecutorABI as any);
+// strategyExecutorABI is now pre-parsed in lib/contracts.ts — use directly.
+const EXECUTOR_ABI = strategyExecutorABI;
 
 /** Convert an error to a plain JSON-safe object. */
 function errorToDetail(e: unknown) {
