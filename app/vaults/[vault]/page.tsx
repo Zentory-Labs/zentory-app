@@ -3,7 +3,7 @@
 import { use, useState, useEffect, useCallback } from "react";
 import { notFound } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { erc20Abi, parseAbi } from "viem";
+import { erc20Abi, formatUnits, parseAbi } from "viem";
 import Link from "next/link";
 import {
   AreaChart,
@@ -83,13 +83,15 @@ const CHART_COLORS = {
   text: "rgba(255,255,255,0.4)",
 };
 
+// Use viem's formatUnits so we don't lose sub-unit precision to BigInt's
+// integer division. The old impl rendered 0.5 WBTC as "0.00" because
+// 50_000_000n / 10n**8n is 0n in BigInt math.
 function fmtBn(value: unknown, decimals: number, digits = 4): string {
   if (value === undefined || value === null) return "—";
   try {
-    const raw = value as bigint;
-    const v = Number(raw / 10n ** BigInt(decimals));
-    if (isNaN(v)) return "—";
-    return v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: digits });
+    const n = Number(formatUnits(value as bigint, decimals));
+    if (!Number.isFinite(n)) return "—";
+    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: digits });
   } catch {
     return "—";
   }
@@ -98,7 +100,8 @@ function fmtBn(value: unknown, decimals: number, digits = 4): string {
 function fmtBnSimple(value: unknown, decimals = 18): number {
   if (value === undefined || value === null) return 0;
   try {
-    return Number((value as bigint) / 10n ** BigInt(decimals));
+    const n = Number(formatUnits(value as bigint, decimals));
+    return Number.isFinite(n) ? n : 0;
   } catch {
     return 0;
   }
@@ -209,8 +212,12 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
     ? BigInt(Math.round(parseFloat(depositAmount) * 10 ** config.decimals))
     : 0n;
 
+  // Vault shares use the SAME decimals as the underlying asset (OZ ERC-4626
+  // default; no decimals offset on BaseVault). For zBTC that's 8, not 18.
+  const shareDecimals = config.decimals;
+
   const withdrawSharesBn = withdrawShares && !isNaN(parseFloat(withdrawShares))
-    ? BigInt(Math.round(parseFloat(withdrawShares) * 10 ** 18))
+    ? BigInt(Math.round(parseFloat(withdrawShares) * 10 ** shareDecimals))
     : 0n;
 
   const needsApproval = isConnected && depositAmtBn > 0n
@@ -218,7 +225,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
     : false;
 
   const userAssetRaw = fmtBnSimple(userAssetBalance.data, config.decimals);
-  const userSharesRaw = fmtBnSimple(userShares.data, 18);
+  const userSharesRaw = fmtBnSimple(userShares.data, shareDecimals);
   const tvlRaw = fmtBnSimple(totalAssets.data, config.decimals);
 
   // ─── Chart data ───────────────────────────────────────────────────
@@ -254,8 +261,21 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   }, [vault, withdrawSharesBn, user, withdraw]);
 
   useEffect(() => {
-    if (isDepositSuccess) setDepositAmount("");
-    if (isWithdrawSuccess) setWithdrawShares("");
+    if (isDepositSuccess || isWithdrawSuccess) {
+      if (isDepositSuccess) setDepositAmount("");
+      if (isWithdrawSuccess) setWithdrawShares("");
+      // wagmi doesn't auto-invalidate same-block reads on this RPC. Manually
+      // refetch user + vault state so the UI reflects the new on-chain truth
+      // without a full page reload.
+      userAssetBalance.refetch();
+      userShares.refetch();
+      allowance.refetch();
+      totalAssets.refetch();
+      navPerShare.refetch();
+      hwm.refetch();
+      isCircuitBreaker.refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDepositSuccess, isWithdrawSuccess]);
 
   // ─── Not found ───────────────────────────────────────────────────
