@@ -3,6 +3,8 @@
 import { useAccount, useReadContract, useWriteContractSync } from "wagmi";
 import { STAKING_ABI, ZENT_ABI, addresses } from "@/lib/contracts";
 import { useState, useEffect, useMemo } from "react";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoStakers } from "@/lib/demo/data";
 
 const MAX_LOCK_SECONDS = 730 * 24 * 60 * 60;
 const MIN_LOCK_SECONDS = 7 * 24 * 60 * 60;
@@ -294,6 +296,9 @@ export default function StakePage() {
           </form>
         </div>
 
+        {/* Top stakers leaderboard — populated in demo mode */}
+        <TopStakersBlock />
+
         {/* Contract link */}
         <div className="text-center">
           <a
@@ -307,6 +312,72 @@ export default function StakePage() {
           </a>
         </div>
       </main>
+    </div>
+  );
+}
+
+// ─── Top stakers block ──────────────────────────────────────────────────────
+
+function TopStakersBlock() {
+  const { enabled: demoMode } = useDemoMode();
+  if (!demoMode) {
+    // Live mode: honest empty state — no indexer means no ranked list.
+    return (
+      <div
+        className="rounded-2xl p-6 text-center text-sm"
+        style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "rgba(106,111,117,0.7)" }}
+      >
+        Top-staker ranking goes live with the indexer (post-mainnet).
+      </div>
+    );
+  }
+  const stakers = demoStakers(8);
+  return (
+    <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+      <div className="flex items-center justify-between mb-4">
+        <h3
+          className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
+          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+        >
+          Top Stakers
+          <DemoBadge />
+        </h3>
+      </div>
+      <ul className="space-y-2">
+        {stakers.map((s) => (
+          <li
+            key={s.address}
+            className="flex items-center gap-4 py-2 px-3 rounded-lg"
+            style={{ background: "rgba(255,255,255,0.02)" }}
+          >
+            <span
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0"
+              style={{
+                background: s.rank <= 3 ? "rgba(240,192,64,0.15)" : "rgba(255,255,255,0.04)",
+                color: s.rank <= 3 ? "#f0c040" : "rgba(255,255,255,0.6)",
+              }}
+            >
+              #{s.rank}
+            </span>
+            <span
+              className="flex-1 text-sm font-mono truncate"
+              style={{ color: s.ens ? "#7c5cff" : "#bfc3c7", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+              title={s.address}
+            >
+              {s.ens ?? `${s.address.slice(0, 6)}…${s.address.slice(-4)}`}
+            </span>
+            <span className="text-sm font-mono" style={{ color: "#eaeaea" }}>
+              {s.staked.toLocaleString("en-US")} ZENT
+            </span>
+            <span className="text-xs hidden sm:inline-block" style={{ color: "rgba(106,111,117,0.8)" }}>
+              {s.lockMonths}mo lock
+            </span>
+            <span className="text-xs font-mono" style={{ color: "#b08d57" }}>
+              {s.veBalance.toLocaleString("en-US")} veZENT
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

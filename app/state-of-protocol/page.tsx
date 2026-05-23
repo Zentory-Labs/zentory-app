@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import RecentActivityTicker from "@/components/RecentActivityTicker";
 
 // ─── Static Data ───────────────────────────────────────────────────────────────
 
@@ -277,6 +278,9 @@ export default function StateOfProtocolPage() {
             ))}
           </div>
         </SectionCard>
+
+        {/* Recent on-chain activity ticker */}
+        <RecentActivityTicker title="Recent On-Chain Activity" limit={10} />
 
         {/* ── 2. Contract Registry ── */}
         <SectionCard title="Smart Contract Registry">

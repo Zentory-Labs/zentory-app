@@ -25,7 +25,7 @@ import {
 } from "@/lib/contracts";
 import { getProtocolStats, getVaultNavHistory, getVaultFlow, type VaultNavSnapshot, type VaultFlow } from "@/lib/vault-stats";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
-import { demoNavHistory, demoFlow, demoProtocolStats } from "@/lib/demo/data";
+import { demoNavHistory, demoFlow, demoProtocolStats, demoHlFills, demoExecutionAttempts } from "@/lib/demo/data";
 import {
   getRecentHlUserFills,
   getRecentExecutionAttempts,
@@ -531,11 +531,18 @@ function ProtocolTVLOverview() {
 // ─── Execution trace (on-chain attempts + venue fills) ─────────
 
 function ExecutionTraceSection() {
+  const { enabled: demoMode } = useDemoMode();
   const [fills, setFills] = useState<HlUserFillRow[]>([]);
   const [attempts, setAttempts] = useState<ExecutionAttemptRow[]>([]);
   const [accounts, setAccounts] = useState<VaultTradingAccountRow[]>([]);
 
   useEffect(() => {
+    if (demoMode) {
+      setFills(demoHlFills(undefined, 18) as unknown as HlUserFillRow[]);
+      setAttempts(demoExecutionAttempts(undefined, 14) as unknown as ExecutionAttemptRow[]);
+      setAccounts([]);
+      return;
+    }
     Promise.all([
       getRecentHlUserFills(40),
       getRecentExecutionAttempts(25),
@@ -545,7 +552,7 @@ function ExecutionTraceSection() {
       setAttempts(a);
       setAccounts(acc);
     });
-  }, []);
+  }, [demoMode]);
 
   const hasTraceData = fills.length > 0 || attempts.length > 0 || accounts.length > 0;
 

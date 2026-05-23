@@ -10,6 +10,8 @@ import {
 } from "wagmi";
 import { erc20Abi } from "viem";
 import { addresses, SUBSCRIPTION_VAULT_ABI } from "@/lib/contracts";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoSubscribers } from "@/lib/demo/data";
 
 // ─── Tier definitions ─────────────────────────────────────────────────────────
 
@@ -618,6 +620,9 @@ export default function SubscriptionVaultPage() {
           </p>
         </section>
 
+        {/* ── Subscription stats (demo mode only) ── */}
+        <SubscriberStatsBlock />
+
         {/* ── Tier Cards ── */}
         <section>
           <div className="text-center mb-8">
@@ -778,5 +783,72 @@ export default function SubscriptionVaultPage() {
         <FAQ />
       </main>
     </div>
+  );
+}
+
+// ─── Subscriber stats (demo mode only) ──────────────────────────────────────
+
+function SubscriberStatsBlock() {
+  const { enabled: demoMode } = useDemoMode();
+  if (!demoMode) return null;
+  const s = demoSubscribers();
+  const cards = [
+    { tier: "BASIC", count: s.basic, price: 100, color: "#7c5cff" },
+    { tier: "PRO", count: s.pro, price: 500, color: "#b08d57" },
+    { tier: "ELITE", count: s.elite, price: 2000, color: "#c2353f" },
+  ];
+  return (
+    <section className="max-w-5xl mx-auto -mt-12">
+      <div className="flex items-center justify-between mb-4">
+        <h3
+          className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
+          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "'Montserrat', sans-serif" }}
+        >
+          Active Subscriptions
+          <DemoBadge />
+        </h3>
+        <span className="text-xs" style={{ color: "rgba(106,111,117,0.8)" }}>
+          MRR: <span style={{ color: "#b08d57", fontWeight: 600 }}>{s.totalMrrZent.toLocaleString("en-US")} ZENT/mo</span>
+        </span>
+      </div>
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        {cards.map((c) => (
+          <div
+            key={c.tier}
+            className="rounded-xl p-4 text-center"
+            style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
+          >
+            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: c.color, fontFamily: "'Montserrat', sans-serif" }}>
+              {c.tier}
+            </div>
+            <div className="text-2xl font-bold" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+              {c.count}
+            </div>
+            <div className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.7)" }}>
+              {(c.count * c.price).toLocaleString("en-US")} ZENT/mo
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="rounded-xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+        <div className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.9)" }}>
+          Recent subscriptions
+        </div>
+        <ul className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+          {s.recent.map((r, i) => (
+            <li
+              key={i}
+              className="rounded-md px-2 py-1.5 flex items-center justify-between"
+              style={{ background: "rgba(255,255,255,0.03)", color: "rgba(234,234,234,0.85)" }}
+            >
+              <span style={{ color: r.tier === "ELITE" ? "#c2353f" : r.tier === "PRO" ? "#b08d57" : "#7c5cff", fontWeight: 600 }}>
+                {r.tier}
+              </span>
+              <span style={{ color: "rgba(106,111,117,0.8)" }}>{r.ago}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }

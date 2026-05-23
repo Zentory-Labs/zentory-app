@@ -18,7 +18,7 @@ import { addresses, VAULT_ABI } from "@/lib/contracts";
 import { getVaultNavHistory, type VaultNavSnapshot } from "@/lib/vault-stats";
 import { getRecentHlUserFills, type HlUserFillRow } from "@/lib/execution-trace";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
-import { demoNavHistory } from "@/lib/demo/data";
+import { demoNavHistory, demoHlFills } from "@/lib/demo/data";
 
 const VAULT_CONFIG: Record<string, {
   name: string;
@@ -212,7 +212,10 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
         created_at: new Date(p.ts).toISOString(),
       }));
       setNavHistory(rows);
-      setFills([]); // fills require a real keeper; leave empty for demo (the table still renders the "no fills" line)
+      // Populate demo HL fills for this specific vault so the Recent Fills
+      // table tells a coherent execution story.
+      const sampleFills = demoHlFills(symbol, 14);
+      setFills(sampleFills as unknown as HlUserFillRow[]);
       return;
     }
     getVaultNavHistory(vaultKey.toUpperCase(), 30).then(setNavHistory);

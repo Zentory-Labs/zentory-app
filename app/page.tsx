@@ -8,6 +8,7 @@ import { VideoHero } from "@/components/VideoHero";
 import { addresses, ZENT_ABI, VAULT_ABI, STAKING_ABI, vaultMeta, HYPEREVM_TESTNET } from "@/lib/contracts";
 import { useDemoMode } from "@/lib/demo/context";
 import { demoProtocolStats } from "@/lib/demo/data";
+import RecentActivityTicker from "@/components/RecentActivityTicker";
 
 const VAULTS = [addresses.zBTC, addresses.zETH, addresses.zSOL, addresses.zXRP] as const;
 
@@ -561,6 +562,11 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {VAULTS.map((v) => <VaultCard key={v} vault={v} />)}
         </div>
+      </section>
+
+      {/* Recent activity feed — populated in demo mode, honest empty state otherwise. */}
+      <section className="mt-12">
+        <RecentActivityTicker title="Live Activity" />
       </section>
 
     </div>

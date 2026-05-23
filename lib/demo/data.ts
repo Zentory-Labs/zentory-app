@@ -490,6 +490,105 @@ export function demoActivity(count = 12): DemoActivityItem[] {
   }).sort((a, b) => b.ts - a.ts);
 }
 
+// ─── Execution trace (HL fills + on-chain executor events) ─────────────────
+
+export interface DemoHlFill {
+  id: string;
+  fill_key: string;
+  vault_address: string;
+  hl_user_address: string;
+  coin: string;
+  side: "Buy" | "Sell";
+  px: string;
+  sz: string;
+  fee: string;
+  closed_pnl: string;
+  time_ms: number;
+}
+
+export interface DemoExecutionAttempt {
+  id: string;
+  vault_address: string;
+  direction: "long" | "short" | "close";
+  nonce: number;
+  tx_hash: string;
+  block_number: number;
+  created_at: string;
+}
+
+const VAULT_ADDRS: Record<string, string> = {
+  zBTC: "0x93669daC07321FF397cf5734Ae8364EA24addF45",
+  zETH: "0xbe8a9d22560A1b126554b70Aaca2D763B2E70C4e",
+  zSOL: "0xb62BA9d0a14aC9f9601891179B3Da52bE71Ce052",
+  zXRP: "0x8B15204D88a9Bb155bE6798522983A3B5F7d7cB0",
+};
+
+const ASSET_PRICE: Record<string, number> = {
+  BTC: 97_420, ETH: 3_586, SOL: 188, XRP: 2.46,
+};
+
+/**
+ * Generate sample Hyperliquid fills. Per-vault if vaultSymbol is supplied,
+ * otherwise mixed across all 4 vaults.
+ */
+export function demoHlFills(vaultSymbol?: string, count = 16): DemoHlFill[] {
+  const r = rng(0xf11157 + (vaultSymbol?.charCodeAt(2) ?? 0));
+  const now = anchorNow();
+  const coinPool: Array<["BTC" | "ETH" | "SOL" | "XRP", string]> = vaultSymbol
+    ? [[vaultSymbol.slice(1) as "BTC", vaultSymbol]]
+    : [["BTC", "zBTC"], ["ETH", "zETH"], ["SOL", "zSOL"], ["XRP", "zXRP"]];
+  const fills: DemoHlFill[] = [];
+  for (let i = 0; i < count; i++) {
+    const [coin, sym] = pick(coinPool, r);
+    const basePx = ASSET_PRICE[coin] ?? 100;
+    const px = basePx * (1 + (r() - 0.5) * 0.01);
+    const sz = (0.1 + r() * 4).toFixed(4);
+    const side: "Buy" | "Sell" = r() > 0.5 ? "Buy" : "Sell";
+    const fee = (Math.abs(parseFloat(sz)) * px * 0.0003).toFixed(4);
+    const closed = (r() - 0.45) * px * 0.02;
+    fills.push({
+      id: `fill-${i}-${coin}`,
+      fill_key: `${"0x".padEnd(8, "0")}${(i * 1973 + 17).toString(16).padStart(56, "0")}`,
+      vault_address: VAULT_ADDRS[sym],
+      hl_user_address: `0xhl${(0xabc + i).toString(16).padStart(40, "0").slice(0, 38)}`,
+      coin,
+      side,
+      px: px.toFixed(coin === "BTC" ? 1 : coin === "ETH" ? 2 : 4),
+      sz,
+      fee,
+      closed_pnl: closed.toFixed(4),
+      time_ms: now - i * (35 * 60 * 1000) - Math.floor(r() * 7 * 60 * 1000),
+    });
+  }
+  return fills.sort((a, b) => b.time_ms - a.time_ms);
+}
+
+/**
+ * Sample on-chain TradeSignalExecuted events. Used in /dashboard execution
+ * trace + per-vault attempt history.
+ */
+export function demoExecutionAttempts(vaultSymbol?: string, count = 12): DemoExecutionAttempt[] {
+  const r = rng(0xe54c + (vaultSymbol?.charCodeAt(2) ?? 0));
+  const symbols = vaultSymbol ? [vaultSymbol] : ["zBTC", "zETH", "zSOL", "zXRP"];
+  const now = anchorNow();
+  const out: DemoExecutionAttempt[] = [];
+  for (let i = 0; i < count; i++) {
+    const sym = pick(symbols, r);
+    const dir = pick<DemoExecutionAttempt["direction"]>(["long", "short", "long", "close"], r);
+    const ts = now - i * (3 * 60 * 60 * 1000) - Math.floor(r() * 20 * 60 * 1000);
+    out.push({
+      id: `exec-${i}`,
+      vault_address: VAULT_ADDRS[sym],
+      direction: dir,
+      nonce: 1000 + i,
+      tx_hash: `0x${(0xe51 + i * 23).toString(16).padStart(4, "0")}${"f".repeat(60)}`,
+      block_number: 54_000_000 + i * 17,
+      created_at: new Date(ts).toISOString(),
+    });
+  }
+  return out;
+}
+
 // ─── Helpers used by UI ─────────────────────────────────────────────────────
 
 export function fmtTimeAgo(tsMs: number): string {
