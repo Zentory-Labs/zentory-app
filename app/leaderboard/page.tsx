@@ -411,7 +411,9 @@ export default function LeaderboardPage() {
         resolvedSignals: p.signalsResolved,
         accuracyPercent: Math.round(p.accuracyBps / 100),
         accuracyGrade: p.grade === "S" ? "A+" : (p.grade as "A" | "B" | "C"),
-        zentEarned: p.zentEarned.toLocaleString("en-US"),
+        // The page later calls Number(zentEarned) for sums and toLocaleString —
+        // comma-formatted values break that. Pass the raw number as a string.
+        zentEarned: String(p.zentEarned),
         lastSignal: `${1 + (i % 4)}h ago`,
         assetClasses: p.assetClasses,
         rankChange: i === 0 ? 0 : (i % 3 === 0 ? 1 : i % 3 === 1 ? -1 : 0),

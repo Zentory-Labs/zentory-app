@@ -256,16 +256,28 @@ export interface DemoProtocolStats {
 export function demoProtocolStats(): DemoProtocolStats {
   const symbols = ["zBTC", "zETH", "zSOL", "zXRP"] as const;
   const r = rng(0xcafe);
+  // USD-equivalent ranges per vault so the dashboard's `value / 1e6` formatter
+  // produces credible $XX.XX M cards. zBTC + zETH carry more TVL; zSOL/zXRP
+  // are the smaller pools per the whitepaper's prioritization.
+  const TVL_RANGES: Record<string, [number, number]> = {
+    zBTC: [18_000_000, 38_000_000],
+    zETH: [14_000_000, 32_000_000],
+    zSOL: [4_000_000, 12_000_000],
+    zXRP: [3_000_000, 9_000_000],
+  };
   const vaults = symbols.map((sym) => {
     const nav = demoNavHistory(sym, 30);
     const last = nav[nav.length - 1];
     const cumulativeAlpha = last.alphaPct;
-    const totalDeposits = Math.round((80 + r() * 220) * 100) / 100;
-    const totalWithdrawals = Math.round((30 + r() * 90) * 100) / 100;
+    const [lo, hi] = TVL_RANGES[sym];
+    const totalAssets = Math.round((lo + r() * (hi - lo)) * 100) / 100;
+    // Lifetime flows ~3x current TVL.
+    const totalDeposits = Math.round(totalAssets * (2.5 + r()) * 100) / 100;
+    const totalWithdrawals = Math.round(totalDeposits * (0.4 + r() * 0.25) * 100) / 100;
     return {
       symbol: sym,
       navPerShare: last.nav,
-      totalAssets: Math.round((100 + r() * 400) * 100) / 100,
+      totalAssets,
       hodlNav: last.hodl,
       alphaPct: last.alphaPct,
       cumulativeAlpha,

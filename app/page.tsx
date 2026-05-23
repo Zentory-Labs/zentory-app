@@ -6,6 +6,8 @@ import { createPublicClient, formatUnits, http } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import { VideoHero } from "@/components/VideoHero";
 import { addresses, ZENT_ABI, VAULT_ABI, STAKING_ABI, vaultMeta, HYPEREVM_TESTNET } from "@/lib/contracts";
+import { useDemoMode } from "@/lib/demo/context";
+import { demoProtocolStats } from "@/lib/demo/data";
 
 const VAULTS = [addresses.zBTC, addresses.zETH, addresses.zSOL, addresses.zXRP] as const;
 
@@ -96,6 +98,7 @@ function TokenLogo({ symbol }: { symbol: string }) {
 function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
   const meta = vaultMeta[vault];
   const assetDecimals = getAssetDecimals(meta.asset);
+  const { enabled: demoMode } = useDemoMode();
   const [tvl, setTvl] = useState<bigint | null>(null);
   const [nav, setNav] = useState<bigint | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,6 +114,22 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      // Demo mode short-circuit: pull seeded numbers from demoProtocolStats so
+      // the home page tells a coherent "we've got TVL" story instead of
+      // exposing the inflated leftover state on zSOL.
+      if (demoMode) {
+        const stats = demoProtocolStats();
+        const row = stats.vaults.find((v) => v.symbol === meta.symbol);
+        if (row) {
+          // demo numbers are in USD; multiply by 1e<decimals> so the same
+          // formatUnits-based display path produces a sensible value.
+          const unit = 10n ** BigInt(assetDecimals);
+          setTvl(BigInt(Math.round(row.totalAssets)) * unit);
+          setNav(BigInt(Math.round(row.navPerShare * 1e6)) * unit / 1_000_000n);
+        }
+        setIsLoading(false);
+        return;
+      }
       try {
         setIsLoading(true);
         setIsError(false);
@@ -131,12 +150,13 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
       }
     }
     load();
+    if (demoMode) return; // no polling for sample data
     const id = window.setInterval(load, 20_000);
     return () => {
       cancelled = true;
       window.clearInterval(id);
     };
-  }, [publicClient, vault]);
+  }, [publicClient, vault, demoMode, meta.symbol, assetDecimals]);
 
   return (
     <div
