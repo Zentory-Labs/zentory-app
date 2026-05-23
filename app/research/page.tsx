@@ -108,18 +108,36 @@ export default function ResearchPage() {
   const fetchResearch = useCallback(async () => {
     if (demoMode) {
       // Map demo research items into the Research shape the table consumes.
+      // - Distribute across the three valid provider enums so the
+      //   contributor-breakdown chips above the table populate evenly.
+      // - Realistic per-asset spot prices (anchored, not live).
+      // - Unique tx hashes per executed row so investors don't see the
+      //   same 0xc0ffee for every line.
+      const ASSET_PRICES: Record<string, number> = {
+        BTC: 97_420, ETH: 3_586, SOL: 188, XRP: 2.46,
+      };
       const samples = demoResearch(8);
-      const rows: Research[] = samples.map((s) => ({
-        id: s.id,
-        timestamp: s.publishedAt,
-        provider: "gp",
-        asset: (["BTC", "ETH", "SOL", "XRP"].includes(s.asset) ? s.asset : "BTC") as Research["asset"],
-        direction: s.direction === "LONG" ? "LONG" : s.direction === "SHORT" ? "SHORT" : "CLOSE",
-        size: 1,
-        price: 0,
-        status: s.status === "executed" ? "executed" : s.status === "expired" ? "failed" : "pending",
-        txHash: s.txHash,
-      }));
+      const rows: Research[] = samples.map((s, i) => {
+        const asset = (["BTC", "ETH", "SOL", "XRP"].includes(s.asset) ? s.asset : "BTC") as Research["asset"];
+        const basePrice = ASSET_PRICES[asset] ?? 0;
+        // ±0.5% drift around base so prices look like snapshots.
+        const drift = ((i * 7919) % 1000) / 100_000 - 0.005;
+        const price = Math.round(basePrice * (1 + drift) * 100) / 100;
+        const provider = (["gp", "lumibot", "manual"] as const)[i % 3];
+        return {
+          id: s.id,
+          timestamp: s.publishedAt,
+          provider,
+          asset,
+          direction: s.direction === "LONG" ? "LONG" : s.direction === "SHORT" ? "SHORT" : "CLOSE",
+          size: Math.round((0.25 + (i % 5) * 0.5) * 100) / 100,
+          price,
+          status: s.status === "executed" ? "executed" : s.status === "expired" ? "failed" : "pending",
+          txHash: s.txHash
+            ? `0x${(0xdec0de00 + i * 17).toString(16).padStart(8, "0")}${"abcdef0123456789".repeat(4).slice(0, 56)}`
+            : undefined,
+        };
+      });
       setResearch(rows);
       setError(null);
       setLoading(false);
