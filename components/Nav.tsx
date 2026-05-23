@@ -88,12 +88,37 @@ export default function Nav() {
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navRootRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Click-outside dismiss: if the dropdown is open and the user clicks
+  // anywhere outside the nav header, close it. Belt-and-braces in case the
+  // hover-leave never fires (e.g. cursor exits the viewport from the top).
+  useEffect(() => {
+    if (!openGroup) return;
+    function onClickAway(e: MouseEvent) {
+      if (!navRootRef.current) return;
+      if (navRootRef.current.contains(e.target as Node)) return;
+      setOpenGroup(null);
+    }
+    document.addEventListener("mousedown", onClickAway);
+    return () => document.removeEventListener("mousedown", onClickAway);
+  }, [openGroup]);
+
+  // Escape closes the dropdown — keyboard accessibility.
+  useEffect(() => {
+    if (!openGroup) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpenGroup(null);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [openGroup]);
 
   // Close any open dropdown on route change so it doesn't stick after click.
   useEffect(() => {
@@ -108,16 +133,22 @@ export default function Nav() {
   }
 
   function handleEnter(label: string) {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
     setOpenGroup(label);
   }
   function handleLeave() {
-    // 150ms grace so users can move from trigger → menu without re-hovering.
-    closeTimer.current = setTimeout(() => setOpenGroup(null), 150);
+    // 400ms grace so users can move from trigger → menu (across a small
+    // transparent invisible-hover-bridge) without losing the dropdown.
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenGroup(null), 400);
   }
 
   return (
     <header
+      ref={navRootRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500
         backdrop-blur-2xl backdrop-saturate-150
         ${isScrolled
@@ -169,7 +200,11 @@ export default function Nav() {
               return (
                 <div
                   key={group.label}
-                  className="relative"
+                  // The wrapper grows to encompass the whole h-20 navbar slot
+                  // so when the cursor moves down from the trigger toward the
+                  // dropdown it never leaves a hoverable area. This was the
+                  // root cause of the flaky open/close behavior.
+                  className="relative h-20 flex items-center"
                   onMouseEnter={() => handleEnter(group.label)}
                   onMouseLeave={handleLeave}
                 >
@@ -194,15 +229,18 @@ export default function Nav() {
                     )}
                   </button>
 
-                  {/* Dropdown */}
+                  {/* Dropdown — flush to the trigger's bottom edge (no pt-2
+                      gap) so the cursor never crosses a non-hoverable zone.
+                      The wrapper has its own hover handlers as a safety net
+                      in case the cursor leaves the parent's bounding box. */}
                   {isOpen && group.children && (
                     <div
-                      className="absolute left-0 top-full pt-2 w-72"
+                      className="absolute left-0 top-full w-72"
                       onMouseEnter={() => handleEnter(group.label)}
                       onMouseLeave={handleLeave}
                     >
                       <div
-                        className="rounded-xl overflow-hidden border shadow-2xl shadow-black/60"
+                        className="rounded-xl overflow-hidden border shadow-2xl shadow-black/60 mt-1"
                         style={{
                           background: "rgba(11,11,13,0.96)",
                           borderColor: "#2a2f3a",
