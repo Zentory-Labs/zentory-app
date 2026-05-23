@@ -15,6 +15,28 @@ export const metadata: Metadata = {
   },
   description:
     "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM. Deposit BTC, ETH, SOL or XRP and earn alpha. Your keys, always.",
+  keywords: [
+    "ZENTORY Protocol", "ZENT token", "HyperEVM", "Hyperliquid",
+    "Alpha Vault", "ERC-4626 vault", "Signal Arena", "on-chain quant",
+    "non-custodial vault", "DeFi quant", "EIP-712 signals",
+  ],
+  // Explicit robots directive — defaults to index/follow but better to be
+  // unambiguous for crawlers + Lighthouse SEO score.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    // Canonical for the homepage. Per-route pages can override via their
+    // own generateMetadata if they need a different canonical.
+    canonical: "https://app.zentorylabs.com",
+  },
   openGraph: {
     title: "ZENTORY Protocol — Alpha Vaults + Signal Arena on HyperEVM",
     description:
@@ -25,6 +47,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@ZENTORYLabs",
+    creator: "@ZENTORYLabs",
     title: "ZENTORY Protocol",
     description:
       "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM.",
