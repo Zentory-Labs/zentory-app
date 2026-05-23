@@ -98,6 +98,101 @@ export default function RootLayout({
                   />
                 </Link>
 
+                {/* Site map — every reachable page grouped by section.
+                    Mirrors the top-nav dropdowns so investors can find any
+                    surface even if they skipped the dropdown. */}
+                <div className="w-full max-w-5xl mb-8 grid grid-cols-2 md:grid-cols-5 gap-6 text-left">
+                  {[
+                    {
+                      label: "Vaults",
+                      items: [
+                        ["Overview", "/"],
+                        ["zBTC", "/vaults/zBTC"],
+                        ["zETH", "/vaults/zETH"],
+                        ["zSOL", "/vaults/zSOL"],
+                        ["zXRP", "/vaults/zXRP"],
+                        ["Dashboard", "/dashboard"],
+                        ["Faucet", "/faucet"],
+                      ],
+                    },
+                    {
+                      label: "Research",
+                      items: [
+                        ["Signal Arena", "/signals"],
+                        ["Leaderboard", "/leaderboard"],
+                        ["Research Feed", "/research"],
+                        ["Markets", "/markets"],
+                      ],
+                    },
+                    {
+                      label: "Token",
+                      items: [
+                        ["Stake ZENT", "/stake"],
+                        ["Subscribe", "/subscribe"],
+                        ["Governance", "/govern"],
+                      ],
+                    },
+                    {
+                      label: "Contribute",
+                      items: [
+                        ["Become a Contributor", "/contribute"],
+                        ["Dashboard", "/contribute/dashboard"],
+                        ["API Keys", "/contribute/api-keys"],
+                        ["My Submissions", "/contribute/submissions"],
+                      ],
+                    },
+                    {
+                      label: "Protocol",
+                      items: [
+                        ["State of Protocol", "/state-of-protocol"],
+                        ["Bug Bounty", "/bug-bounty"],
+                        ["Whitepaper", "https://zentorylabs.com/whitepaper"],
+                        ["Tokenomics", "https://zentorylabs.com/tokenomics"],
+                      ],
+                    },
+                  ].map((col) => (
+                    <div key={col.label}>
+                      <div
+                        className="text-[10px] uppercase tracking-widest font-bold mb-3"
+                        style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+                      >
+                        {col.label}
+                      </div>
+                      <ul className="space-y-1.5">
+                        {col.items.map(([label, href]) => {
+                          const external = href.startsWith("http");
+                          if (external) {
+                            return (
+                              <li key={href}>
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs transition-colors hover:!text-[#eaeaea]"
+                                  style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}
+                                >
+                                  {label} ↗
+                                </a>
+                              </li>
+                            );
+                          }
+                          return (
+                            <li key={href}>
+                              <Link
+                                href={href}
+                                className="text-xs transition-colors hover:!text-[#eaeaea]"
+                                style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}
+                              >
+                                {label}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
                 {/* Legal & risk disclosure section — lifted container */}
                 <div
                   className="w-full max-w-2xl rounded-2xl p-5 mb-6"
