@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { getResearch } from "@/lib/research";
 import type { Research } from "@/lib/research";
 import ResearchTable from "@/components/ResearchTable";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoResearch } from "@/lib/demo/data";
 
 // ─── Performance Metrics ─────────────────────────────────────
 
@@ -98,11 +100,31 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
 // ─── Main Page ─────────────────────────────────────────────
 
 export default function ResearchPage() {
+  const { enabled: demoMode } = useDemoMode();
   const [research, setResearch] = useState<Research[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchResearch = useCallback(async () => {
+    if (demoMode) {
+      // Map demo research items into the Research shape the table consumes.
+      const samples = demoResearch(8);
+      const rows: Research[] = samples.map((s) => ({
+        id: s.id,
+        timestamp: s.publishedAt,
+        provider: "gp",
+        asset: (["BTC", "ETH", "SOL", "XRP"].includes(s.asset) ? s.asset : "BTC") as Research["asset"],
+        direction: s.direction === "LONG" ? "LONG" : s.direction === "SHORT" ? "SHORT" : "CLOSE",
+        size: 1,
+        price: 0,
+        status: s.status === "executed" ? "executed" : s.status === "expired" ? "failed" : "pending",
+        txHash: s.txHash,
+      }));
+      setResearch(rows);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     try {
       const data = await getResearch();
       setResearch(data);
@@ -112,7 +134,7 @@ export default function ResearchPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [demoMode]);
 
   useEffect(() => {
     fetchResearch();
@@ -142,8 +164,9 @@ export default function ResearchPage() {
               <div className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "#c2353f", boxShadow: "0 0 8px #c2353f" }} />
               LIVE
             </div>
-            <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>
               <span className="gradient-text-gold">Research Dashboard</span>
+              {demoMode && <DemoBadge />}
             </h1>
             <p className="mt-1 text-sm text-white/40">
               Multi-asset market structure analysis. Published research from the ZENT network. Not investment advice.

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAccount } from "wagmi";
 import { createClient } from "@/utils/supabase/client";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoProviders } from "@/lib/demo/data";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -390,12 +392,39 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
 
 export default function LeaderboardPage() {
   const { address, isConnected } = useAccount();
+  const { enabled: demoMode } = useDemoMode();
   const [providers, setProviders] = useState<LeaderboardProvider[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchLeaderboard = useCallback(async () => {
+    // Demo mode: render seeded top-10 quants. Same shape as the live API
+    // response so the rest of the page doesn't branch.
+    if (demoMode) {
+      const samples = demoProviders();
+      const mapped: LeaderboardProvider[] = samples.map((p, i) => ({
+        rank: p.rank,
+        provider: p.address,
+        providerShort: p.name,
+        totalSignals: p.signalsSubmitted,
+        resolvedSignals: p.signalsResolved,
+        accuracyPercent: Math.round(p.accuracyBps / 100),
+        accuracyGrade: p.grade === "S" ? "A+" : (p.grade as "A" | "B" | "C"),
+        zentEarned: p.zentEarned.toLocaleString("en-US"),
+        lastSignal: `${1 + (i % 4)}h ago`,
+        assetClasses: p.assetClasses,
+        rankChange: i === 0 ? 0 : (i % 3 === 0 ? 1 : i % 3 === 1 ? -1 : 0),
+        sparklineData: Array.from({ length: 10 }, (_, k) =>
+          Math.max(40, Math.min(95, p.accuracyBps / 100 + Math.sin(i + k) * 5 + (k - 5)))
+        ),
+      }));
+      setProviders(mapped);
+      setLastUpdated(new Date());
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/leaderboard");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -429,7 +458,7 @@ export default function LeaderboardPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [demoMode]);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -493,8 +522,9 @@ export default function LeaderboardPage() {
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
               Live Leaderboard
             </div>
-            <h1 className="text-4xl font-bold tracking-tight" style={{ color: "#eaeaea" }}>
+            <h1 className="text-4xl font-bold tracking-tight inline-flex items-center gap-3" style={{ color: "#eaeaea" }}>
               Research Contributor Leaderboard
+              {demoMode && <DemoBadge />}
             </h1>
             <p className="text-sm mt-1" style={{ color: "rgba(234,234,234,0.5)" }}>
               Top quant contributors ranked by accuracy and ZENT earned across all asset classes

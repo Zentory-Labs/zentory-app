@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
 import { createPublicClient, http, parseAbiItem } from "viem";
 import { addresses, HYPEREVM_TESTNET } from "@/lib/contracts";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoSignals, demoProviders } from "@/lib/demo/data";
 
 // viem's getLogs needs a parsed AbiEvent object, not a raw human-readable
 // string. Passing the string verbatim throws "Event not found on ABI" — that
@@ -80,8 +82,19 @@ function directionLabel(dir: number): { label: string; color: string } {
   return { label: "NEUTRAL", color: "#9ca3af" };
 }
 
+// Map the asset-class string used by the demo generator to the numeric class
+// the page already filters on (0=spot, 1=perp, 2=equity, 3=forex, 4=commodity).
+const ASSET_CLASS_TO_NUM: Record<string, number> = {
+  CRYPTO_SPOT: 0,
+  CRYPTO_PERP: 1,
+  EQUITY: 2,
+  FOREX: 3,
+  COMMODITY: 4,
+};
+
 export default function SignalsPage() {
   const { address: user, isConnected } = useAccount();
+  const { enabled: demoMode } = useDemoMode();
   const [signals, setSignals] = useState<Signal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +113,29 @@ export default function SignalsPage() {
   const fetchSignals = useCallback(async () => {
     setLoading(true);
     setError(null);
+
+    // Demo mode: short-circuit to seeded sample data. The shape matches the
+    // on-chain signal type exactly, so the rest of this page renders without
+    // a single conditional.
+    if (demoMode) {
+      const samples = demoSignals(36);
+      const mapped: Signal[] = samples.map((s) => ({
+        id: s.id,
+        provider: s.providerName, // show the name; on-chain we'd show a 0x address
+        assetClass: ASSET_CLASS_TO_NUM[s.assetClass] ?? 0,
+        assetId: s.market,
+        direction: s.direction === "STRONG BUY" ? 5000 : s.direction === "BUY" ? 1500 : s.direction === "NEUTRAL" ? 0 : s.direction === "SELL" ? -1500 : -5000,
+        confidence: s.confidence,
+        submittedAt: Math.floor(s.submittedAt / 1000),
+        expiresAt: Math.floor(s.expiresAt / 1000),
+        convictionStaked: s.conviction,
+        status: s.status === "scored" ? 1 : 0,
+      }));
+      setSignals(mapped);
+      setLoading(false);
+      return;
+    }
+
     try {
       // Prefer the configured Alchemy URL (rotated, rate-limit-friendly) over
       // the public testnet RPC which throttles aggressively under demo load.
@@ -142,7 +178,7 @@ export default function SignalsPage() {
     } finally {
       setLoading(false);
     }
-  }, [convictionMap]);
+  }, [convictionMap, demoMode]);
 
   useEffect(() => {
     fetchSignals();
@@ -170,8 +206,9 @@ export default function SignalsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          <h1 className="text-3xl font-bold inline-flex items-center gap-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>
             Signal Arena
+            {demoMode && <DemoBadge />}
           </h1>
           <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
             Live signals from on-chain SignalRegistry · Conviction-Weighted Leaderboard

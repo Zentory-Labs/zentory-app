@@ -24,6 +24,8 @@ import {
   vaultMeta,
 } from "@/lib/contracts";
 import { getProtocolStats, getVaultNavHistory, getVaultFlow, type VaultNavSnapshot, type VaultFlow } from "@/lib/vault-stats";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoNavHistory, demoFlow, demoProtocolStats } from "@/lib/demo/data";
 import {
   getRecentHlUserFills,
   getRecentExecutionAttempts,
@@ -118,17 +120,37 @@ function MetricCard({
 // ─── NAV Chart ──────────────────────────────────────────────
 
 function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
+  const { enabled: demoMode } = useDemoMode();
   const [nav, setNav] = useState<VaultNavSnapshot[]>([]);
   const [loaded, setLoaded] = useState(false);
   const meta = vaultMeta[vault];
   const vaultSymbol = meta.symbol;
 
   useEffect(() => {
+    if (demoMode) {
+      // Map demo NAV points to the VaultNavSnapshot shape the chart expects.
+      const points = demoNavHistory(vaultSymbol, 14);
+      const dec = getAssetDecimals(meta.asset);
+      const unit = 10 ** dec;
+      const rows: VaultNavSnapshot[] = points.map((p, i) => ({
+        id: `demo-${vaultSymbol}-${i}`,
+        vault_symbol: vaultSymbol,
+        snapshot_at: new Date(p.ts).toISOString(),
+        nav_per_share: p.nav * unit,
+        total_assets: 500 * unit,
+        hodl_nav: p.hodl * unit,
+        alpha_pct: p.alphaPct,
+        created_at: new Date(p.ts).toISOString(),
+      }));
+      setNav(rows);
+      setLoaded(true);
+      return;
+    }
     getVaultNavHistory(vaultSymbol, 14).then((rows) => {
       setNav(rows);
       setLoaded(true);
     });
-  }, [vaultSymbol]);
+  }, [vaultSymbol, demoMode, meta.asset]);
 
   if (!loaded) {
     return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading NAV history…</div>;
@@ -189,17 +211,32 @@ function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
 // ─── Deposit Flow Chart ─────────────────────────────────────
 
 function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
+  const { enabled: demoMode } = useDemoMode();
   const [flow, setFlow] = useState<VaultFlow[]>([]);
   const [loaded, setLoaded] = useState(false);
   const meta = vaultMeta[vault];
   const vaultSymbol = meta.symbol;
 
   useEffect(() => {
+    if (demoMode) {
+      const rows = demoFlow(vaultSymbol, 14).map((d, i) => ({
+        id: `demo-flow-${vaultSymbol}-${i}`,
+        vault_symbol: vaultSymbol,
+        date: d.date,
+        deposits: d.deposits,
+        withdrawals: d.withdrawals,
+        net_flow: d.netFlow,
+        tx_count: d.txCount,
+      }));
+      setFlow(rows);
+      setLoaded(true);
+      return;
+    }
     getVaultFlow(vaultSymbol, 14).then((rows) => {
       setFlow(rows);
       setLoaded(true);
     });
-  }, [vaultSymbol]);
+  }, [vaultSymbol, demoMode]);
 
   if (!loaded) {
     return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading flow data…</div>;
@@ -385,15 +422,21 @@ function ZENTTokenMetrics() {
 // ─── Protocol TVL Overview ──────────────────────────────────
 
 function ProtocolTVLOverview() {
+  const { enabled: demoMode } = useDemoMode();
   const [stats, setStats] = useState<Awaited<ReturnType<typeof getProtocolStats>> | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (demoMode) {
+      setStats(demoProtocolStats());
+      setLoaded(true);
+      return;
+    }
     getProtocolStats()
       .then(setStats)
       .catch(() => undefined)
       .finally(() => setLoaded(true));
-  }, []);
+  }, [demoMode]);
 
   if (!loaded) {
     return (
@@ -638,6 +681,7 @@ function ExecutionTraceSection() {
 // ─── Main Page ─────────────────────────────────────────────
 
 export default function DashboardPage() {
+  const { enabled: demoMode } = useDemoMode();
   return (
     <div className="w-full">
       {/* Header */}
@@ -648,8 +692,9 @@ export default function DashboardPage() {
             Live Protocol Analytics
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <h1 className="text-3xl font-bold text-white inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>
           Protocol Dashboard
+          {demoMode && <DemoBadge />}
         </h1>
         <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>
           Real-time performance, TVL, alpha generation, and capital flow metrics

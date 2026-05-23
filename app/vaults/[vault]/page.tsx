@@ -17,6 +17,8 @@ import {
 import { addresses, VAULT_ABI } from "@/lib/contracts";
 import { getVaultNavHistory, type VaultNavSnapshot } from "@/lib/vault-stats";
 import { getRecentHlUserFills, type HlUserFillRow } from "@/lib/execution-trace";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoNavHistory } from "@/lib/demo/data";
 
 const VAULT_CONFIG: Record<string, {
   name: string;
@@ -112,6 +114,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   // touching any wagmi hooks downstream that assume a valid config.
   if (!VAULT_CONFIG[vaultKey]) notFound();
   const { address: user, isConnected } = useAccount();
+  const { enabled: demoMode } = useDemoMode();
   const config = VAULT_CONFIG[vaultKey];
 
   const [activeTab, setActiveTab] = useState<"deposit" | "withdraw">("deposit");
@@ -194,12 +197,30 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   // ─── Load data ────────────────────────────────────────────────────
   useEffect(() => {
     if (!vaultKey) return;
+    if (demoMode) {
+      const symbol = vaultKey.toUpperCase();
+      const points = demoNavHistory(symbol, 30);
+      const unit = 10 ** config.decimals;
+      const rows: VaultNavSnapshot[] = points.map((p, i) => ({
+        id: `demo-${symbol}-${i}`,
+        vault_symbol: symbol,
+        snapshot_at: new Date(p.ts).toISOString(),
+        nav_per_share: p.nav * unit,
+        total_assets: 500 * unit,
+        hodl_nav: p.hodl * unit,
+        alpha_pct: p.alphaPct,
+        created_at: new Date(p.ts).toISOString(),
+      }));
+      setNavHistory(rows);
+      setFills([]); // fills require a real keeper; leave empty for demo (the table still renders the "no fills" line)
+      return;
+    }
     getVaultNavHistory(vaultKey.toUpperCase(), 30).then(setNavHistory);
     getRecentHlUserFills(40).then((rows) => {
       if (!config) return;
       setFills(rows.filter((r) => r.vault_address?.toLowerCase() === config.vaultAddress.toLowerCase()));
     });
-  }, [vaultKey, config]);
+  }, [vaultKey, config, demoMode]);
 
   // ─── Derived values ───────────────────────────────────────────────
   const depositAmtBn = depositAmount && !isNaN(parseFloat(depositAmount))

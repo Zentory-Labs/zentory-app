@@ -240,6 +240,7 @@ export interface DemoProtocolStats {
     hodlNav: number;
     alphaPct: number;
     cumulativeAlpha: number;
+    avgAlpha: number;
     avgWinRate: number;
     totalDeposits: number;
     totalWithdrawals: number;
@@ -268,6 +269,7 @@ export function demoProtocolStats(): DemoProtocolStats {
       hodlNav: last.hodl,
       alphaPct: last.alphaPct,
       cumulativeAlpha,
+      avgAlpha: last.alphaPct,
       avgWinRate: 55 + r() * 25,
       totalDeposits,
       totalWithdrawals,

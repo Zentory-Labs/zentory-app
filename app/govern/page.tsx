@@ -3,6 +3,8 @@
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { GOVERNOR_ABI, addresses } from "@/lib/contracts";
 import { useState, useEffect } from "react";
+import { useDemoMode, DemoBadge } from "@/lib/demo/context";
+import { demoProposals } from "@/lib/demo/data";
 
 const PROPOSAL_STATES = ["pending", "active", "canceled", "defeated", "succeeded", "queued", "expired", "executed"];
 
@@ -135,17 +137,37 @@ export default function GovernPage() {
   } as any);
 
   const { writeContract } = useWriteContract();
+  const { enabled: demoMode } = useDemoMode();
   const [proposals, setProposals] = useState<ProposalInfo[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadProposals() {
+      if (demoMode) {
+        // Map demo proposals into the ProposalInfo shape ProposalCard renders.
+        const samples = demoProposals();
+        const STATE_TO_NUM: Record<string, number> = {
+          pending: 0, active: 1, canceled: 2, defeated: 3,
+          succeeded: 4, queued: 5, expired: 6, executed: 7,
+        };
+        setProposals(samples.map((p) => ({
+          id: p.id,
+          state: STATE_TO_NUM[p.status] ?? 1,
+          deadline: BigInt(Math.floor(p.endsAt / 1000)),
+          snapshot: BigInt(Math.floor((p.endsAt - 7 * 24 * 60 * 60 * 1000) / 1000)),
+          forVotes: BigInt(p.forVotes) * 10n ** 18n,
+          againstVotes: BigInt(p.againstVotes) * 10n ** 18n,
+          description: `#${p.id} · ${p.title} — by ${p.proposer}\n\n${p.summary}`,
+        })));
+        setLoading(false);
+        return;
+      }
       // No proposals yet — Governor has no proposalCount() so we just show empty state
       setProposals([]);
       setLoading(false);
     }
     loadProposals();
-  }, []);
+  }, [demoMode]);
 
   function handleVote(proposalId: number, support: 0 | 1) {
     try {
@@ -164,7 +186,7 @@ export default function GovernPage() {
     <div className="min-h-screen relative">
       <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
         <div className="mx-auto max-w-7xl px-6 py-4">
-          <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}><span className="gradient-text-gold">Governance</span></h1>
+          <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}><span className="gradient-text-gold">Governance</span>{demoMode && <DemoBadge />}</h1>
           <p className="text-xs text-white/40 mt-0.5">Vote on protocol upgrades, risk parameters, and treasury allocations</p>
         </div>
       </header>
