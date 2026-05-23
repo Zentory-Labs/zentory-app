@@ -41,7 +41,7 @@ const BADGE_STYLE: Record<BadgeColor, { bg: string; text: string; border: string
   red:    { bg: "rgba(194,53,63,0.12)",   text: "#c2353f", border: "rgba(194,53,63,0.3)" },
   orange: { bg: "rgba(255,140,0,0.10)",   text: "#ff8c00", border: "rgba(255,140,0,0.25)" },
   amber:  { bg: "rgba(176,141,87,0.12)",  text: "#b08d57", border: "rgba(176,141,87,0.3)" },
-  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#6a6f75", border: "rgba(42,47,58,0.6)" },
+  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#9ca3af", border: "rgba(42,47,58,0.6)" },
 };
 
 function SeverityBadge({ color, children }: { color: BadgeColor; children: React.ReactNode }) {
@@ -170,7 +170,7 @@ export default function BugBountyPage() {
                     <th
                       key={h}
                       className="pb-3 text-xs uppercase tracking-wider font-semibold"
-                      style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}
+                      style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
                     >
                       {h}
                     </th>
@@ -226,7 +226,7 @@ export default function BugBountyPage() {
               className="mt-4 pt-4 flex items-center gap-2"
               style={{ borderTop: "1px solid #2a2f3a" }}
             >
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#6a6f75" strokeWidth={1.5}>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
@@ -243,7 +243,7 @@ export default function BugBountyPage() {
           <ul className="space-y-3">
             {OUT_OF_SCOPE.map((item) => (
               <li key={item} className="flex items-start gap-3">
-                <svg width="14" height="14" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#6a6f75" strokeWidth={1.5}>
+                <svg width="14" height="14" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
                 </svg>
                 <span className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>

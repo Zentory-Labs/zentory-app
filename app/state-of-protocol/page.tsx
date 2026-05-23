@@ -75,7 +75,7 @@ const STATUS_STYLE: Record<StatusColor, { bg: string; text: string; border: stri
   green:  { bg: "rgba(39,174,96,0.12)",   text: "#27ae60", border: "rgba(39,174,96,0.3)" },
   amber:  { bg: "rgba(176,141,87,0.12)",  text: "#b08d57", border: "rgba(176,141,87,0.3)" },
   red:    { bg: "rgba(194,53,63,0.12)",   text: "#c2353f", border: "rgba(194,53,63,0.3)" },
-  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#6a6f75", border: "rgba(42,47,58,0.6)" },
+  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#9ca3af", border: "rgba(42,47,58,0.6)" },
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -177,9 +177,9 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
           <button
             onClick={handleCopy}
             className="text-xs transition-colors"
-            style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#b08d57")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#6a6f75")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#9ca3af")}
           >
             {copied ? "Copied!" : "Copy"}
           </button>
@@ -260,7 +260,7 @@ export default function StateOfProtocolPage() {
               >
                 <span
                   className="text-xs uppercase tracking-wider"
-                  style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}
+                  style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
                 >
                   {stat.label}
                 </span>
@@ -289,7 +289,7 @@ export default function StateOfProtocolPage() {
             className="mt-4 pt-4 flex items-center gap-2"
             style={{ borderTop: "1px solid #2a2f3a" }}
           >
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#6a6f75" strokeWidth={1.5}>
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
@@ -345,7 +345,7 @@ export default function StateOfProtocolPage() {
                     <th
                       key={h}
                       className="pb-3 text-xs uppercase tracking-wider font-semibold"
-                      style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}
+                      style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
                     >
                       {h}
                     </th>

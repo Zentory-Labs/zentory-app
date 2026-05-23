@@ -43,19 +43,24 @@ export default function Nav() {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-start items-center h-20 gap-8 lg:gap-10">
-          {/* Logo */}
+          {/* Logo — alt="" because the wordmark text next to it already
+              announces "Zentory Labs" to screen readers. The image is purely
+              decorative. sizes hint caps the responsive set at the actual
+              rendered 40px so we stop downloading the 384px variant. */}
           <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0 z-10">
             <Image
               src="/zentory_logo_dark.png"
-              alt="Zentory Labs"
-              width={44}
-              height={44}
+              alt=""
+              aria-hidden
+              width={40}
+              height={40}
+              sizes="40px"
               className="h-10 w-10 object-contain transition-all duration-300 group-hover:opacity-90 brightness-0 invert"
               priority
             />
             <span
               className="font-semibold tracking-tight transition-colors duration-300 text-white"
-              style={{ fontFamily: "Montserrat, sans-serif" }}
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               Zentory Labs
             </span>

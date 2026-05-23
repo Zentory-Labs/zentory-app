@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+/* Montserrat self-hosted via next/font/google in app/layout.tsx — no remote
+ * fonts.googleapis.com request. Use var(--font-montserrat) where needed. */
 @import "tailwindcss";
 
 :root {
@@ -131,7 +132,7 @@
 body {
   background-color: #0b0b0d;
   color: var(--foreground);
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-montserrat), 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Dot grid — fine graph-paper pattern */
@@ -183,13 +184,13 @@ body::after {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
 .font-montserrat {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
 }
 
 * {

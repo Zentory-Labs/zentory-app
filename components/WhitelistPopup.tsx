@@ -83,7 +83,7 @@ export default function WhitelistPopup() {
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-white/10"
-          style={{ color: "#6a6f75" }}
+          style={{ color: "#9ca3af" }}
           aria-label="Close"
         >
           <CloseIcon />

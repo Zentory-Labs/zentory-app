@@ -131,11 +131,11 @@ function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
   }, [vaultSymbol]);
 
   if (!loaded) {
-    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#6a6f75" }}>Loading NAV history…</div>;
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading NAV history…</div>;
   }
   if (!nav.length) {
     return (
-      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#6a6f75" }}>
+      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#9ca3af" }}>
         NAV history populates once the off-chain indexer is live (post-mainnet).
       </div>
     );
@@ -202,11 +202,11 @@ function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
   }, [vaultSymbol]);
 
   if (!loaded) {
-    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#6a6f75" }}>Loading flow data…</div>;
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading flow data…</div>;
   }
   if (!flow.length) {
     return (
-      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#6a6f75" }}>
+      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#9ca3af" }}>
         Deposit/withdrawal flow populates once the indexer is live.
       </div>
     );
@@ -398,7 +398,7 @@ function ProtocolTVLOverview() {
   if (!loaded) {
     return (
       <div className="rounded-2xl p-6 flex items-center justify-center h-48" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-        <span className="text-sm" style={{ color: "#6a6f75" }}>Loading protocol stats…</span>
+        <span className="text-sm" style={{ color: "#9ca3af" }}>Loading protocol stats…</span>
       </div>
     );
   }
@@ -414,7 +414,7 @@ function ProtocolTVLOverview() {
           <div className="text-sm font-semibold mb-2" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
             Off-chain analytics offline
           </div>
-          <p className="text-xs max-w-md mx-auto" style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs max-w-md mx-auto" style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}>
             Aggregate TVL, deposits, withdrawals and historical alpha come from the
             indexer, which goes live alongside mainnet (Q4 2026). Live on-chain vault
             state is shown in the cards below.
@@ -522,7 +522,7 @@ function ExecutionTraceSection() {
           </p>
         </div>
         {!hasTraceData && (
-          <span className="text-xs px-3 py-1 rounded-full border" style={{ borderColor: "#2a2f3a", color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}>
+          <span className="text-xs px-3 py-1 rounded-full border" style={{ borderColor: "#2a2f3a", color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}>
             Indexer ingestion goes live with mainnet
           </span>
         )}
@@ -535,7 +535,7 @@ function ExecutionTraceSection() {
           </p>
           <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
             <thead>
-              <tr style={{ color: "#6a6f75", textAlign: "left" }}>
+              <tr style={{ color: "#9ca3af", textAlign: "left" }}>
                 <th className="pb-2 pr-4">Vault</th>
                 <th className="pb-2 pr-4">HL user</th>
                 <th className="pb-2">Asset</th>
@@ -560,11 +560,11 @@ function ExecutionTraceSection() {
             Recent on-chain attempts
           </p>
           {attempts.length === 0 ? (
-            <p className="text-sm" style={{ color: "#6a6f75" }}>No on-chain executions to display yet.</p>
+            <p className="text-sm" style={{ color: "#9ca3af" }}>No on-chain executions to display yet.</p>
           ) : (
             <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
               <thead>
-                <tr style={{ color: "#6a6f75", textAlign: "left" }}>
+                <tr style={{ color: "#9ca3af", textAlign: "left" }}>
                   <th className="pb-2 pr-3">Vault</th>
                   <th className="pb-2 pr-3">Dir</th>
                   <th className="pb-2 pr-3">Nonce</th>
@@ -600,13 +600,13 @@ function ExecutionTraceSection() {
             Recent venue fills (Hyperliquid)
           </p>
           {fills.length === 0 ? (
-            <p className="text-sm" style={{ color: "#6a6f75" }}>
+            <p className="text-sm" style={{ color: "#9ca3af" }}>
               No venue fills to display yet.
             </p>
           ) : (
             <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
               <thead>
-                <tr style={{ color: "#6a6f75", textAlign: "left" }}>
+                <tr style={{ color: "#9ca3af", textAlign: "left" }}>
                   <th className="pb-2 pr-3">Coin</th>
                   <th className="pb-2 pr-3">Px</th>
                   <th className="pb-2 pr-3">Sz</th>
@@ -621,7 +621,7 @@ function ExecutionTraceSection() {
                     <td className="py-2 pr-3 font-mono text-[11px]">{f.px ?? "—"}</td>
                     <td className="py-2 pr-3 font-mono text-[11px]">{f.sz ?? "—"}</td>
                     <td className="py-2 pr-3 font-mono text-[11px]">{f.closed_pnl ?? "—"}</td>
-                    <td className="py-2 text-[11px]" style={{ color: "#6a6f75" }}>
+                    <td className="py-2 text-[11px]" style={{ color: "#9ca3af" }}>
                       {f.time_ms ? new Date(f.time_ms).toISOString().slice(0, 16).replace("T", " ") : "—"}
                     </td>
                   </tr>

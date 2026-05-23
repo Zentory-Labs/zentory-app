@@ -221,7 +221,7 @@ export function WalletButton() {
             style={{
               background: "transparent",
               borderColor: "#2a2f3a",
-              color: "#6a6f75",
+              color: "#9ca3af",
               fontFamily: "'Montserrat', sans-serif",
             }}
             onMouseEnter={(e) => {
@@ -230,7 +230,7 @@ export function WalletButton() {
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2f3a";
-              (e.currentTarget as HTMLButtonElement).style.color = "#6a6f75";
+              (e.currentTarget as HTMLButtonElement).style.color = "#9ca3af";
             }}
           >
             Disconnect
@@ -289,7 +289,7 @@ export function WalletButton() {
           }}
         >
           <div className="px-4 py-3" style={{ borderBottom: "1px solid #2a2f3a" }}>
-            <p className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75" }}>Select wallet</p>
+            <p className="text-xs uppercase tracking-wider" style={{ color: "#9ca3af" }}>Select wallet</p>
           </div>
 
           {noWallet && (

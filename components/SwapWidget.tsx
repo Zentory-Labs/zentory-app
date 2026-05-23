@@ -202,7 +202,7 @@ export function SwapWidget() {
               className="px-2 py-0.5 rounded text-xs font-medium transition-all"
               style={{
                 background: slippage === s ? "rgba(139,30,45,0.3)" : "transparent",
-                color: slippage === s ? "#c2353f" : "#6a6f75",
+                color: slippage === s ? "#c2353f" : "#9ca3af",
                 border: `1px solid ${slippage === s ? "rgba(139,30,45,0.5)" : "#2a2f3a"}`,
                 fontFamily: "'Montserrat', sans-serif",
               }}
@@ -219,8 +219,8 @@ export function SwapWidget() {
         style={{ background: "rgba(11,11,13,0.6)", border: "1px solid #2a2f3a" }}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs" style={{ color: "#6a6f75" }}>From</span>
-          <span className="text-xs" style={{ color: "#6a6f75" }}>
+          <span className="text-xs" style={{ color: "#9ca3af" }}>From</span>
+          <span className="text-xs" style={{ color: "#9ca3af" }}>
             Balance: {fromBalance}
           </span>
         </div>
@@ -249,7 +249,7 @@ export function SwapWidget() {
           <button
             onClick={() => adjustAmount(-10)}
             className="w-8 h-8 rounded-lg border flex items-center justify-center flex-shrink-0 transition-all hover:border-white/40 active:scale-95"
-            style={{ background: "rgba(42,47,58,0.5)", borderColor: "#2a2f3a", color: "#6a6f75" }}
+            style={{ background: "rgba(42,47,58,0.5)", borderColor: "#2a2f3a", color: "#9ca3af" }}
             aria-label="Decrease amount"
           >
             <MinusIcon />
@@ -267,7 +267,7 @@ export function SwapWidget() {
           <button
             onClick={() => adjustAmount(10)}
             className="w-8 h-8 rounded-lg border flex items-center justify-center flex-shrink-0 transition-all hover:border-white/40 active:scale-95"
-            style={{ background: "rgba(42,47,58,0.5)", borderColor: "#2a2f3a", color: "#6a6f75" }}
+            style={{ background: "rgba(42,47,58,0.5)", borderColor: "#2a2f3a", color: "#9ca3af" }}
             aria-label="Increase amount"
           >
             <PlusIcon />
@@ -277,7 +277,7 @@ export function SwapWidget() {
             onChange={(v) => setFromToken(v as typeof fromToken)}
           />
         </div>
-        <div className="mt-1 text-xs" style={{ color: "#6a6f75" }}>
+        <div className="mt-1 text-xs" style={{ color: "#9ca3af" }}>
           ≈ ${fromAmount && !isNaN(parseFloat(fromAmount)) ? (parseFloat(fromAmount) * fromPrice).toFixed(2) : "0.00"} USD
         </div>
       </div>
@@ -309,8 +309,8 @@ export function SwapWidget() {
         style={{ background: "rgba(11,11,13,0.6)", border: "1px solid #2a2f3a" }}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs" style={{ color: "#6a6f75" }}>To</span>
-          <span className="text-xs" style={{ color: "#6a6f75" }}>Balance: {toBalance}
+          <span className="text-xs" style={{ color: "#9ca3af" }}>To</span>
+          <span className="text-xs" style={{ color: "#9ca3af" }}>Balance: {toBalance}
           </span>
         </div>
         <div className="flex items-center gap-3 min-w-0">
@@ -325,20 +325,20 @@ export function SwapWidget() {
             onChange={(v) => setToToken(v as typeof toToken)}
           />
         </div>
-        <div className="mt-1 text-xs" style={{ color: "#6a6f75" }}>
+        <div className="mt-1 text-xs" style={{ color: "#9ca3af" }}>
           ≈ ${fromAmount && !isNaN(parseFloat(fromAmount)) ? (parseFloat(estimatedOutput) * toPrice).toFixed(2) : "0.00"} USD
         </div>
       </div>
 
       {/* Details row */}
       <div className="flex justify-between text-xs mb-4 px-1">
-        <span style={{ color: "#6a6f75" }}>Rate</span>
+        <span style={{ color: "#9ca3af" }}>Rate</span>
         <span className="font-mono" style={{ color: "#bfc3c7" }}>
           1 {fromToken} = {(fromPrice / toPrice).toFixed(6)} {toToken}
         </span>
       </div>
       <div className="flex justify-between text-xs mb-4 px-1">
-        <span style={{ color: "#6a6f75" }}>Slippage</span>
+        <span style={{ color: "#9ca3af" }}>Slippage</span>
         <span className="font-mono" style={{ color: "#bfc3c7" }}>{slippage}%</span>
       </div>
 
@@ -366,7 +366,7 @@ export function SwapWidget() {
       </button>
 
       {/* Powered by line */}
-      <p className="text-center text-xs mt-3" style={{ color: "#6a6f75" }}>
+      <p className="text-center text-xs mt-3" style={{ color: "#9ca3af" }}>
         Powered by Zentory Protocol · HyperEVM
       </p>
     </div>

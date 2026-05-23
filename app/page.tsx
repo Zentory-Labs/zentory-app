@@ -177,7 +177,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
           },
         ].map(({ label, value }) => (
           <div key={label} className="flex justify-between items-center">
-            <span className="text-xs" style={{ color: "#6a6f75" }}>{label}</span>
+            <span className="text-xs" style={{ color: "#9ca3af" }}>{label}</span>
             <span className="text-sm font-mono font-medium text-white">{value}</span>
           </div>
         ))}
@@ -202,9 +202,9 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 text-xs transition-colors"
-          style={{ color: "#6a6f75" }}
+          style={{ color: "#9ca3af" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#b08d57")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#6a6f75")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#9ca3af")}
         >
           View
           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -312,7 +312,7 @@ function ChainStats() {
           </div>
           <div
             className="text-xs md:text-sm uppercase tracking-wider mt-1"
-            style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
           >
             {label}
           </div>
@@ -510,7 +510,7 @@ export default function Home() {
         >
           <span
             className="text-xs uppercase tracking-widest mb-1"
-            style={{ fontFamily: "'Montserrat', sans-serif", color: "#6a6f75" }}
+            style={{ fontFamily: "'Montserrat', sans-serif", color: "#9ca3af" }}
           >
             Scroll
           </span>

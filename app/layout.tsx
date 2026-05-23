@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +7,15 @@ import Providers from "@/components/Providers";
 import Nav from "@/components/Nav";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 import "./globals.css";
+
+// Self-host Montserrat — removes the render-blocking fonts.googleapis.com
+// request (Lighthouse: ~450ms saved + cleaner CWV scores).
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-montserrat",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://app.zentorylabs.com"),
@@ -63,7 +73,7 @@ export default function RootLayout({
   const currentYear = new Date().getFullYear();
 
   return (
-    <html lang="en">
+    <html lang="en" className={montserrat.variable}>
       <body className="min-h-screen text-white antialiased" suppressHydrationWarning>
         <Providers>
           <Nav />
