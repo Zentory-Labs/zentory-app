@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { WalletButton } from "./WalletSelector";
+import { useDemoMode } from "@/lib/demo/context";
 import dynamic from "next/dynamic";
 
 const WhitelistPopup = dynamic(() => import("./WhitelistPopup"), { ssr: false });
@@ -19,6 +20,7 @@ const NAV_LINKS = [
 
 export default function Nav() {
   const pathname = usePathname();
+  const { enabled: demoMode, toggle: toggleDemo } = useDemoMode();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -105,6 +107,23 @@ export default function Nav() {
           }}
         >
           Join Waitlist
+        </button>
+        {/* Demo mode toggle — investor-facing button that activates sample
+            data on every page that would otherwise be empty. Off by default. */}
+        <button
+          type="button"
+          onClick={toggleDemo}
+          className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all border"
+          style={{
+            background: demoMode ? "rgba(176,141,87,0.18)" : "rgba(176,141,87,0.05)",
+            borderColor: demoMode ? "rgba(176,141,87,0.6)" : "rgba(176,141,87,0.25)",
+            color: demoMode ? "#e6d3a0" : "#b08d57",
+            fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif",
+          }}
+          title={demoMode ? "Demo mode is ON — sample data is shown on empty pages. Click to switch back to live data." : "Turn on demo mode to see what the protocol looks like with active signals, leaderboard, and indexed history."}
+        >
+          <span className={`h-1.5 w-1.5 rounded-full ${demoMode ? "animate-pulse" : ""}`} style={{ background: demoMode ? "#e6d3a0" : "#b08d57" }} />
+          {demoMode ? "Demo: On" : "Demo"}
         </button>
         <WalletButton />
 

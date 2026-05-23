@@ -5,6 +5,7 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { injected, coinbaseWallet, walletConnect, metaMask } from "wagmi/connectors";
 import { HYPEREVM_TESTNET } from "@/lib/contracts";
+import { DemoModeProvider } from "@/lib/demo/context";
 
 const queryClient = new QueryClient();
 
@@ -65,7 +66,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        {mounted ? children : null}
+        <DemoModeProvider>{mounted ? children : null}</DemoModeProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

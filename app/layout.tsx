@@ -6,6 +6,7 @@ import Link from "next/link";
 import Providers from "@/components/Providers";
 import Nav from "@/components/Nav";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
+import { DemoBanner } from "@/lib/demo/context";
 import "./globals.css";
 
 // Self-host Montserrat — removes the render-blocking fonts.googleapis.com
@@ -76,6 +77,7 @@ export default function RootLayout({
     <html lang="en" className={montserrat.variable}>
       <body className="min-h-screen text-white antialiased" suppressHydrationWarning>
         <Providers>
+          <DemoBanner />
           <Nav />
           <main className="mx-auto max-w-7xl px-6 pt-24 pb-8">
             {children}
