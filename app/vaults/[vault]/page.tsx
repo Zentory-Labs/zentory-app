@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi, formatUnits } from "viem";
 import Link from "next/link";
+import Image from "next/image";
 import {
   AreaChart,
   Area,
@@ -316,11 +317,32 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
         <Link href="/dashboard" className="text-sm hover:opacity-70 transition-opacity" style={{ color: "rgba(255,255,255,0.4)" }}>
           ← Dashboard
         </Link>
+        {/* Asset icon — use the real crypto logo from /public/token-logos
+            with a ring of the vault's brand color around it. Falls back to
+            the brand-colored initial chip if the file is missing. */}
         <div
-          className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold"
-          style={{ background: config.bgColor, color: config.color }}
+          className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center font-bold ring-2"
+          style={{
+            background: config.bgColor,
+            color: config.color,
+            // @ts-expect-error — Tailwind ring is implemented via outline + ring-color
+            "--tw-ring-color": config.color,
+          }}
         >
-          {config.symbol.replace("z", "")}
+          <Image
+            src={`/token-logos/${config.symbol.replace("z", "").toLowerCase()}.png`}
+            alt={config.assetName}
+            width={40}
+            height={40}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Hide broken image, the parent will show the fallback initial below
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+          <span className="absolute text-xs" style={{ color: config.color }}>
+            {config.symbol.replace("z", "")}
+          </span>
         </div>
         <div>
           <h1 className="text-2xl font-bold">{config.name}</h1>

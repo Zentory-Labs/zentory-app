@@ -258,15 +258,19 @@ export default function Nav() {
                               key={item.href}
                               href={item.href}
                               {...extraProps}
-                              className="block px-4 py-3 transition-colors border-l-2"
+                              // Hover state: dark-gold background + red left
+                              // border accent so the cursor target is
+                              // unambiguously highlighted. Active state
+                              // (current page) uses a stronger red bar.
+                              className="group/item block px-4 py-3 transition-colors border-l-2 hover:bg-[rgba(176,141,87,0.10)] hover:border-l-[#c2353f]"
                               style={{
                                 borderLeftColor: itemActive ? "#8b1e2d" : "transparent",
-                                background: itemActive ? "rgba(139,30,45,0.08)" : "transparent",
+                                background: itemActive ? "rgba(139,30,45,0.10)" : "transparent",
                               }}
                               onClick={() => setOpenGroup(null)}
                             >
                               <div
-                                className="text-sm font-semibold flex items-center gap-1.5"
+                                className="text-sm font-semibold flex items-center gap-1.5 transition-colors group-hover/item:text-[#eaeaea]"
                                 style={{
                                   color: itemActive ? "#eaeaea" : "#bfc3c7",
                                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
@@ -281,7 +285,7 @@ export default function Nav() {
                               </div>
                               {item.desc && (
                                 <div
-                                  className="text-xs mt-0.5"
+                                  className="text-xs mt-0.5 transition-colors group-hover/item:text-[#b08d57]"
                                   style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                                 >
                                   {item.desc}

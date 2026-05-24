@@ -303,10 +303,18 @@ export default function SignalsPage() {
                     className="rounded-xl p-4 flex items-center gap-4"
                     style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
                   >
-                    {/* Provider */}
-                    <div className="flex-shrink-0 w-32">
-                      <div className="text-xs font-mono truncate" style={{ color: "#7c5cff" }} title={sig.provider}>
-                        {sig.provider.slice(0, 8)}...{sig.provider.slice(-6)}
+                    {/* Provider — show the full name when it's a human name
+                        (e.g. "Genesis Pulse"); only truncate when the provider
+                        field is a raw 0x address. */}
+                    <div className="flex-shrink-0 w-36">
+                      <div
+                        className={`text-xs truncate ${sig.provider.startsWith("0x") ? "font-mono" : "font-semibold"}`}
+                        style={{ color: "#7c5cff" }}
+                        title={sig.provider}
+                      >
+                        {sig.provider.startsWith("0x") && sig.provider.length === 42
+                          ? `${sig.provider.slice(0, 8)}…${sig.provider.slice(-6)}`
+                          : sig.provider}
                       </div>
                       <div className="text-xs mt-0.5" style={{ color: "rgba(106,111,117,0.7)" }}>
                         {fmtTime(sig.submittedAt)}

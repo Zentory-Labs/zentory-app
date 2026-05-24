@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useChainId, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
 import { parseAbi, formatUnits } from "viem";
 import { addresses, HYPEREVM_TESTNET } from "@/lib/contracts";
 
@@ -91,7 +92,15 @@ function AssetCard({
     abi: MOCK_ERC20_ABI,
     functionName: "balanceOf",
     args: user ? [user] : undefined,
-    query: { enabled: !!user },
+    query: {
+      enabled: !!user,
+      // Refetch the on-chain balance every 8s so when a mint tx confirms
+      // the card updates without requiring a manual page refresh.
+      refetchInterval: 8_000,
+      // Also refetch on window-focus so coming back from Rabby instantly
+      // shows the new balance.
+      refetchOnWindowFocus: true,
+    },
   });
 
   return (
@@ -156,10 +165,19 @@ export default function FaucetPage() {
   const { isLoading: isTxPending, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
   });
+  const queryClient = useQueryClient();
 
   // pendingKey + isTxPending together drive the per-button "Minting…" state.
-  // No useEffect needed: when the tx settles, isTxPending becomes false and
-  // any subsequent click overwrites pendingKey via setPendingKey below.
+  // When the mint tx confirms, invalidate every balanceOf query so each
+  // AssetCard re-reads its balance from chain without a page refresh.
+  useEffect(() => {
+    if (!isTxSuccess) return;
+    queryClient.invalidateQueries({
+      predicate: (q) =>
+        Array.isArray(q.queryKey) &&
+        q.queryKey.some((k) => typeof k === "object" && k !== null && (k as { functionName?: string }).functionName === "balanceOf"),
+    });
+  }, [isTxSuccess, queryClient]);
 
   function handleMint(asset: (typeof ASSETS)[number]) {
     if (!user) return;

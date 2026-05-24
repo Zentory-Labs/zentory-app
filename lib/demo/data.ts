@@ -112,15 +112,27 @@ export interface DemoSignal {
   signedDigest: string;        // synthetic EIP-712 digest
 }
 
+// Weighted market pool — perp BTC dominates real on-chain activity but the
+// demo feed needs visible diversity so investors see the multi-asset story.
+// Each market is repeated proportional to expected real-world share.
 const MARKETS: Array<{ market: string; assetClass: DemoSignal["assetClass"] }> = [
+  // Crypto perps — heaviest weighting (live testnet markets)
+  { market: "BTC-PERP", assetClass: "CRYPTO_PERP" },
   { market: "BTC-PERP", assetClass: "CRYPTO_PERP" },
   { market: "ETH-PERP", assetClass: "CRYPTO_PERP" },
+  { market: "ETH-PERP", assetClass: "CRYPTO_PERP" },
+  { market: "SOL-PERP", assetClass: "CRYPTO_PERP" },
   { market: "SOL-PERP", assetClass: "CRYPTO_PERP" },
   { market: "XRP-PERP", assetClass: "CRYPTO_PERP" },
+  // Spot
   { market: "BTC/USD", assetClass: "CRYPTO_SPOT" },
+  { market: "ETH/USD", assetClass: "CRYPTO_SPOT" },
+  { market: "SOL/USD", assetClass: "CRYPTO_SPOT" },
+  // Equity / Forex / Commodity (Q3 2026 roadmap, lightly populated)
   { market: "AAPL", assetClass: "EQUITY" },
   { market: "MSFT", assetClass: "EQUITY" },
   { market: "EUR/USD", assetClass: "FOREX" },
+  { market: "GBP/USD", assetClass: "FOREX" },
   { market: "XAU/USD", assetClass: "COMMODITY" },
 ];
 
@@ -143,7 +155,14 @@ export function demoSignals(count = 36): DemoSignal[] {
     const isResolved = isPast && r() > 0.25;
     const direction = pick(DIRECTIONS, r);
     const confidence = Math.round(4500 + r() * 4500);
-    const conviction = Math.round(200 + r() * 9800);
+    // Spread conviction across all 4 tiers (Bronze <100, Silver <1k,
+    // Gold <10k, Diamond ≥10k) so the tier badges aren't all "Gold".
+    let conviction: number;
+    const tierRoll = r();
+    if (tierRoll < 0.15) conviction = Math.round(15 + r() * 80);          // Bronze
+    else if (tierRoll < 0.45) conviction = Math.round(120 + r() * 800);   // Silver
+    else if (tierRoll < 0.85) conviction = Math.round(1100 + r() * 8500); // Gold
+    else conviction = Math.round(11_000 + r() * 30_000);                  // Diamond
     signals.push({
       id: `0x${(0xdead + i).toString(16).padStart(4, "0")}${"a".repeat(60)}`,
       providerId: provider.id,
