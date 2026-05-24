@@ -101,7 +101,7 @@ export default function RootLayout({
                 {/* Site map — every reachable page grouped by section.
                     Mirrors the top-nav dropdowns so investors can find any
                     surface even if they skipped the dropdown. */}
-                <div className="w-full max-w-5xl mb-8 grid grid-cols-2 md:grid-cols-5 gap-6 text-left">
+                <div className="w-full max-w-5xl mb-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 text-left">
                   {[
                     {
                       label: "Vaults",
@@ -158,19 +158,16 @@ export default function RootLayout({
                       >
                         {col.label}
                       </div>
-                      <ul className="space-y-1.5">
+                      <ul className="space-y-0.5">
                         {col.items.map(([label, href]) => {
                           const external = href.startsWith("http");
+                          // py-2 + text-sm ≈ 36px tap target on mobile.
+                          const linkClass = "block py-2 text-sm transition-colors hover:!text-[#eaeaea]";
+                          const linkStyle = { color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" } as const;
                           if (external) {
                             return (
                               <li key={href}>
-                                <a
-                                  href={href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-xs transition-colors hover:!text-[#eaeaea]"
-                                  style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}
-                                >
+                                <a href={href} target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>
                                   {label} ↗
                                 </a>
                               </li>
@@ -178,11 +175,7 @@ export default function RootLayout({
                           }
                           return (
                             <li key={href}>
-                              <Link
-                                href={href}
-                                className="text-xs transition-colors hover:!text-[#eaeaea]"
-                                style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}
-                              >
+                              <Link href={href} className={linkClass} style={linkStyle}>
                                 {label}
                               </Link>
                             </li>
@@ -204,13 +197,13 @@ export default function RootLayout({
                   <LegalDisclaimer variant="footer" className="mb-4" />
                 </div>
 
-                {/* Links */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-xs" style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}>
-                  <span>© {currentYear} Zentory Labs</span>
-                  <a href="https://zentorylabs.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="transition-colors hover:!text-[#b08d57]" style={{ color: "rgba(191,195,199,0.6)" }}>
+                {/* Links — block padding so they're ≥36px tap targets on mobile */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-sm" style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}>
+                  <span className="py-2">© {currentYear} Zentory Labs</span>
+                  <a href="https://zentorylabs.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="py-2 px-3 transition-colors hover:!text-[#b08d57]" style={{ color: "rgba(191,195,199,0.6)" }}>
                     Terms of Service
                   </a>
-                  <a href="https://zentorylabs.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="transition-colors hover:!text-[#b08d57]" style={{ color: "rgba(191,195,199,0.6)" }}>
+                  <a href="https://zentorylabs.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="py-2 px-3 transition-colors hover:!text-[#b08d57]" style={{ color: "rgba(191,195,199,0.6)" }}>
                     Privacy Policy
                   </a>
                 </div>

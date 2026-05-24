@@ -403,7 +403,7 @@ function ZENTTokenMetrics() {
         </h3>
       </div>
 
-      <div className="grid grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
           { label: "Total Supply", value: totalSupply.isLoading ? "—" : `${(supply / 1e9).toFixed(2)}B`, sub: "ZENT (fixed)" },
           { label: "Market Cap", value: "TBD", sub: "Pre-listing" },
@@ -506,7 +506,7 @@ function ProtocolTVLOverview() {
       className="rounded-2xl p-6"
       style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
     >
-      <div className="grid grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
           { label: "Total TVL", value: `$${(stats.totalTvl / 1e6).toFixed(2)}M`, accent: "#eaeaea" },
           { label: "Total Deposits", value: `$${(stats.totalDeposits / 1e6).toFixed(2)}M`, accent: CHART_COLORS.positive },
