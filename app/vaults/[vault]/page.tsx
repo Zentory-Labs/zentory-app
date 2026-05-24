@@ -80,6 +80,53 @@ const CHART_COLORS = {
   text: "rgba(255,255,255,0.4)",
 };
 
+/**
+ * Asset icon for the vault header. Tries to load /token-logos/<asset>.png
+ * and falls back to a brand-colored initial chip if the file is missing
+ * or fails to load. Previously rendered both image AND fallback at the
+ * same time, causing the text to overlap the image.
+ */
+function AssetIcon({
+  symbol,
+  bgColor,
+  color,
+  assetName,
+}: {
+  symbol: string;
+  bgColor: string;
+  color: string;
+  assetName: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+  return (
+    <div
+      className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center font-bold ring-2 flex-shrink-0"
+      style={{
+        background: bgColor,
+        color,
+        // @ts-expect-error — Tailwind ring is implemented via outline + ring-color
+        "--tw-ring-color": color,
+      }}
+    >
+      {imgError ? (
+        <span className="text-xs" style={{ color }}>
+          {symbol}
+        </span>
+      ) : (
+        <Image
+          src={`/token-logos/${symbol.toLowerCase()}.png`}
+          alt={assetName}
+          width={40}
+          height={40}
+          className="w-full h-full object-cover"
+          onError={() => setImgError(true)}
+          unoptimized
+        />
+      )}
+    </div>
+  );
+}
+
 // Use viem's formatUnits so we don't lose sub-unit precision to BigInt's
 // integer division. The old impl rendered 0.5 WBTC as "0.00" because
 // 50_000_000n / 10n**8n is 0n in BigInt math.
@@ -317,33 +364,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
         <Link href="/dashboard" className="text-sm hover:opacity-70 transition-opacity" style={{ color: "rgba(255,255,255,0.4)" }}>
           ← Dashboard
         </Link>
-        {/* Asset icon — use the real crypto logo from /public/token-logos
-            with a ring of the vault's brand color around it. Falls back to
-            the brand-colored initial chip if the file is missing. */}
-        <div
-          className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center font-bold ring-2"
-          style={{
-            background: config.bgColor,
-            color: config.color,
-            // @ts-expect-error — Tailwind ring is implemented via outline + ring-color
-            "--tw-ring-color": config.color,
-          }}
-        >
-          <Image
-            src={`/token-logos/${config.symbol.replace("z", "").toLowerCase()}.png`}
-            alt={config.assetName}
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // Hide broken image, the parent will show the fallback initial below
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
-          <span className="absolute text-xs" style={{ color: config.color }}>
-            {config.symbol.replace("z", "")}
-          </span>
-        </div>
+        {/* Asset icon — real crypto logo with a brand-colored ring. */}
+        <AssetIcon symbol={config.symbol.replace("z", "")} bgColor={config.bgColor} color={config.color} assetName={config.assetName} />
         <div>
           <h1 className="text-2xl font-bold">{config.name}</h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>

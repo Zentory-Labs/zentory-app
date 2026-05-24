@@ -219,13 +219,18 @@ function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
 
   useEffect(() => {
     if (demoMode) {
+      // Live data from Supabase is stored as raw wei, then divided by
+      // 10^decimals downstream. The demo generator returns human-readable
+      // asset amounts, so we pre-multiply by 10^decimals here to cancel out
+      // the downstream division. Without this, the Y-axis renders 7e-18 etc.
+      const decShift = 10 ** getAssetDecimals(meta.asset);
       const rows = demoFlow(vaultSymbol, 14).map((d, i) => ({
         id: `demo-flow-${vaultSymbol}-${i}`,
         vault_symbol: vaultSymbol,
         date: d.date,
-        deposits: d.deposits,
-        withdrawals: d.withdrawals,
-        net_flow: d.netFlow,
+        deposits: d.deposits * decShift,
+        withdrawals: d.withdrawals * decShift,
+        net_flow: d.netFlow * decShift,
         tx_count: d.txCount,
       }));
       setFlow(rows);
@@ -236,7 +241,7 @@ function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
       setFlow(rows);
       setLoaded(true);
     });
-  }, [vaultSymbol, demoMode]);
+  }, [vaultSymbol, demoMode, meta.asset]);
 
   if (!loaded) {
     return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading flow data…</div>;
@@ -281,6 +286,7 @@ function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
 
 function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
   const meta = vaultMeta[vault];
+  const { enabled: demoMode } = useDemoMode();
   const totalAssets = useReadContract({ address: vault, abi: VAULT_ABI, functionName: "totalAssets" } as any);
   const navPerShare = useReadContract({ address: vault, abi: VAULT_ABI, functionName: "getNavPerShare" } as any);
 
@@ -288,8 +294,19 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
   const dec = getAssetDecimals(meta.asset);
   const unit = 10 ** dec;
 
-  const tvl = Number((totalAssets.data as bigint) ?? 0n) / unit;
-  const nav = Number((navPerShare.data as bigint) ?? 0n) / unit;
+  // In demo mode, override the on-chain reads with seeded protocol stats
+  // so per-vault rows match the aggregate stat cards above (and avoid the
+  // inflated zSOL state from the earlier decimals bug).
+  let tvl: number;
+  let nav: number;
+  if (demoMode) {
+    const row = demoProtocolStats().vaults.find((v) => v.symbol === meta.symbol);
+    tvl = row?.totalAssets ?? 0;
+    nav = row?.navPerShare ?? 1;
+  } else {
+    tvl = Number((totalAssets.data as bigint) ?? 0n) / unit;
+    nav = Number((navPerShare.data as bigint) ?? 0n) / unit;
+  }
 
   return (
     <div
@@ -311,7 +328,11 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
         </div>
         <div className="text-right">
           <div className="text-xl font-bold" style={{ color, fontFamily: "'Montserrat', sans-serif" }}>
-            {totalAssets.isLoading ? "—" : fmt(tvl, 0)}
+            {demoMode
+              ? `$${(tvl / 1e6).toFixed(2)}M`
+              : totalAssets.isLoading
+              ? "—"
+              : fmt(tvl, 0)}
           </div>
           <div className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
             TVL

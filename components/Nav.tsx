@@ -253,28 +253,27 @@ export default function Nav() {
                           const extraProps = item.external
                             ? { target: "_blank", rel: "noopener noreferrer" }
                             : {};
+                          // The hover styling lives in className-only because
+                          // inline style={} always wins over Tailwind hover:.
+                          // Active state uses a different className branch so
+                          // it persists on the current page without competing
+                          // with hover transitions.
+                          const itemClasses = itemActive
+                            ? "group/item block px-4 py-3 transition-colors border-l-2 border-l-[#8b1e2d] bg-[rgba(139,30,45,0.10)]"
+                            : "group/item block px-4 py-3 transition-colors border-l-2 border-l-transparent hover:bg-[rgba(176,141,87,0.10)] hover:border-l-[#c2353f]";
                           return (
                             <LinkComp
                               key={item.href}
                               href={item.href}
                               {...extraProps}
-                              // Hover state: dark-gold background + red left
-                              // border accent so the cursor target is
-                              // unambiguously highlighted. Active state
-                              // (current page) uses a stronger red bar.
-                              className="group/item block px-4 py-3 transition-colors border-l-2 hover:bg-[rgba(176,141,87,0.10)] hover:border-l-[#c2353f]"
-                              style={{
-                                borderLeftColor: itemActive ? "#8b1e2d" : "transparent",
-                                background: itemActive ? "rgba(139,30,45,0.10)" : "transparent",
-                              }}
+                              className={itemClasses}
                               onClick={() => setOpenGroup(null)}
                             >
                               <div
-                                className="text-sm font-semibold flex items-center gap-1.5 transition-colors group-hover/item:text-[#eaeaea]"
-                                style={{
-                                  color: itemActive ? "#eaeaea" : "#bfc3c7",
-                                  fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                                }}
+                                className={`text-sm font-semibold flex items-center gap-1.5 transition-colors ${
+                                  itemActive ? "text-[#eaeaea]" : "text-[#bfc3c7] group-hover/item:text-[#eaeaea]"
+                                }`}
+                                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                               >
                                 {item.label}
                                 {item.external && (
@@ -285,8 +284,8 @@ export default function Nav() {
                               </div>
                               {item.desc && (
                                 <div
-                                  className="text-xs mt-0.5 transition-colors group-hover/item:text-[#b08d57]"
-                                  style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                                  className="text-xs mt-0.5 transition-colors text-[#6a6f75] group-hover/item:text-[#b08d57]"
+                                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                                 >
                                   {item.desc}
                                 </div>
