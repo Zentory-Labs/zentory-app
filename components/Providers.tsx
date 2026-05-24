@@ -3,30 +3,22 @@
 import { ReactNode, useEffect, useState } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { injected, coinbaseWallet, walletConnect, metaMask } from "wagmi/connectors";
+import { injected, coinbaseWallet, walletConnect } from "wagmi/connectors";
 import { HYPEREVM_TESTNET } from "@/lib/contracts";
 import { DemoModeProvider } from "@/lib/demo/context";
 
 const queryClient = new QueryClient();
 
-const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC ?? "https://rpc.hyperliquid-testnet.xyz/evm";
+const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC || "https://rpc.hyperliquid-testnet.xyz/evm";
 const TRANSPORT_URL = process.env.NODE_ENV === "production" ? "/api/rpc" : RPC_URL;
 
-/**
- * WalletConnect Project ID — required for production.
- * In development, set NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID in .env.local.
- * Without a valid project ID the WalletConnect connector will not function.
- */
-function getWalletConnectProjectId(): string {
-  const id = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
-  if (!id) {
-    throw new Error(
-      "NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is not set. "
-      + "Create a project at https://cloud.walletconnect.com and add it to .env.local"
-    );
-  }
-  return id;
-}
+// Read once. We treat empty-string and unset identically — both mean
+// "WalletConnect is disabled." Empty was the production failure mode: WC v2
+// strictly requires a non-empty UUID, throwing 'Connection rejected' on
+// click otherwise.
+const WALLETCONNECT_PROJECT_ID = (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "").trim();
+const WALLETCONNECT_ENABLED =
+  WALLETCONNECT_PROJECT_ID.length > 0 && WALLETCONNECT_PROJECT_ID !== "placeholder";
 
 const wagmiConfig = createConfig({
   chains: [HYPEREVM_TESTNET],
@@ -34,19 +26,35 @@ const wagmiConfig = createConfig({
     [HYPEREVM_TESTNET.id]: http(TRANSPORT_URL),
   },
   connectors: [
+    // injected() with EIP-6963 discovery (wagmi v2 default) auto-detects
+    // every installed browser wallet — MetaMask, Rabby, Phantom, Coinbase
+    // Wallet extension, Frame, etc. — and exposes each as its own
+    // connector with the right icon. We deliberately do NOT add wagmi's
+    // metaMask() SDK connector: it duplicates the EIP-6963 entry, often
+    // hangs on connect, and forces a QR flow even when the extension is
+    // installed. The injected path is the reliable one.
     injected({
-      shimDisconnect: true,
-    }),
-    metaMask({
       shimDisconnect: true,
     }),
     coinbaseWallet({
       appName: "Zentory Protocol",
     }),
-    // WalletConnect is only included when the project ID env var is present.
-    // This prevents the module-level throw from crashing the build.
-    ...(process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
-      ? [walletConnect({ projectId: getWalletConnectProjectId() })]
+    // WalletConnect — only mounted when a valid project ID is configured.
+    // Empty/unset string is treated as disabled (otherwise WC v2 throws
+    // 'Connection rejected' on every click).
+    ...(WALLETCONNECT_ENABLED
+      ? [
+          walletConnect({
+            projectId: WALLETCONNECT_PROJECT_ID,
+            metadata: {
+              name: "Zentory Protocol",
+              description: "Non-custodial Alpha Vaults + Signal Arena on HyperEVM",
+              url: "https://app.zentorylabs.com",
+              icons: ["https://app.zentorylabs.com/zentory_logo_dark.png"],
+            },
+            showQrModal: true,
+          }),
+        ]
       : []),
   ],
 });
