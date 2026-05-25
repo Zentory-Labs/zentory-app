@@ -1,21 +1,29 @@
 "use client";
 
-// Force Sentry.init to run on the client. Next.js 16's Turbopack production
-// build bundles `instrumentation-client.ts` (the DSN ends up in the chunk)
-// but its top-level module code never actually executes — the
-// `instrumentation-client` auto-load works in Webpack builds and dev mode
-// but not in Turbopack production yet (@sentry/nextjs 10.x gap).
-// Importing it as a side-effect from this always-loaded client component
-// guarantees the init runs once on first paint, regardless of bundler.
-// Safe because Sentry.init is idempotent — calling it twice is a no-op.
-import "@/instrumentation-client";
-
+import * as Sentry from "@sentry/nextjs";
 import { ReactNode, useEffect, useState } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { injected, coinbaseWallet, walletConnect } from "wagmi/connectors";
 import { HYPEREVM_TESTNET } from "@/lib/contracts";
 import { DemoModeProvider } from "@/lib/demo/context";
+
+// Initialize Sentry directly here. Next.js 16's Turbopack production build
+// bundles `instrumentation-client.ts` but never actually executes its
+// top-level code (a side-effect-only import either gets tree-shaken or
+// silently dropped — known @sentry/nextjs 10.x gap). Inlining the init
+// in an always-loaded 'use client' component guarantees it runs once on
+// first paint. Idempotent: getClient() check avoids double-init.
+if (typeof window !== "undefined" && !Sentry.getClient()) {
+  // eslint-disable-next-line no-console
+  console.log("[ZENTORY] Sentry client init starting");
+  Sentry.init({
+    dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
+    tracesSampleRate: 1,
+    enableLogs: true,
+    sendDefaultPii: true,
+  });
+}
 
 const queryClient = new QueryClient();
 
