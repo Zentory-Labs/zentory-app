@@ -1,5 +1,15 @@
 "use client";
 
+// Force Sentry.init to run on the client. Next.js 16's Turbopack production
+// build bundles `instrumentation-client.ts` (the DSN ends up in the chunk)
+// but its top-level module code never actually executes — the
+// `instrumentation-client` auto-load works in Webpack builds and dev mode
+// but not in Turbopack production yet (@sentry/nextjs 10.x gap).
+// Importing it as a side-effect from this always-loaded client component
+// guarantees the init runs once on first paint, regardless of bundler.
+// Safe because Sentry.init is idempotent — calling it twice is a no-op.
+import "@/instrumentation-client";
+
 import { ReactNode, useEffect, useState } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
