@@ -4,6 +4,14 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+// Diagnostic: confirm this module actually runs on the client. If you see
+// this log in the browser console, Sentry init has executed. Remove after
+// verifying.
+if (typeof window !== "undefined") {
+  // eslint-disable-next-line no-console
+  console.log("[ZENTORY] Sentry client init starting");
+}
+
 Sentry.init({
   dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
 
