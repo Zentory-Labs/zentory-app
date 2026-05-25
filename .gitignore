@@ -27,8 +27,7 @@ playwright-report/
 *.tsbuildinfo
 next-env.d.ts
 
-# Sentry
-sentry.client.config.ts
-sentry.server.config.ts
-sentry.edge.config.ts
-instrumentation.ts
+# Sentry — DSN is public (Sentry's DSNs are identifiers, not credentials),
+# so we commit the config files so Vercel can find them at build time.
+# Only the auth-token file stays out of git.
+.env.sentry-build-plugin
