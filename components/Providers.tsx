@@ -17,12 +17,27 @@ import { DemoModeProvider } from "@/lib/demo/context";
 if (typeof window !== "undefined" && !Sentry.getClient()) {
   // eslint-disable-next-line no-console
   console.log("[ZENTORY] Sentry client init starting");
-  Sentry.init({
-    dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
-    tracesSampleRate: 1,
-    enableLogs: true,
-    sendDefaultPii: true,
-  });
+  try {
+    Sentry.init({
+      dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
+      tracesSampleRate: 1,
+      enableLogs: true,
+      sendDefaultPii: true,
+      // debug: true surfaces internal SDK errors to the console so silent
+      // init failures (missing transport, bad integration) are visible.
+      debug: true,
+    });
+    const client = Sentry.getClient();
+    // eslint-disable-next-line no-console
+    console.log("[ZENTORY] Sentry init complete. Client:", client ? "✓ created" : "✗ NOT created");
+    // Expose the namespace on window for browser-side debugging only.
+    // Module-scoped imports can't be probed from devtools — this gives us a
+    // handle to call Sentry.captureMessage / .captureException by hand.
+    (window as unknown as { Sentry: typeof Sentry }).Sentry = Sentry;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error("[ZENTORY] Sentry init THREW:", e);
+  }
 }
 
 const queryClient = new QueryClient();
