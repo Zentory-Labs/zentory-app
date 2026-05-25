@@ -27,7 +27,7 @@ const CONTRACTS = [
   { name: "Strategy Executor", address: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF", chain: "HyperEVM", verified: true },
   { name: "HyperCore Adapter", address: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7", chain: "HyperEVM", verified: true },
   { name: "Signal Registry", address: "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c", chain: "HyperEVM", verified: true },
-  { name: "Epoch Scoring", address: "0xC9F7345574e8734247556Ed4e30B11851E285bA4", chain: "HyperEVM", verified: true },
+  { name: "Epoch Scoring", address: "0xB6b206AaF3a482624238dD8292BB63EDBAf59143", chain: "HyperEVM", verified: true },
   { name: "Subscription Vault", address: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d", chain: "HyperEVM", verified: true },
   { name: "Zent Governor", address: "0x21ba1F7C028B1ADc78e75Ac187B08b1BDd567118", chain: "HyperEVM", verified: true },
   { name: "Timelock (48h)", address: "0x1504cA3C050C88CcCa67696d642F634fc381fD03", chain: "HyperEVM", verified: true },

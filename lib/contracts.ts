@@ -45,7 +45,10 @@ export const addresses = {
 
   // ─── Research Network (deployed 2026-04-28 via deploy_signal_network.s.sol) ────────
   SignalRegistry:    "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c",
-  EpochScoring:     "0xC9F7345574e8734247556Ed4e30B11851E285bA4",
+  // Redeployed 2026-05-25 — original deploy at 0xC9F7345574e8734247556Ed4e30B11851E285bA4
+  // had stripped/wrong bytecode (missing scoringOracle/DEFAULT_ADMIN_ROLE selectors).
+  // New deploy tx: 0x08d6834e7660d84f4628bdfc2c71eb190d8fd4013e054ea9baed8f6efd486327
+  EpochScoring:     "0xB6b206AaF3a482624238dD8292BB63EDBAf59143",
   SubscriptionVault: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d",
 } as const;
 
