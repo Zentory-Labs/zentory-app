@@ -69,16 +69,6 @@ function fmtUsd(value: bigint, decimals = 18, digits = 2): string {
   // It's still useful for showing non-zero TVL and comparing deltas in UI.
   const n = Number(formatUnits(value, decimals));
   if (!Number.isFinite(n)) return "$—";
-
-  // Sanity cap: anything above $1B on testnet is almost certainly an
-  // over-seeded mock vault, not real value. Show a "Sample" placeholder
-  // instead of an inflated-looking number that misleads investors during
-  // demo walkthroughs. The real fix is reducing the on-chain seed via
-  // vault admin — until then, hide the absurd value.
-  if (n >= 1_000_000_000) {
-    return "Sample (testnet seed)";
-  }
-
   return n.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",

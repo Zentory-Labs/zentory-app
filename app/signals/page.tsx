@@ -164,7 +164,12 @@ export default function SignalsPage() {
 
       const decoded: Signal[] = logs.map((log: any) => {
         const args = log.args;
-        const conviction = convictionMap[args.signalId] ?? Math.floor(Math.random() * 5000) + 100;
+        // Use the real conviction from the convictionMap (sourced from the
+        // off-chain indexer's mirror of signal stake amounts). If missing
+        // (e.g. the indexer hasn't caught up yet), default to 0 — better
+        // to show an honest blank than a fake random number that misleads
+        // anyone watching the live arena.
+        const conviction = convictionMap[args.signalId] ?? 0;
         return {
           id: args.signalId as string,
           provider: args.provider as string,
