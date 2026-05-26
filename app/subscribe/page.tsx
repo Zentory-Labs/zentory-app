@@ -15,7 +15,12 @@ import { demoSubscribers } from "@/lib/demo/data";
 
 // ─── Tier definitions ─────────────────────────────────────────────────────────
 
-const ZENT_USD = 0.08;
+// Audit M-15 / M-16 fix: previously hardcoded $0.08 here while the marketing
+// site's tokenomics.json shows a sale price of $0.005. That cross-page
+// mismatch made the protocol look ~16× more expensive on this page. Aligned
+// to the canonical sale price. When mainnet liquidity exists, replace with a
+// viem `useReadContract` against the HyperSwap pair quoter for the live mark.
+const ZENT_USD = 0.005;
 
 interface Tier {
   id: number;

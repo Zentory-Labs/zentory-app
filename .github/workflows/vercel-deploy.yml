@@ -58,7 +58,16 @@ jobs:
           # POST to Vercel's deploy API. We tell it to fetch the source
           # from GitHub at the SHA that just pushed. Vercel will dedup if
           # its native webhook already triggered.
-          curl -sS -X POST \
+          #
+          # Audit M-12 fix: `curl -sS` returns exit 0 on 4xx/5xx, silently
+          # masking deploy failures. Switch to `--fail-with-body` so curl
+          # exits non-zero on any HTTP error but still prints the body so
+          # we can see why. Also capture the response and grep for the
+          # `id` field — a deploy that returned 200 but lacks `id` is also
+          # treated as a failure.
+          set -euo pipefail
+          response=$(curl --silent --show-error --fail-with-body \
+            -X POST \
             "https://api.vercel.com/v13/deployments?teamId=${VERCEL_ORG_ID}" \
             -H "Authorization: Bearer ${VERCEL_TOKEN}" \
             -H "Content-Type: application/json" \
@@ -75,6 +84,9 @@ jobs:
             }
           }
           EOF
+          )
+          echo "$response"
+          echo "$response" | grep -q '"id"' || { echo "::error::Vercel response missing deployment id"; exit 1; }
 
           echo ""
           echo "Vercel deploy triggered for commit ${GIT_SHA}"

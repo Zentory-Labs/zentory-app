@@ -112,30 +112,26 @@ export async function GET(request: Request) {
 async function sendAlert(message: string) {
   console.error(`[heartbeat cron] ALERT: ${message}`);
 
-  if (DISCORD_WEBHOOK_URL) {
-    try {
-      await fetch(DISCORD_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: `[ZENTORY KEEPER] ${message}`,
-          components: [
-            {
-              type: 1,
-              components: [
-                {
-                  type: 2,
-                  style: 4,
-                  label: 'View UptimeRobot',
-                  url: 'https://uptimerobot.com/dashboard',
-                },
-              ],
-            },
-          ],
-        }),
-      });
-    } catch (e) {
-      console.error('Failed to send Discord alert:', e);
+  if (!DISCORD_WEBHOOK_URL) return;
+
+  // Audit F-06 fix: Discord webhook tokens reject payloads with `components`
+  // (returns 400) — the keeper-side heartbeat already strips them. Before this
+  // fix, when the keeper died and this backup alert fired, the webhook 400'd
+  // silently because the previous code didn't check res.ok or surface errors,
+  // so no one ever got paged. Send content-only and log non-ok responses.
+  try {
+    const res = await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: `[ZENTORY KEEPER] ${message}\nDashboard: https://uptimerobot.com/dashboard`,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '<no body>');
+      console.error(`[heartbeat cron] Discord webhook returned ${res.status}: ${body}`);
     }
+  } catch (e) {
+    console.error('Failed to send Discord alert:', e);
   }
 }

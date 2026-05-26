@@ -2,7 +2,7 @@
 
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { EXECUTOR_ABI, VAULT_ABI, addresses, vaultMeta } from "@/lib/contracts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const VAULTS = [addresses.zETH, addresses.zBTC, addresses.zXRP, addresses.zSOL] as const;
 
@@ -15,8 +15,56 @@ function fmtBPS(raw: bigint): string {
 }
 
 export default function AdminPage() {
+  // Audit D-06 fix: gate the entire admin UI behind GUARDIAN_ROLE. Previously
+  // any visitor could see the pause + risk-parameter controls; the
+  // "Role-gated" pill was decorative, only the actual writes reverted
+  // on-chain. On mainnet that becomes a phishing template. This is a UI
+  // lockout, not a security boundary — writes still revert if the caller
+  // lacks the role.
   const { address, isConnected } = useAccount();
   const { writeContract } = useWriteContract();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const guardianRoleId = useReadContract({
+    address: addresses.StrategyExecutor,
+    abi: EXECUTOR_ABI,
+    functionName: "GUARDIAN_ROLE",
+  } as any);
+
+  const callerHasGuardian = useReadContract({
+    address: addresses.StrategyExecutor,
+    abi: EXECUTOR_ABI,
+    functionName: "hasRole",
+    args:
+      address && (guardianRoleId.data as `0x${string}` | undefined)
+        ? [guardianRoleId.data as `0x${string}`, address]
+        : undefined,
+    query: { enabled: Boolean(address && guardianRoleId.data) },
+  } as any);
+
+  if (!mounted || !isConnected) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white/60 p-8">
+        Connect a wallet to access the admin console.
+      </div>
+    );
+  }
+
+  if (callerHasGuardian.data === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-center p-8">
+        <div className="max-w-md">
+          <div className="text-2xl font-bold text-white mb-2">Not authorized</div>
+          <div className="text-sm text-white/60">
+            This page is restricted to wallets holding{" "}
+            <code>GUARDIAN_ROLE</code> on the StrategyExecutor contract.
+            Connected: <code>{shorten(address!)}</code>.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const isPaused = useReadContract({
     address: addresses.StrategyExecutor,

@@ -49,8 +49,24 @@ function safeJson<T>(data: T, init?: ResponseInit): NextResponse {
 }
 
 function checkAuth(req: NextRequest): NextResponse | null {
-  // If API key isn't configured, leave endpoint open in dev (but still require keeper key).
-  if (!API_KEY) return null;
+  // Audit D-02 fix: previously the endpoint was unauthenticated whenever
+  // `KEEPER_API_KEY` was unset — meaning a missing/misconfigured env var in
+  // production silently opened the endpoint to anyone, who could then spend
+  // keeper gas and write trades via `recordTradeManual`. We now hard-fail
+  // with 503 in production if the key is unset, so a deploy misconfiguration
+  // can't accidentally expose this. Local dev (NODE_ENV !== "production")
+  // still allows missing key for ergonomics.
+  if (!API_KEY) {
+    if (process.env.NODE_ENV === "production") {
+      return safeJson(
+        {
+          error: "Service misconfigured — KEEPER_API_KEY is not set in production.",
+        },
+        { status: 503 },
+      );
+    }
+    return null;
+  }
   const header = req.headers.get("authorization") ?? "";
   const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
   if (!token || token !== API_KEY) {

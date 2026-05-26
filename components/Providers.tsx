@@ -24,7 +24,10 @@ if (typeof window !== "undefined" && !Sentry.getClient()) {
     dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
     tracesSampleRate: 1,
     enableLogs: true,
-    sendDefaultPii: true,
+    // Audit D-08 / M-17 fix: sendDefaultPii was true, shipping wallet
+    // addresses, IPs, cookies and console.log payloads to Sentry. We aren't
+    // using Sentry user identification anyway. Off.
+    sendDefaultPii: false,
   });
 }
 

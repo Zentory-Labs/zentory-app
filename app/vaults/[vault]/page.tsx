@@ -3,6 +3,7 @@
 import { use, useState, useEffect, useCallback } from "react";
 import { notFound } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useRequireCorrectChain } from "@/lib/useRequireCorrectChain";
 import { erc20Abi, formatUnits } from "viem";
 import Link from "next/link";
 import Image from "next/image";
@@ -311,28 +312,28 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   }));
 
   // ─── Handlers ────────────────────────────────────────────────────
-  const handleApprove = useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.log("[zentory] handleApprove", { asset, vault, depositAmtBn: depositAmtBn?.toString() });
+  // Audit D-04: gate every write behind a chain-id check. Previously, a user
+  // on Ethereum mainnet hitting Deposit would approve whatever contract sat
+  // at our vault address on mainnet (often unrelated, occasionally hostile).
+  const requireChain = useRequireCorrectChain();
+
+  const handleApprove = useCallback(async () => {
     if (!asset || !depositAmtBn || !vault) return;
+    if (!(await requireChain())) return;
     approve({ address: asset, abi: erc20Abi, functionName: "approve", args: [vault, depositAmtBn] });
-  }, [asset, vault, depositAmtBn, approve]);
+  }, [asset, vault, depositAmtBn, approve, requireChain]);
 
-  const handleDeposit = useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.log("[zentory] handleDeposit", { vault, user, depositAmtBn: depositAmtBn?.toString() });
-    if (!vault || !depositAmtBn || !user) {
-      // eslint-disable-next-line no-console
-      console.warn("[zentory] handleDeposit early-return guard tripped", { hasVault: !!vault, hasUser: !!user, depositAmtBn: depositAmtBn?.toString() });
-      return;
-    }
+  const handleDeposit = useCallback(async () => {
+    if (!vault || !depositAmtBn || !user) return;
+    if (!(await requireChain())) return;
     deposit({ address: vault, abi: VAULT_ABI, functionName: "deposit", args: [depositAmtBn, user] });
-  }, [vault, depositAmtBn, user, deposit]);
+  }, [vault, depositAmtBn, user, deposit, requireChain]);
 
-  const handleWithdraw = useCallback(() => {
+  const handleWithdraw = useCallback(async () => {
     if (!vault || !withdrawSharesBn || !user) return;
+    if (!(await requireChain())) return;
     withdraw({ address: vault, abi: VAULT_ABI, functionName: "redeem", args: [withdrawSharesBn, user, user] });
-  }, [vault, withdrawSharesBn, user, withdraw]);
+  }, [vault, withdrawSharesBn, user, withdraw, requireChain]);
 
   useEffect(() => {
     if (isApproveSuccess || isDepositSuccess || isWithdrawSuccess) {

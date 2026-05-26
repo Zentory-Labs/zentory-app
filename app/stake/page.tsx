@@ -1,6 +1,15 @@
 "use client";
 
-import { useAccount, useReadContract, useWriteContractSync } from "wagmi";
+// Audit D-01 fix: useWriteContractSync is not a wagmi v2 hook (the previous
+// `const { writeContractSyncAsync } = useWriteContractSync()` line threw on
+// mount because `useWriteContractSync` resolved to undefined, breaking the
+// whole page). Wagmi v2 exports useWriteContract which returns a
+// `writeContractAsync` that resolves to a tx hash. We surface the hash to
+// the user and let them confirm in the explorer rather than blocking on a
+// receipt — the receipt-await was previously checking properties on a
+// synthesized object that wagmi v2 never returns.
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useRequireCorrectChain } from "@/lib/useRequireCorrectChain";
 import { STAKING_ABI, ZENT_ABI, addresses } from "@/lib/contracts";
 import { useState, useEffect, useMemo } from "react";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
@@ -85,7 +94,9 @@ export default function StakePage() {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { writeContractSyncAsync } = useWriteContractSync();
+  const { writeContractAsync } = useWriteContract();
+  // Audit D-05: gate stake/approve behind a chain-id check (HyperEVM 998).
+  const requireChain = useRequireCorrectChain();
 
   // veZENT preview calculator
   const previewVe = useMemo(() => {
@@ -104,35 +115,32 @@ export default function StakePage() {
     setIsPending(true);
     setTxHash(null);
     try {
+      if (!(await requireChain())) {
+        setError("Switch your wallet to HyperEVM testnet (chain 998) to stake.");
+        setIsPending(false);
+        return;
+      }
       const amountWei = BigInt(Math.floor(parseFloat(stakeAmount) * 1e18));
 
-      const approvalReceipt = await writeContractSyncAsync({
+      // Approve ZENT spend by the staking contract. writeContractAsync returns
+      // a tx hash; user confirms in their wallet. We don't pre-fetch the
+      // receipt — both the approval and the stake are sequential user-signed
+      // txns, and the second will simply revert at the contract layer if the
+      // first never confirmed.
+      await writeContractAsync({
         address: addresses.ZENT,
         abi: ZENT_ABI,
         functionName: "approve",
         args: [addresses.ZENTStaking, amountWei],
       } as any);
 
-      if (approvalReceipt.status !== "success") {
-        setError("Approval transaction failed");
-        setIsPending(false);
-        return;
-      }
-
-      const stakeReceipt = await writeContractSyncAsync({
+      const stakeTxHash = await writeContractAsync({
         address: addresses.ZENTStaking,
         abi: STAKING_ABI,
         functionName: "stake",
         args: [amountWei, BigInt(lockDurationSeconds)],
       } as any);
-      setTxHash(stakeReceipt.transactionHash);
-
-      if (stakeReceipt.status !== "success") {
-        setError("Stake transaction failed");
-        setIsPending(false);
-        return;
-      }
-
+      setTxHash(stakeTxHash);
       setIsPending(false);
     } catch (err: any) {
       setError(err.shortMessage ?? err.message ?? "Transaction failed");
