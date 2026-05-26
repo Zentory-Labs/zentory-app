@@ -1,0 +1,80 @@
+# Fallback Vercel auto-deploy.
+#
+# Vercel's native GitHub integration occasionally fails to fire deploys
+# on push (#108 — observed twice in a single session, commits c79796c
+# and cdbe78e). This workflow is the belt-and-braces fallback that pings
+# Vercel's deploy API directly so we don't rely solely on the webhook.
+#
+# Setup (one-time):
+#   1. Generate a Vercel token at
+#      https://vercel.com/account/tokens — scope it to the zentory-token
+#      project ONLY (Vercel calls it that, even though it serves
+#      app.zentorylabs.com — legacy name from before the dApp split).
+#   2. Find the project ID at
+#      Vercel → zentory-token → Settings → General → Project ID
+#   3. Add both as GitHub repo secrets at
+#      https://github.com/Zentory-Labs/zentory-app/settings/secrets/actions
+#        VERCEL_TOKEN       — the token from step 1
+#        VERCEL_PROJECT_ID  — the project ID from step 2
+#        VERCEL_ORG_ID      — Vercel → Settings → General → Team ID
+#                              (starts with `team_`)
+#
+# This workflow runs in parallel with Vercel's native webhook. If both
+# fire, Vercel deduplicates — only the first one through actually builds.
+# If the native webhook fails, this one rescues us.
+#
+# Disable this workflow once #108's underlying webhook issue is fixed.
+
+name: Vercel deploy (fallback)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  trigger-vercel-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Vercel production deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          GIT_SHA: ${{ github.sha }}
+          GIT_REF: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${VERCEL_TOKEN:-}" ] || [ -z "${VERCEL_PROJECT_ID:-}" ]; then
+            echo "::warning::VERCEL_TOKEN or VERCEL_PROJECT_ID not configured — skipping fallback deploy. See workflow header for setup."
+            exit 0
+          fi
+
+          # POST to Vercel's deploy API. We tell it to fetch the source
+          # from GitHub at the SHA that just pushed. Vercel will dedup if
+          # its native webhook already triggered.
+          curl -sS -X POST \
+            "https://api.vercel.com/v13/deployments?teamId=${VERCEL_ORG_ID}" \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d @- <<EOF
+          {
+            "name": "zentory-token",
+            "project": "${VERCEL_PROJECT_ID}",
+            "target": "production",
+            "gitSource": {
+              "type": "github",
+              "repo": "${REPO}",
+              "ref": "${GIT_REF}",
+              "sha": "${GIT_SHA}"
+            }
+          }
+          EOF
+
+          echo ""
+          echo "Vercel deploy triggered for commit ${GIT_SHA}"
