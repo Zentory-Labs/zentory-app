@@ -146,7 +146,14 @@ export default function SignalsPage() {
       });
 
       const LATEST_BLOCK = await publicClient.getBlockNumber();
-      const FROM_BLOCK = LATEST_BLOCK > 10000n ? LATEST_BLOCK - 10000n : 0n;
+      // Alchemy + HyperEVM public RPC enforce a 1000-block max range per
+      // eth_getLogs call. 10000 was way over and threw "query exceeds max
+      // block range" on every refresh. 900 keeps us comfortably under the
+      // ceiling and on HyperEVM's ~600ms blocks equals ~9 min of history —
+      // enough for live signal demos; older signals come from the Supabase
+      // mirror populated by the off-chain indexer.
+      const MAX_RANGE = 900n;
+      const FROM_BLOCK = LATEST_BLOCK > MAX_RANGE ? LATEST_BLOCK - MAX_RANGE : 0n;
 
       const logs = await publicClient.getLogs({
         address: addresses.SignalRegistry,

@@ -31,45 +31,62 @@ const VAULT_CONFIG: Record<string, {
   vaultAddress: `0x${string}`;
   assetAddress: `0x${string}`;
 }> = {
+  // ⚠️ TESTNET REALITY: the four MockERC20 underlyings were deployed
+  // swapped — each zX vault wraps a different mock than its label suggests:
+  //   zBTC.asset() → WETH (18 decimals)
+  //   zETH.asset() → WBTC (8 decimals)
+  //   zSOL.asset() → WXRP (6 decimals)
+  //   zXRP.asset() → WSOL (9 decimals)
+  // The vaults themselves work correctly (ERC-4626 accounting is internally
+  // consistent), but the LABELS on this page don't match what the contract
+  // actually wraps. Two consequences for this config block:
+  //   1. `decimals` must reflect what's ACTUALLY wrapped on-chain, otherwise
+  //      TVL math is wrong by 1000x+ (this was the visible bug — zSOL showed
+  //      $100B because the dApp formatted a 6-decimal raw value as 9-decimal).
+  //   2. `assetAddress` must point to the contract.asset() target, otherwise
+  //      the Approve flow asks the user for the wrong token and the deposit
+  //      reverts with InsufficientAllowance.
+  // Mainnet deploy: redeploy these vaults with the correct underlyings so
+  // the labels line up. Tracked separately as a M12 (mainnet deploy) blocker.
   zBTC: {
     name: "zBTC Vault",
     symbol: "zBTC",
-    decimals: 8,
+    decimals: 18, // actually wraps WETH on testnet (see comment above)
     color: "#F7931A",
     bgColor: "rgba(247,147,26,0.1)",
     assetName: "Wrapped Bitcoin",
     vaultAddress: addresses.zBTC,
-    assetAddress: addresses.WBTC,
+    assetAddress: addresses.WETH, // ← actual on-chain target
   },
   zETH: {
     name: "zETH Vault",
     symbol: "zETH",
-    decimals: 18,
+    decimals: 8, // actually wraps WBTC on testnet
     color: "#627EEA",
     bgColor: "rgba(98,126,234,0.1)",
     assetName: "Wrapped Ethereum",
     vaultAddress: addresses.zETH,
-    assetAddress: addresses.WETH,
+    assetAddress: addresses.WBTC,
   },
   zSOL: {
     name: "zSOL Vault",
     symbol: "zSOL",
-    decimals: 9, // on-chain WSOL + zSOL share are 9 decimals
+    decimals: 6, // actually wraps WXRP on testnet (root cause of the $100B bug)
     color: "#9945FF",
     bgColor: "rgba(153,69,255,0.1)",
     assetName: "Wrapped Solana",
     vaultAddress: addresses.zSOL,
-    assetAddress: addresses.WSOL,
+    assetAddress: addresses.WXRP,
   },
   zXRP: {
     name: "zXRP Vault",
     symbol: "zXRP",
-    decimals: 6,
+    decimals: 9, // actually wraps WSOL on testnet
     color: "#00AAE4",
     bgColor: "rgba(0,170,228,0.1)",
     assetName: "Wrapped XRP",
     vaultAddress: addresses.zXRP,
-    assetAddress: addresses.WXRP,
+    assetAddress: addresses.WSOL,
   },
 };
 

@@ -20,14 +20,33 @@ const STAKING_ABI_VIEM = STAKING_ABI;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
-function getAssetDecimals(asset: string): number {
-  // These correspond to the mock assets deployed on HyperEVM testnet.
-  // ETH mock is 18, SOL mock is 9 (matches native SOL), BTC is 8, XRP is 6.
+// Used as the FALLBACK label-based guess for asset decimals while the
+// real value is being read from chain. Most of the time the chain read
+// returns first and supersedes this — we keep the guess only so the
+// initial render doesn't flash "$0" or "$NaN" before the read settles.
+//
+// IMPORTANT: do NOT rely on this for display math. On testnet the deployed
+// mock tokens are swapped (zBTC wraps WETH, zSOL wraps WXRP, etc. — see
+// scripts/verify-vault-underlyings.ts) and the only correct source of
+// truth is reading IERC20(vault.asset()).decimals() at runtime.
+function getAssetDecimalsFallback(asset: string): number {
   if (asset === "BTC") return 8;
   if (asset === "XRP") return 6;
   if (asset === "SOL") return 9;
   return 18;
 }
+
+// Minimal ABI for the one ERC-20 call we make on each underlying — saves
+// importing a full ERC-20 helper and keeps the parsed ABI surface tiny.
+const ERC20_DECIMALS_ABI = [
+  {
+    type: "function",
+    name: "decimals",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ type: "uint8" }],
+  },
+] as const;
 
 function fmtUnitsTrim(value: bigint, decimals: number, fractionDigits: number): string {
   const s = formatUnits(value, decimals);
@@ -98,10 +117,14 @@ function TokenLogo({ symbol }: { symbol: string }) {
 
 function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
   const meta = vaultMeta[vault];
-  const assetDecimals = getAssetDecimals(meta.asset);
+  // assetDecimals starts as the label-based fallback (BTC=8, SOL=9, etc.)
+  // and gets overwritten by the on-chain read after the first load tick.
+  // See getAssetDecimalsFallback comment for why this matters.
+  const fallbackDecimals = getAssetDecimalsFallback(meta.asset);
   const { enabled: demoMode } = useDemoMode();
   const [tvl, setTvl] = useState<bigint | null>(null);
   const [nav, setNav] = useState<bigint | null>(null);
+  const [assetDecimals, setAssetDecimals] = useState<number>(fallbackDecimals);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -134,13 +157,25 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
       try {
         setIsLoading(true);
         setIsError(false);
-        const [assets, navPerShare] = await Promise.all([
+        // Read in parallel: totalAssets, navPerShare, and the underlying
+        // token address. Then a follow-up read for the underlying's
+        // decimals() because the testnet mocks are swapped (see comment on
+        // getAssetDecimalsFallback) and label-based decimals give wrong
+        // magnitudes — most visibly the inflated zSOL TVL.
+        const [assets, navPerShare, underlying] = await Promise.all([
           publicClient.readContract({ address: vault as any, abi: VAULT_ABI_VIEM as any, functionName: "totalAssets" }),
           publicClient.readContract({ address: vault as any, abi: VAULT_ABI_VIEM as any, functionName: "getNavPerShare" }),
+          publicClient.readContract({ address: vault as any, abi: VAULT_ABI_VIEM as any, functionName: "asset" }),
         ]);
+        const onChainDecimals = (await publicClient.readContract({
+          address: underlying as `0x${string}`,
+          abi: ERC20_DECIMALS_ABI,
+          functionName: "decimals",
+        })) as number;
         if (cancelled) return;
         setTvl(assets as bigint);
         setNav(navPerShare as bigint);
+        setAssetDecimals(onChainDecimals);
       } catch {
         if (cancelled) return;
         setIsError(true);
