@@ -15,29 +15,17 @@ import { DemoModeProvider } from "@/lib/demo/context";
 // in an always-loaded 'use client' component guarantees it runs once on
 // first paint. Idempotent: getClient() check avoids double-init.
 if (typeof window !== "undefined" && !Sentry.getClient()) {
-  // eslint-disable-next-line no-console
-  console.log("[ZENTORY] Sentry client init starting");
-  try {
-    Sentry.init({
-      dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
-      tracesSampleRate: 1,
-      enableLogs: true,
-      sendDefaultPii: true,
-      // debug: true surfaces internal SDK errors to the console so silent
-      // init failures (missing transport, bad integration) are visible.
-      debug: true,
-    });
-    const client = Sentry.getClient();
-    // eslint-disable-next-line no-console
-    console.log("[ZENTORY] Sentry init complete. Client:", client ? "✓ created" : "✗ NOT created");
-    // Expose the namespace on window for browser-side debugging only.
-    // Module-scoped imports can't be probed from devtools — this gives us a
-    // handle to call Sentry.captureMessage / .captureException by hand.
-    (window as unknown as { Sentry: typeof Sentry }).Sentry = Sentry;
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error("[ZENTORY] Sentry init THREW:", e);
-  }
+  // The wizard's instrumentation-client.ts approach only works under
+  // Webpack — Turbopack (Next.js 16 default) bundles the file but never
+  // runs its top-level code. Inlining init here in an always-loaded
+  // 'use client' component is the workaround. Gated on !getClient() so
+  // re-mounts (HMR, route transitions) don't double-init.
+  Sentry.init({
+    dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
+    tracesSampleRate: 1,
+    enableLogs: true,
+    sendDefaultPii: true,
+  });
 }
 
 const queryClient = new QueryClient();
