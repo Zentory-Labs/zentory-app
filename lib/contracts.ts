@@ -43,13 +43,17 @@ export const addresses = {
   HyperCoreAdapter: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7",
   StrategyExecutor: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF",
 
-  // ─── Research Network (deployed 2026-04-28 via deploy_signal_network.s.sol) ────────
-  SignalRegistry:    "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c",
-  // Redeployed 2026-05-25 — original deploy at 0xC9F7345574e8734247556Ed4e30B11851E285bA4
-  // had stripped/wrong bytecode (missing scoringOracle/DEFAULT_ADMIN_ROLE selectors).
-  // New deploy tx: 0x08d6834e7660d84f4628bdfc2c71eb190d8fd4013e054ea9baed8f6efd486327
-  EpochScoring:     "0xDcB2a366dCD5eE126793523b1BeFd78E32A1694d",
-  SubscriptionVault: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d",
+  // ─── Research Network — REDEPLOYED 2026-05-27 via deploy_signal_network.s.sol ──────
+  // The prior SignalRegistry (0x7745...) predated getSignalCount/advanceEpoch,
+  // so EpochScoring.settleEpoch() reverted and the keeper loop stalled at
+  // epoch 1. This redeploy ships the current source (per-epoch scoring,
+  // advanceEpoch, oracle, low-s, etc.) with the EpochScoring contract granted
+  // SCORING_ORACLE on the registry so settleEpoch works. Verified on-chain:
+  // getSignalCount() returns 0 (no longer reverts) and settleEpoch() simulates
+  // successfully from the keeper.
+  SignalRegistry:    "0xd743381782707d86C6d679779fD71b962ae10658",
+  EpochScoring:      "0xbA31Cf18fA442f21F70EaB7452B67231fbf6ec2a",
+  SubscriptionVault: "0x2D71aa478b9e267e41168f3f4f2AF79009924C54",
 } as const;
 
 // ─── ABIs ───────────────────────────────────────────────────────────────────
