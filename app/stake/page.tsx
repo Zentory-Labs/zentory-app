@@ -10,6 +10,7 @@
 // synthesized object that wagmi v2 never returns.
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { useRequireCorrectChain } from "@/lib/useRequireCorrectChain";
+import { reportError } from "@/lib/reportError";
 import { STAKING_ABI, ZENT_ABI, addresses } from "@/lib/contracts";
 import { useState, useEffect, useMemo } from "react";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
@@ -143,7 +144,7 @@ export default function StakePage() {
       setTxHash(stakeTxHash);
       setIsPending(false);
     } catch (err: any) {
-      setError(err.shortMessage ?? err.message ?? "Transaction failed");
+      setError(reportError(err, { scope: "stake.submit", lockDays }));
       setIsPending(false);
     }
   }

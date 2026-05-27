@@ -12,6 +12,7 @@ import { erc20Abi } from "viem";
 import { addresses, SUBSCRIPTION_VAULT_ABI } from "@/lib/contracts";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoSubscribers } from "@/lib/demo/data";
+import { reportError } from "@/lib/reportError";
 
 // ─── Tier definitions ─────────────────────────────────────────────────────────
 
@@ -191,7 +192,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       });
     } catch (e: unknown) {
       setState("error");
-      setError(e instanceof Error ? e.message : "Transaction failed");
+      setError(reportError(e, { scope: "subscribe.approve" }));
     }
   }
 
