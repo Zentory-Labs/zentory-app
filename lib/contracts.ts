@@ -45,15 +45,16 @@ export const addresses = {
 
   // ─── Research Network — REDEPLOYED 2026-05-27 via deploy_signal_network.s.sol ──────
   // The prior SignalRegistry (0x7745...) predated getSignalCount/advanceEpoch,
-  // so EpochScoring.settleEpoch() reverted and the keeper loop stalled at
-  // epoch 1. This redeploy ships the current source (per-epoch scoring,
-  // advanceEpoch, oracle, low-s, etc.) with the EpochScoring contract granted
-  // SCORING_ORACLE on the registry so settleEpoch works. Verified on-chain:
-  // getSignalCount() returns 0 (no longer reverts) and settleEpoch() simulates
-  // successfully from the keeper.
-  SignalRegistry:    "0xd743381782707d86C6d679779fD71b962ae10658",
-  EpochScoring:      "0xbA31Cf18fA442f21F70EaB7452B67231fbf6ec2a",
-  SubscriptionVault: "0x2D71aa478b9e267e41168f3f4f2AF79009924C54",
+  // so EpochScoring.settleEpoch() reverted and the keeper loop stalled at epoch 1.
+  // The first redeploy attempt failed mid-broadcast (deployer out of gas), so the
+  // earlier 0xd743/0xbA31/0x2D71 addresses were never actually deployed. These are
+  // the addresses from the SUCCESSFUL broadcast. NOTE: forge's broadcast receipt
+  // mislabeled the contract names (rotated); identity was confirmed on-chain by
+  // eth_call — EpochScoring.signalRegistry() returns the SignalRegistry below and
+  // SignalRegistry.getSignalCount() returns 0 (no longer reverts).
+  SignalRegistry:    "0xFA50e97287cdF3A82C538de63475C60046a2DE58",
+  EpochScoring:      "0x78d38C666341Ca6a94f478E6ae2f216264ca9809",
+  SubscriptionVault: "0x433962C14Ddd3034cF858E1C1b9986a8d876fF73",
 } as const;
 
 // ─── ABIs ───────────────────────────────────────────────────────────────────
