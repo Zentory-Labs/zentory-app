@@ -1,0 +1,22 @@
+# Code owners — every PR auto-requests review from these handles. With
+# branch protection's "Require review from Code Owners" turned on, no PR
+# can merge without their approval. See ../zentory-protocol/SECURITY_HARDENING.md.
+# Replace @edgeza with the maintainer's real GitHub handle.
+
+# Everything
+*                                                      @edgeza
+
+# Load-bearing paths
+/.github/                                              @edgeza
+/.github/workflows/                                    @edgeza
+/package.json                                          @edgeza
+/package-lock.json                                     @edgeza
+/next.config.*                                         @edgeza
+/middleware.ts                                         @edgeza
+/lib/contracts.ts                                      @edgeza
+/lib/wagmi.ts                                          @edgeza
+/lib/supabase*                                         @edgeza
+/app/api/                                              @edgeza
+/components/GhostPortfolioTile.tsx                     @edgeza
+/components/LiveSignalWidget.tsx                       @edgeza
+/public/forward_ledger.jsonl                           @edgeza
