@@ -148,7 +148,7 @@ export default function GhostPortfolioTile({ asset }: { asset: string }) {
               <Tooltip
                 contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: "rgba(255,255,255,0.5)" }}
-                formatter={(v: number) => v.toFixed(4)}
+                formatter={(v) => (typeof v === "number" ? v.toFixed(4) : String(v))}
               />
               <Legend wrapperStyle={{ fontSize: 12, color: COLOR.text }} />
               <Line type="monotone" dataKey="hold"  stroke={COLOR.hold}  strokeWidth={1.5} dot={false} name="HOLD" />
