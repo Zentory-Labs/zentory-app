@@ -21,6 +21,8 @@ import { getVaultNavHistory, type VaultNavSnapshot } from "@/lib/vault-stats";
 import { getRecentHlUserFills, type HlUserFillRow } from "@/lib/execution-trace";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoNavHistory, demoHlFills } from "@/lib/demo/data";
+import LiveSignalWidget from "@/components/LiveSignalWidget";
+import GhostPortfolioTile from "@/components/GhostPortfolioTile";
 
 const VAULT_CONFIG: Record<string, {
   name: string;
@@ -578,6 +580,10 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           </div>
         </div>
       )}
+
+      {/* Live signal + Ghost Portfolio attribution (forward-recorder driven) */}
+      <LiveSignalWidget asset={config.symbol.slice(1)} />
+      <GhostPortfolioTile asset={config.symbol.slice(1)} />
 
       {/* NAV Chart */}
       {chartData.length > 0 && (
