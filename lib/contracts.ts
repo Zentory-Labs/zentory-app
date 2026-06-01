@@ -43,18 +43,18 @@ export const addresses = {
   HyperCoreAdapter: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7",
   StrategyExecutor: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF",
 
-  // ─── Research Network — REDEPLOYED 2026-05-27 via deploy_signal_network.s.sol ──────
-  // The prior SignalRegistry (0x7745...) predated getSignalCount/advanceEpoch,
-  // so EpochScoring.settleEpoch() reverted and the keeper loop stalled at epoch 1.
-  // The first redeploy attempt failed mid-broadcast (deployer out of gas), so the
-  // earlier 0xd743/0xbA31/0x2D71 addresses were never actually deployed. These are
-  // the addresses from the SUCCESSFUL broadcast. NOTE: forge's broadcast receipt
-  // mislabeled the contract names (rotated); identity was confirmed on-chain by
-  // eth_call — EpochScoring.signalRegistry() returns the SignalRegistry below and
-  // SignalRegistry.getSignalCount() returns 0 (no longer reverts).
-  SignalRegistry:    "0xFA50e97287cdF3A82C538de63475C60046a2DE58",
-  EpochScoring:      "0x78d38C666341Ca6a94f478E6ae2f216264ca9809",
-  SubscriptionVault: "0x433962C14Ddd3034cF858E1C1b9986a8d876fF73",
+  // ─── Research Network — REDEPLOYED 2026-06-01 via deploy_signal_network.s.sol ──────
+  // Carries the spec-conformance audit fixes (merged to protocol main, PR #15):
+  // EpochScoring payout made linear/monotonic + scaled to +5%/-1.7% clips, the
+  // reference-close snapshot moved BEFORE scoring (accuracy was identically 0),
+  // recency window off-by-one; SignalRegistry direction/confidence bounds; and the
+  // CRITICAL SubscriptionVault fix (renewals no longer charged every tier at the
+  // ELITE price). Supersedes the 2026-05-27 set (0xFA50/0x78d38/0x433962).
+  // Verified on-chain: EpochScoring.signalRegistry() == the SignalRegistry below,
+  // currentEpochId() == 1, SignalRegistry.getSignalCount() == 0 (no revert).
+  SignalRegistry:    "0x9685F25E75758E18b2b109be64271102497D800e",
+  EpochScoring:      "0x31b7082f1e1B3cC373dE3d9c3575701b9aa24538",
+  SubscriptionVault: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E",
 } as const;
 
 // ─── ABIs ───────────────────────────────────────────────────────────────────
