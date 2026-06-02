@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
 import { createPublicClient, http, parseAbiItem } from "viem";
-import { addresses, HYPEREVM_TESTNET } from "@/lib/contracts";
+import { addresses, HYPEREVM_TESTNET, demoProviderLabel } from "@/lib/contracts";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoSignals, demoProviders } from "@/lib/demo/data";
 
@@ -315,19 +315,35 @@ export default function SignalsPage() {
                     className="rounded-xl p-4 flex items-center gap-4"
                     style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
                   >
-                    {/* Provider — show the full name when it's a human name
-                        (e.g. "Genesis Pulse"); only truncate when the provider
-                        field is a raw 0x address. */}
+                    {/* Provider — a labeled demo account shows its name + a Demo
+                        badge; a known human name shows in full; otherwise a raw
+                        0x address is truncated. */}
                     <div className="flex-shrink-0 w-36">
-                      <div
-                        className={`text-xs truncate ${sig.provider.startsWith("0x") ? "font-mono" : "font-semibold"}`}
-                        style={{ color: "#7c5cff" }}
-                        title={sig.provider}
-                      >
-                        {sig.provider.startsWith("0x") && sig.provider.length === 42
-                          ? `${sig.provider.slice(0, 8)}…${sig.provider.slice(-6)}`
-                          : sig.provider}
-                      </div>
+                      {(() => {
+                        const demoLabel = demoProviderLabel(sig.provider);
+                        if (demoLabel) {
+                          return (
+                            <div className="flex items-center gap-1.5" title={sig.provider}>
+                              <span className="text-xs font-semibold truncate" style={{ color: "#7c5cff" }}>{demoLabel}</span>
+                              <span className="text-[9px] px-1 py-0.5 rounded uppercase tracking-wide flex-shrink-0"
+                                style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff", border: "1px solid rgba(124,92,255,0.3)" }}>
+                                Demo
+                              </span>
+                            </div>
+                          );
+                        }
+                        return (
+                          <div
+                            className={`text-xs truncate ${sig.provider.startsWith("0x") ? "font-mono" : "font-semibold"}`}
+                            style={{ color: "#7c5cff" }}
+                            title={sig.provider}
+                          >
+                            {sig.provider.startsWith("0x") && sig.provider.length === 42
+                              ? `${sig.provider.slice(0, 8)}…${sig.provider.slice(-6)}`
+                              : sig.provider}
+                          </div>
+                        );
+                      })()}
                       <div className="text-xs mt-0.5" style={{ color: "rgba(106,111,117,0.7)" }}>
                         {fmtTime(sig.submittedAt)}
                       </div>

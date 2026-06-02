@@ -68,6 +68,23 @@ export const addresses = {
   ShadowUSDC:        "0x2DF6A937da1430B4B593fE3EB2C9AB986cC3AF9e",
 } as const;
 
+// ─── Demo signal providers (TESTNET ONLY) ───────────────────────────────────
+// Clearly-labeled demo accounts seeded by zentory-engine/demo_seed_signals.py to
+// demonstrate the Signal Arena's scoring/leaderboard mechanics while real external
+// quants are recruited. Keyed by lowercase address. The UI shows a "Demo" badge so
+// these are never mistaken for real contributor performance. Addresses are
+// deterministic (derived from the public seed "zentory-testnet-demo-v1").
+export const DEMO_PROVIDERS: Record<string, string> = {
+  "0xc34a3d1d32e88079a66595a681cee1ed8fd98edc": "TrendFollower",
+  "0x331af524893044c39417870b429f6d0afa464b0d": "MeanReverter",
+  "0xd3255b14c9f26648723e75ed2bf1448ffa6b01b9": "MomentumQuant",
+};
+
+export function demoProviderLabel(address: string | undefined | null): string | null {
+  if (!address) return null;
+  return DEMO_PROVIDERS[address.toLowerCase()] ?? null;
+}
+
 // ─── ABIs ───────────────────────────────────────────────────────────────────
 
 // All ABIs below are pre-parsed via viem's `parseAbi` so they're directly
