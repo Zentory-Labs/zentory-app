@@ -55,6 +55,17 @@ export const addresses = {
   SignalRegistry:    "0x9685F25E75758E18b2b109be64271102497D800e",
   EpochScoring:      "0x31b7082f1e1B3cC373dE3d9c3575701b9aa24538",
   SubscriptionVault: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E",
+
+  // ─── Shadow stack — SpotVault research vault (TESTNET ONLY, deployed 2026-06-02) ──
+  // Oracle-valued ERC-4626 vault that rebalances BTC long ⇄ flat on signed signals.
+  // Self-contained testnet swap venue (no real Hyperliquid spot integration) so the
+  // deposit → rebalance → NAV → redeem loop runs end-to-end. NONE of these ship to
+  // mainnet. Recorded here for tooling/scripts; a dedicated dApp vault page that reads
+  // the oracle-valued NAV is a follow-on (the existing /vaults pages drive BaseVaults).
+  SpotVault:         "0x504E998B32D165cfd6470a8a0000235550C33cBc",
+  ShadowSpotAdapter: "0x385Ba1f9A9d74A28974C8F6c03762D03B0e4a00c",
+  ShadowPriceOracle: "0x46a7c01424229CB5B2C9FF069e6b0eab07490Fd4",
+  ShadowUSDC:        "0x2DF6A937da1430B4B593fE3EB2C9AB986cC3AF9e",
 } as const;
 
 // ─── ABIs ───────────────────────────────────────────────────────────────────
