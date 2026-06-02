@@ -126,6 +126,40 @@ export const VAULT_ABI = parseAbi([
   "event Withdraw(address indexed caller, address indexed receiver, address indexed owner, uint256 assets, uint256 shares)",
 ]);
 
+// SpotVault (shadow research vault) — oracle-valued ERC-4626 that holds the
+// underlying (LONG) or cash (FLAT) and rebalances on signed signals. Shares use
+// a decimals offset (asset decimals + 6), so always read decimals() rather than
+// assuming. NAV is valued via the price oracle, so deposits/redeems revert if the
+// feed is stale.
+export const SPOT_VAULT_ABI = parseAbi([
+  "function decimals() view returns (uint8)",
+  "function balanceOf(address) view returns (uint256)",
+  "function asset() view returns (address)",
+  "function cashAsset() view returns (address)",
+  "function totalAssets() view returns (uint256)",
+  "function totalSupply() view returns (uint256)",
+  "function convertToAssets(uint256) view returns (uint256)",
+  "function previewRedeem(uint256) view returns (uint256)",
+  "function deposit(uint256,address) returns (uint256)",
+  "function redeem(uint256,address,address) returns (uint256)",
+  "function getNavPerShare() view returns (uint256)",
+  "function grossValue() view returns (uint256)",
+  "function highWaterMark() view returns (uint256)",
+  "function performanceFee() view returns (uint256)",
+  "function targetWeightBps() view returns (uint16)",
+  "function rebalanceThresholdBps() view returns (uint16)",
+  "function maxSlippageBps() view returns (uint16)",
+  "function maxOracleStaleness() view returns (uint256)",
+  "function isCircuitBreakerActive() view returns (bool)",
+]);
+
+// Chainlink-compatible price feed (ShadowPriceOracle on testnet). Reading
+// latestRoundData returns [roundId, answer, startedAt, updatedAt, answeredInRound].
+export const PRICE_ORACLE_ABI = parseAbi([
+  "function decimals() view returns (uint8)",
+  "function latestRoundData() view returns (uint80, int256, uint256, uint256, uint80)",
+]);
+
 export const STAKING_ABI = parseAbi([
   "function stake(uint256,uint64) returns (uint64)",
   "function increaseAmount(uint256)",

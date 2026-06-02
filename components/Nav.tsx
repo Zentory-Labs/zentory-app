@@ -39,6 +39,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/vaults/zETH", label: "zETH Vault", desc: "Wrapped Ethereum" },
       { href: "/vaults/zSOL", label: "zSOL Vault", desc: "Wrapped Solana" },
       { href: "/vaults/zXRP", label: "zXRP Vault", desc: "Wrapped XRP" },
+      { href: "/vaults/spot", label: "Spot Strategy Vault", desc: "BTC long ⇄ flat · oracle-valued · testnet research" },
       { href: "/dashboard", label: "Protocol Dashboard", desc: "Aggregate TVL, alpha, capital flow" },
       { href: "/faucet", label: "Testnet Faucet", desc: "Mint mock assets for testing" },
     ],
