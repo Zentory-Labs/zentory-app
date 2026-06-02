@@ -34,14 +34,13 @@ const VAULT_CONFIG: Record<string, {
   vaultAddress: `0x${string}`;
   assetAddress: `0x${string}`;
 }> = {
-  // Each vault wraps the correctly-labelled MockERC20 on-chain — I had to
-  // re-verify via vault.asset() (the original `addresses.WBTC` etc. in
-  // lib/contracts.ts are correct, I just initially confused myself by
-  // cross-referencing against a stale memory note). Real bug for the
-  // visible $100B zSOL: someone seeded the vault with 100 BILLION WSOL
-  // at deploy time (almost certainly a unit error somewhere in the
-  // seeding script). Display math here is correct, the contract state
-  // is just too big. Withdraw the excess via vault admin to fix.
+  // Each vault wraps the correctly-labelled MockERC20 on-chain (verified via
+  // vault.asset()). NOTE on the old "$100B zSOL" scare: that was a DECIMALS
+  // DISPLAY bug, not an on-chain problem. zSOL holds totalAssets = 1e11 raw
+  // WSOL which, at WSOL's 9 decimals, is a sane ~100 SOL — it only looked like
+  // 100 billion when rendered without the 9-decimal scaling. Fixed by the
+  // decimals:9 entry below (+ matching handling on the dashboard/home pages).
+  // No on-chain action needed; verified 2026-06-02 (totalAssets == 1e11).
   zBTC: {
     name: "zBTC Vault",
     symbol: "zBTC",
