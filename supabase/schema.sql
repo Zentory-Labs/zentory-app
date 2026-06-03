@@ -296,8 +296,15 @@ create table if not exists public.provider_stats (
   total_payout_zent   numeric(78, 0) default 0,
   current_rank        integer default 0,
   last_signal_at      bigint,
+  zent_staked         numeric(78, 0) default 0,
   updated_at          bigint  not null default (EXTRACT(EPOCH FROM NOW()))::BIGINT
 );
+
+-- Idempotent column add for tables created before zent_staked existed
+-- (CREATE TABLE IF NOT EXISTS above won't alter an existing table). The
+-- /api/leaderboard SELECT references zent_staked, so a missing column errors
+-- the whole query.
+alter table public.provider_stats add column if not exists zent_staked numeric(78, 0) default 0;
 
 create index if not exists idx_provider_stats_rank     on public.provider_stats(current_rank);
 create index if not exists idx_provider_stats_provider on public.provider_stats(provider);
