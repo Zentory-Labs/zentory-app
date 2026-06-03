@@ -305,6 +305,9 @@ create table if not exists public.provider_stats (
 -- /api/leaderboard SELECT references zent_staked, so a missing column errors
 -- the whole query.
 alter table public.provider_stats add column if not exists zent_staked numeric(78, 0) default 0;
+-- Running sum of accuracy bps so the incremental indexer can maintain an exact
+-- average (avg = accuracy_sum_bps / resolved_signals) without re-scanning history.
+alter table public.provider_stats add column if not exists accuracy_sum_bps bigint default 0;
 
 create index if not exists idx_provider_stats_rank     on public.provider_stats(current_rank);
 create index if not exists idx_provider_stats_provider on public.provider_stats(provider);
@@ -318,6 +321,17 @@ create policy "provider_stats_read_all"
 drop policy if exists "provider_stats_insert_keeper" on public.provider_stats;
 create policy "provider_stats_insert_keeper"
   on public.provider_stats for insert with check (true);
+
+-- ─── indexer_state — cursor for the incremental Signal Arena indexer ──────────
+-- Stores the last fully-scanned block so each indexer run scans only NEW blocks
+-- (RPC-light) and accumulates into provider_stats. RLS on with no policy: only
+-- the service-role key (which bypasses RLS) reads/writes it — nothing public.
+create table if not exists public.indexer_state (
+  key        text primary key,
+  last_block bigint not null default 0,
+  updated_at bigint not null default (EXTRACT(EPOCH FROM NOW()))::BIGINT
+);
+alter table public.indexer_state enable row level security;
 
 -- ─── subscriptions — ERC-6932 subscription tracking ───────────
 create table if not exists public.subscriptions (
