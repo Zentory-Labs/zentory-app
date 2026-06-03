@@ -336,9 +336,13 @@ create table if not exists public.subscriptions (
 
 create index if not exists idx_subscriptions_subscriber on public.subscriptions(subscriber);
 create index if not exists idx_subscriptions_expiration  on public.subscriptions(expiration);
+-- Plain composite index (subscriber, expiration). A PARTIAL index with a
+-- `where expiration > now()` predicate is illegal in Postgres — index predicates
+-- must be IMMUTABLE and now()/EXTRACT(EPOCH FROM NOW()) is only STABLE (error
+-- 42P17). The "active" filter is applied at query time instead; this index still
+-- serves it.
 create index if not exists idx_subscriptions_active
-  on public.subscriptions(subscriber, expiration)
-  where expiration > (EXTRACT(EPOCH FROM NOW()))::BIGINT;
+  on public.subscriptions(subscriber, expiration);
 
 alter table public.subscriptions enable row level security;
 
