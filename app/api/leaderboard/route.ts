@@ -13,8 +13,12 @@ export async function GET() {
   try {
     supabase = await createClient();
   } catch (err) {
-    console.error("[GET /api/leaderboard] createClient failed:", err);
-    return NextResponse.json({ providers: [], error: String(err) }, { status: 500 });
+    // Public read endpoint: "Supabase not configured yet" is a normal early state
+    // (the indexer hasn't populated provider_stats / env vars not set). Degrade to
+    // an empty leaderboard with 200 so the page shows its honest empty state instead
+    // of logging 500s; warn server-side so the misconfig stays discoverable.
+    console.warn("[GET /api/leaderboard] Supabase not configured; returning empty leaderboard:", String(err));
+    return NextResponse.json({ providers: [], count: 0, degraded: "supabase-unconfigured" }, { status: 200 });
   }
 
   try {
@@ -27,8 +31,9 @@ export async function GET() {
       .limit(50);
 
     if (error) {
-      console.error("[GET /api/leaderboard] query error:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      // e.g. provider_stats not created yet — show empty, don't 500.
+      console.warn("[GET /api/leaderboard] query failed; returning empty leaderboard:", error.message);
+      return NextResponse.json({ providers: [], count: 0, degraded: "query-error" }, { status: 200 });
     }
 
     const providers = (data ?? []).map((row) => {
@@ -44,8 +49,9 @@ export async function GET() {
       const zentPayout = Number(row.total_payout_zent ?? 0);
       const zentEarned = (zentPayout / 1e18).toFixed(4);
 
+      // provider_stats.last_signal_at is a bigint epoch in SECONDS → ms for Date math.
       const lastSignalMs = row.last_signal_at
-        ? new Date(row.last_signal_at).getTime()
+        ? Number(row.last_signal_at) * 1000
         : Date.now();
       const hoursAgo = Math.floor((Date.now() - lastSignalMs) / 3_600_000);
       const lastSignal = hoursAgo <= 0 ? "<1h ago" : `${hoursAgo}h ago`;
@@ -69,7 +75,7 @@ export async function GET() {
 
     return NextResponse.json(result, { status: 200 });
   } catch (err) {
-    console.error("[GET /api/leaderboard] unexpected error:", err);
-    return NextResponse.json({ providers: [], error: String(err) }, { status: 500 });
+    console.warn("[GET /api/leaderboard] unexpected error; returning empty leaderboard:", err);
+    return NextResponse.json({ providers: [], count: 0, degraded: "error" }, { status: 200 });
   }
 }
