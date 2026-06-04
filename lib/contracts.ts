@@ -59,6 +59,11 @@ export const addresses = {
   EpochScoring:      "0x659569A6f195698745779E59fef88e3B5Fe0484A",
   SubscriptionVault: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E",
 
+  // Airdrop claim (M9). Empty until DeployMerkleDistributor.s.sol runs; the /claim
+  // page treats "" as "airdrop not yet live". Set to the deployed address + publish
+  // public/airdrop-proofs.json (from scripts/airdrop/snapshot.ts) to open claims.
+  MerkleDistributor: "",
+
   // ─── Shadow stack — SpotVault research vault (TESTNET ONLY, deployed 2026-06-02) ──
   // Oracle-valued ERC-4626 vault that rebalances BTC long ⇄ flat on signed signals.
   // Self-contained testnet swap venue (no real Hyperliquid spot integration) so the
