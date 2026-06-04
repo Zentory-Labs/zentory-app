@@ -25,7 +25,9 @@ export const addresses = {
   WSOL: "0x2b9d5bBD8C5FEfc71E985d993C13db2770469972",
 
   // Staking & Fees
-  ZENTStaking: "0x4E2e7Fd3C85c05697b24743e580B03abCD6d0c65",
+  // ZENTStaking REDEPLOYED 2026-06-04 (prior 0x4E2e7Fd3 reverted getProviderStake
+  // for unstaked providers, bricking EpochScoring.settleEpoch — see Research Network note).
+  ZENTStaking: "0x93A14D1c60e054038980965CF3CAa50CEB848de9",
   ModelBonding: "0x15f6c4bf4000747E0fDd85B33998A36F5BdF5007",
   FeeDistributor: {
     zETH: "0x8Fb48F84AA69E89e0360e6d2D26C447AA57DcF73",
@@ -43,17 +45,18 @@ export const addresses = {
   HyperCoreAdapter: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7",
   StrategyExecutor: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF",
 
-  // ─── Research Network — REDEPLOYED 2026-06-01 via deploy_signal_network.s.sol ──────
-  // Carries the spec-conformance audit fixes (merged to protocol main, PR #15):
-  // EpochScoring payout made linear/monotonic + scaled to +5%/-1.7% clips, the
-  // reference-close snapshot moved BEFORE scoring (accuracy was identically 0),
-  // recency window off-by-one; SignalRegistry direction/confidence bounds; and the
-  // CRITICAL SubscriptionVault fix (renewals no longer charged every tier at the
-  // ELITE price). Supersedes the 2026-05-27 set (0xFA50/0x78d38/0x433962).
-  // Verified on-chain: EpochScoring.signalRegistry() == the SignalRegistry below,
-  // currentEpochId() == 1, SignalRegistry.getSignalCount() == 0 (no revert).
-  SignalRegistry:    "0x9685F25E75758E18b2b109be64271102497D800e",
-  EpochScoring:      "0x31b7082f1e1B3cC373dE3d9c3575701b9aa24538",
+  // ─── Research Network — REDEPLOYED 2026-06-04 via RedeploySignalStack.s.sol ──────
+  // Fresh SignalRegistry + EpochScoring (and a fresh ZENTStaking, below) from current
+  // protocol main. Fixes the epoch off-by-one (registry now inits currentEpochId=1,
+  // aligned with EpochScoring) AND the stale-staking blocker: the prior ZENTStaking
+  // (0x4E2e7Fd3, 2026-04-27) had getProviderStake REVERTING for unstaked providers,
+  // so settleEpoch bricked on the first non-empty epoch. New staking returns 0. All
+  // roles re-wired (EpochScoring holds SCORING_ORACLE on the registry + GOVERNOR_ROLE
+  // on the staking; BTC feed re-registered). Supersedes the 2026-06-01 set
+  // (0x9685/0x31b7) and the 2026-05-27 set (0xFA50/0x78d38).
+  // Verified on-chain: registry.currentEpochId() == scoring.currentEpochId() == 1.
+  SignalRegistry:    "0xA71cfdA74fc0BB7bE3f95aB806197286549e82e7",
+  EpochScoring:      "0x659569A6f195698745779E59fef88e3B5Fe0484A",
   SubscriptionVault: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E",
 
   // ─── Shadow stack — SpotVault research vault (TESTNET ONLY, deployed 2026-06-02) ──
