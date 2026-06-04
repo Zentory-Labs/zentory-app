@@ -22,10 +22,22 @@ export const runtime = "nodejs";
  *     Upstash or KV-backed counters.
  */
 
-const UPSTREAM_RPC_URL =
-  process.env.HYPEREVM_RPC_URL ??
-  process.env.NEXT_PUBLIC_HYPEREVM_RPC ??
-  "https://rpc.hyperliquid-testnet.xyz/evm";
+// Ordered upstream list for failover (M6). The proxy tries each in turn and
+// falls through on network error, 5xx/429, timeout, or a JSON-RPC rate-limit
+// (-32005) in the body — so a single flaky/rate-limited endpoint doesn't break
+// the dApp. Order: paid/primary endpoint → any RPC_FALLBACK_URLS (comma-sep) →
+// the public HyperEVM RPC as last resort. Deduped; empties dropped.
+const UPSTREAM_RPC_URLS: string[] = (() => {
+  const primary = process.env.HYPEREVM_RPC_URL ?? process.env.NEXT_PUBLIC_HYPEREVM_RPC ?? "";
+  const extra = (process.env.RPC_FALLBACK_URLS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const publicRpc = "https://rpc.hyperliquid-testnet.xyz/evm";
+  return [...new Set([primary, ...extra, publicRpc].filter(Boolean))];
+})();
+
+const UPSTREAM_TIMEOUT_MS = 8_000;
 
 // JSON-RPC methods that wagmi / viem actually invoke for read-only flows.
 // Keep this tight. If you find logs of legitimate 405s, expand deliberately.
@@ -139,18 +151,50 @@ export async function POST(req: Request) {
     }
   }
 
-  const upstream = await fetch(UPSTREAM_RPC_URL, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-    cache: "no-store",
+  // Failover across upstreams (M6): return the first response that isn't a
+  // transport failure or a rate-limit; otherwise fall through to the next.
+  const bodyStr = JSON.stringify(body);
+  let lastStatus = 502;
+  let lastText = JSON.stringify({
+    jsonrpc: "2.0",
+    error: { code: -32603, message: "All RPC upstreams failed" },
+    id: null,
   });
 
-  return new Response(await upstream.text(), {
-    status: upstream.status,
-    headers: {
-      "content-type": "application/json",
-      "cache-control": "no-store",
-    },
+  for (const url of UPSTREAM_RPC_URLS) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
+    try {
+      const upstream = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: bodyStr,
+        cache: "no-store",
+        signal: ctrl.signal,
+      });
+      const text = await upstream.text();
+      // Fall through on infra errors (5xx) or rate-limit (HTTP 429 or in-body
+      // JSON-RPC -32005); anything else is a real answer — forward it verbatim.
+      const rateLimited = upstream.status === 429 || text.includes("-32005");
+      if (upstream.status >= 500 || rateLimited) {
+        lastStatus = upstream.status === 429 ? 429 : 502;
+        lastText = text;
+        continue;
+      }
+      return new Response(text, {
+        status: upstream.status,
+        headers: { "content-type": "application/json", "cache-control": "no-store" },
+      });
+    } catch {
+      // network error / timeout / abort → try the next upstream
+      continue;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  return new Response(lastText, {
+    status: lastStatus,
+    headers: { "content-type": "application/json", "cache-control": "no-store" },
   });
 }
