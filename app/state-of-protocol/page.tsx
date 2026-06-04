@@ -15,20 +15,21 @@ const PROTOCOL_STATS = [
   { label: "Total Value Secured", value: "$0", sub: "Non-custodial architecture" },
 ];
 
-// Selection of canonical contracts shown in the public table. Full list of all
-// 26 deployed contracts lives in zentory-protocol/DEPLOYMENTS.md.
+// Selection of canonical contracts shown in the public table. Addresses MUST match
+// lib/contracts.ts (the single source of truth) and zentory-protocol/DEPLOYMENTS.md.
+// Signal stack redeployed 2026-06-04 (staking/registry/scoring) — keep in sync.
 const CONTRACTS = [
   { name: "ZENT Token", address: "0x271cd48c1297CacCD810c7B1BCD904f459df7117", chain: "HyperEVM", verified: true },
-  { name: "ZENT Staking (veZENT)", address: "0x4E2e7Fd3C85c05697b24743e580B03abCD6d0c65", chain: "HyperEVM", verified: true },
+  { name: "ZENT Staking (veZENT)", address: "0x93A14D1c60e054038980965CF3CAa50CEB848de9", chain: "HyperEVM", verified: true },
   { name: "zBTC Vault (ERC-4626)", address: "0x93669daC07321FF397cf5734Ae8364EA24addF45", chain: "HyperEVM", verified: true },
   { name: "zETH Vault (ERC-4626)", address: "0xbe8a9d22560A1b126554b70Aaca2D763B2E70C4e", chain: "HyperEVM", verified: true },
   { name: "zSOL Vault (ERC-4626)", address: "0xb62BA9d0a14aC9f9601891179B3Da52bE71Ce052", chain: "HyperEVM", verified: true },
   { name: "zXRP Vault (ERC-4626)", address: "0x8B15204D88a9Bb155bE6798522983A3B5F7d7cB0", chain: "HyperEVM", verified: true },
   { name: "Strategy Executor", address: "0xaCD862eF134D772b0CA53a97f53CCDd00aBC05CF", chain: "HyperEVM", verified: true },
   { name: "HyperCore Adapter", address: "0xdad9175f6d2Da1709bA3F73711E69022538d21a7", chain: "HyperEVM", verified: true },
-  { name: "Signal Registry", address: "0x7745B22B2C73E422154Fcd1ECD283765c4BF6e8c", chain: "HyperEVM", verified: true },
-  { name: "Epoch Scoring", address: "0xDcB2a366dCD5eE126793523b1BeFd78E32A1694d", chain: "HyperEVM", verified: true },
-  { name: "Subscription Vault", address: "0xd7d346f6d1F2CEcc3E67d9749B5121549F3dd80d", chain: "HyperEVM", verified: true },
+  { name: "Signal Registry", address: "0xA71cfdA74fc0BB7bE3f95aB806197286549e82e7", chain: "HyperEVM", verified: true },
+  { name: "Epoch Scoring", address: "0x659569A6f195698745779E59fef88e3B5Fe0484A", chain: "HyperEVM", verified: true },
+  { name: "Subscription Vault", address: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E", chain: "HyperEVM", verified: true },
   { name: "Zent Governor", address: "0x21ba1F7C028B1ADc78e75Ac187B08b1BDd567118", chain: "HyperEVM", verified: true },
   { name: "Timelock (48h)", address: "0x1504cA3C050C88CcCa67696d642F634fc381fD03", chain: "HyperEVM", verified: true },
 ];
