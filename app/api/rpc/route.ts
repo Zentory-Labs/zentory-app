@@ -1,3 +1,5 @@
+import { rateLimit } from "@/lib/rateLimit";
+
 export const runtime = "nodejs";
 
 /**
@@ -74,13 +76,11 @@ const REJECTED_METHODS = new Set<string>([
   "eth_signTypedData_v4",
 ]);
 
-// Sliding-window rate limit. 120 calls/min/IP is generous for a dApp page
-// and stingy for a scraper. Map lives only in the warm container — cold
-// starts reset it, which is fine for our threat model.
-type RateEntry = { windowStart: number; count: number };
-const RATE_WINDOW_MS = 60_000;
+// Per-IP rate limit. 120 calls/min/IP is generous for a dApp page and stingy
+// for a scraper. Backed by Upstash Redis (persistent across cold starts and
+// shared across instances) via lib/rateLimit, with an in-memory fallback when
+// Redis isn't configured — closes audit DAPP-1 (cold-start reset bypass).
 const RATE_MAX = 120;
-const _rate = new Map<string, RateEntry>();
 
 function getClientIp(req: Request): string {
   return (
@@ -90,29 +90,21 @@ function getClientIp(req: Request): string {
   );
 }
 
-function checkRateLimit(req: Request): Response | null {
+async function checkRateLimit(req: Request): Promise<Response | null> {
   const ip = getClientIp(req);
-  const now = Date.now();
-  const entry = _rate.get(ip);
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    _rate.set(ip, { windowStart: now, count: 1 });
-    return null;
-  }
-  entry.count += 1;
-  if (entry.count > RATE_MAX) {
-    return new Response(
-      JSON.stringify({
-        jsonrpc: "2.0",
-        error: { code: -32005, message: "Rate limit exceeded" },
-        id: null,
-      }),
-      {
-        status: 429,
-        headers: { "content-type": "application/json", "retry-after": "60" },
-      },
-    );
-  }
-  return null;
+  const { ok } = await rateLimit(`rpc:${ip}`, RATE_MAX, 60);
+  if (ok) return null;
+  return new Response(
+    JSON.stringify({
+      jsonrpc: "2.0",
+      error: { code: -32005, message: "Rate limit exceeded" },
+      id: null,
+    }),
+    {
+      status: 429,
+      headers: { "content-type": "application/json", "retry-after": "60" },
+    },
+  );
 }
 
 function rpcError(code: number, message: string, status = 400, id: unknown = null): Response {
@@ -126,7 +118,7 @@ function rpcError(code: number, message: string, status = 400, id: unknown = nul
 }
 
 export async function POST(req: Request) {
-  const limited = checkRateLimit(req);
+  const limited = await checkRateLimit(req);
   if (limited) return limited;
 
   let body: unknown;
