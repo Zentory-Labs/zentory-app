@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import type { Asset, Direction, ResearchContributor } from "@/lib/research";
 import { geoBlockCheck } from "@/lib/geo-blocking";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export async function GET(request: Request) {
   const block = geoBlockCheck(request);
@@ -31,6 +32,16 @@ export async function GET(request: Request) {
 export async function POST(req: NextRequest) {
   const block = geoBlockCheck(req);
   if (block) return block;
+
+  // Audit DAPP-5: open submission endpoint — rate-limit per IP to stop bulk
+  // signal spam. (Full ZENT-governance gating before mainnet remains future work.)
+  const { ok } = await rateLimit(`research-submit:ip:${clientIp(req)}`, 20, 60);
+  if (!ok) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      { status: 429, headers: { "retry-after": "60" } },
+    );
+  }
 
   try {
     const body = await req.json();

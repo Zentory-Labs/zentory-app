@@ -5,14 +5,15 @@ import { createPublicClient, createWalletClient, http } from "viem";
 import { strategyExecutorABI, HYPEREVM_TESTNET } from "@/lib/contracts";
 import { addresses } from "@/lib/contracts";
 import { geoBlockCheck } from "@/lib/geo-blocking";
+import { rateLimit } from "@/lib/rateLimit";
 
 const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC ?? "https://rpc.hyperliquid-testnet.xyz/evm";
 const KEEPER_PRIVATE_KEY = process.env.KEEPER_PRIVATE_KEY ?? "";
 const API_KEY = process.env.KEEPER_API_KEY ?? "";
 
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX = 10;
-const _rate = new Map<string, { windowStart: number; count: number }>();
+const RATE_LIMIT_MAX = 10;          // per-IP per minute
+const RATE_LIMIT_GLOBAL_MAX = 60;   // across all IPs per minute (distributed-attack ceiling)
+const HYPEREVM_MAINNET_CHAIN_ID = 999;
 // strategyExecutorABI is now pre-parsed in lib/contracts.ts — use directly.
 const EXECUTOR_ABI = strategyExecutorABI;
 
@@ -75,22 +76,20 @@ function checkAuth(req: NextRequest): NextResponse | null {
   return null;
 }
 
-function checkRateLimit(req: NextRequest): NextResponse | null {
+async function checkRateLimit(req: NextRequest): Promise<NextResponse | null> {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     ?? req.headers.get("x-real-ip")
     ?? "unknown";
 
-  const now = Date.now();
-  const entry = _rate.get(ip);
-  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-    _rate.set(ip, { windowStart: now, count: 1 });
-    return null;
-  }
-  entry.count += 1;
-  if (entry.count > RATE_LIMIT_MAX) {
+  // Persistent (Upstash) per-IP + global limits — survive cold starts and are
+  // shared across instances, closing audit DAPP-2 (cold-start reset bypass) and
+  // bounding distributed attacks that fan out across many IPs.
+  const perIp = await rateLimit(`research-exec:ip:${ip}`, RATE_LIMIT_MAX, 60);
+  const global = await rateLimit(`research-exec:global`, RATE_LIMIT_GLOBAL_MAX, 60);
+  if (!perIp.ok || !global.ok) {
     return safeJson(
       { error: "Rate limit exceeded" },
-      { status: 429, headers: { "retry-after": String(Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)) } }
+      { status: 429, headers: { "retry-after": "60" } }
     );
   }
   return null;
@@ -117,12 +116,11 @@ export async function POST(req: NextRequest) {
   try {
     const auth = checkAuth(req);
     if (auth) return auth;
-    const limited = checkRateLimit(req);
+    const limited = await checkRateLimit(req);
     if (limited) return limited;
 
     const block = geoBlockCheck(req);
     if (block) return block;
-    if (limited) return limited;
 
     const body = await req.json();
     const { researchId, asset, direction, size, price } = body as {
@@ -164,6 +162,22 @@ export async function POST(req: NextRequest) {
     try {
       // Ensure executor is deployed on the RPC chain
       const chainId = await publicClient.getChainId();
+
+      // Audit DAPP-3.3: recordTradeManual is a testnet-research-arena tool that
+      // writes the cosmetic (NAV-irrelevant) BaseVault path. On mainnet the
+      // canonical vault is SpotVault and ALL exposure changes must flow through
+      // the signed executeRebalance keeper loop — so disable this browser-
+      // triggered manual write entirely on HyperEVM mainnet (fail-safe; testnet
+      // 998 is unaffected).
+      if (chainId === HYPEREVM_MAINNET_CHAIN_ID) {
+        return safeJson(
+          {
+            error: "Manual trade execution is disabled on mainnet. Exposure changes flow through the signed executeRebalance keeper loop.",
+          },
+          { status: 410 },
+        );
+      }
+
       const bytecode = await publicClient.getBytecode({ address: addresses.StrategyExecutor });
       if (!bytecode || bytecode === "0x") {
         return safeJson(
