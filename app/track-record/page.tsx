@@ -58,7 +58,7 @@ export default function TrackRecordPage() {
   const recent = entries ? entries.slice(-12).reverse() : [];
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-28 space-y-10">
+    <div className="space-y-10 pb-16">
       <header className="space-y-3">
         <h1 className="text-4xl font-bold tracking-tight" style={{ color: "#eaeaea" }}>
           Live Paper Track Record
@@ -197,6 +197,6 @@ export default function TrackRecordPage() {
           </li>
         </ol>
       </section>
-    </main>
+    </div>
   );
 }

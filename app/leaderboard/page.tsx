@@ -556,7 +556,7 @@ export default function LeaderboardPage() {
       <div className="absolute top-0 left-1/3 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <main className="mx-auto max-w-7xl px-6 py-28 space-y-10">
+      <div className="space-y-10 pb-16">
 
         {/* ── Header ── */}
         <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -719,7 +719,7 @@ export default function LeaderboardPage() {
           </section>
         )}
 
-      </main>
+      </div>
     </div>
   );
 }
