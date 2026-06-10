@@ -23,8 +23,8 @@ type Entry = {
 const ASSETS = ["BTC", "ETH", "SOL", "XRP"] as const;
 const BUDGET = 100_000; // paper budget each line starts from
 
-function pct(x: number): string {
-  return `${x >= 0 ? "+" : ""}${(x * 100).toFixed(1)}%`;
+function pct(x: number, d = 1): string {
+  return `${x >= 0 ? "+" : ""}${(x * 100).toFixed(d)}%`;
 }
 
 export default function TrackRecordPage() {
@@ -77,6 +77,12 @@ export default function TrackRecordPage() {
             ● Recording live — day {daysLive}
           </p>
         )}
+        <p className="text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+          Want the long view?{" "}
+          <a href="/backtest" className="underline" style={{ color: "#B08D57" }}>
+            See the 6-year walk-forward backtest →
+          </a>
+        </p>
       </header>
 
       {error && (
@@ -91,7 +97,9 @@ export default function TrackRecordPage() {
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {ASSETS.filter((a) => latest.has(a)).map((a) => {
             const e = latest.get(a)!;
-            const vsHold = e.actual_nav / e.hold_nav - 1;
+            const stratRet = e.actual_nav / BUDGET - 1;   // absolute: what the strategy actually did
+            const holdRet = e.hold_nav / BUDGET - 1;       // absolute: what holding did
+            const vsHold = e.actual_nav / e.hold_nav - 1;  // the gap = mostly loss avoided
             return (
               <div key={a} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-3">
                 <div className="flex items-baseline justify-between">
@@ -101,18 +109,25 @@ export default function TrackRecordPage() {
                   </span>
                 </div>
                 <div className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>
-                  strategy vs holding
+                  ahead of holding
                 </div>
+                {/* Make the decomposition explicit so "+X%" is never read as trading profit */}
                 <div className="space-y-1 text-xs tabular-nums" style={{ color: "rgba(234,234,234,0.7)" }}>
-                  <div className="flex justify-between"><span>HOLD</span><span>${e.hold_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
-                  <div className="flex justify-between"><span>GHOST</span><span>${e.ghost_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
-                  <div className="flex justify-between"><span>ACTUAL</span><span>${e.actual_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
-                  <div className="flex justify-between pt-1 border-t border-white/5">
+                  <div className="flex justify-between">
+                    <span>Strategy return</span>
+                    <span className={stratRet >= 0 ? "text-emerald-400" : "text-red-400"}>{pct(stratRet, 1)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Holding return</span>
+                    <span className={holdRet >= 0 ? "text-emerald-400" : "text-red-400"}>{pct(holdRet, 1)}</span>
+                  </div>
+                  <div className="flex justify-between pt-1 border-t border-white/5" style={{ color: "rgba(234,234,234,0.5)" }}>
                     <span>last price</span><span>${e.price.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="text-[10px]" style={{ color: "rgba(234,234,234,0.35)" }}>
-                  start ${BUDGET.toLocaleString()} · bar {e.bar_ts}
+                <div className="text-[10px] leading-snug" style={{ color: "rgba(234,234,234,0.4)" }}>
+                  The gap is mostly <span style={{ color: "rgba(234,234,234,0.6)" }}>loss avoided</span>, not trading
+                  profit: when the asset falls and the strategy is in cash, it ends ahead by the drawdown it skipped.
                 </div>
               </div>
             );
