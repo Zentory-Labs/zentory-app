@@ -72,7 +72,7 @@ const wagmiConfig = createConfig({
             projectId: WALLETCONNECT_PROJECT_ID,
             metadata: {
               name: "Zentory Protocol",
-              description: "Non-custodial Alpha Vaults + Signal Arena on HyperEVM",
+              description: "Non-custodial crypto vaults that defend the drawdowns, on HyperEVM",
               url: "https://app.zentorylabs.com",
               icons: ["https://app.zentorylabs.com/zentory_logo_dark.png"],
             },

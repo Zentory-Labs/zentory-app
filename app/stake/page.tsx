@@ -168,7 +168,7 @@ export default function StakePage() {
       <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
         <div className="mx-auto max-w-7xl px-6 py-4">
           <h1 className="text-2xl font-bold text-white">ZENT Staking</h1>
-          <p className="text-xs text-white/40 mt-0.5">Lock ZENT to receive veZENT governance power and access Alpha Vaults</p>
+          <p className="text-xs text-white/40 mt-0.5">Lock ZENT to receive veZENT governance power and protocol access</p>
         </div>
       </header>
 

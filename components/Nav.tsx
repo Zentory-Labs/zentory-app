@@ -34,7 +34,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "Vaults",
     children: [
-      { href: "/", label: "Overview", desc: "All four Alpha Vaults at a glance" },
+      { href: "/", label: "Overview", desc: "All four vaults at a glance" },
       { href: "/vaults/zBTC", label: "zBTC Vault", desc: "Wrapped Bitcoin" },
       { href: "/vaults/zETH", label: "zETH Vault", desc: "Wrapped Ethereum" },
       { href: "/vaults/zSOL", label: "zSOL Vault", desc: "Wrapped Solana" },

@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 export const runtime = "nodejs";
 export const alt =
-  "ZENTORY — Non-custodial Alpha Vaults + Signal Arena on HyperEVM";
+  "ZENTORY — Non-custodial crypto vaults that defend the drawdowns, on HyperEVM";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -130,7 +130,7 @@ export default async function OpenGraphImage() {
               display: "flex",
             }}
           >
-            Non-custodial Alpha Vaults +
+            Grow your crypto.
           </div>
           <div
             style={{
@@ -144,7 +144,7 @@ export default async function OpenGraphImage() {
               display: "flex",
             }}
           >
-            verifiable quant reputation
+            Defend the drawdowns.
           </div>
           <div
             style={{
@@ -155,7 +155,7 @@ export default async function OpenGraphImage() {
               display: "flex",
             }}
           >
-            Deposit BTC · ETH · SOL · XRP — earn alpha. Your keys. Always.
+            Deposit BTC · ETH · SOL · XRP. Verifiable track record. Your keys, always.
           </div>
         </div>
 

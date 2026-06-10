@@ -419,7 +419,7 @@ export default function Home() {
               className="text-5xl sm:text-6xl md:text-7xl lg:text-6xl xl:text-8xl font-bold mb-6 tracking-tight leading-none"
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
-              <span className="gradient-text-gold">Non-custodial Alpha Vaults on HyperEVM</span>
+              <span className="gradient-text-gold">Grow your crypto. Defend the drawdowns.</span>
             </h1>
 
             {/* Subtitle */}
@@ -427,8 +427,8 @@ export default function Home() {
               className="text-base md:text-lg xl:text-xl mb-6 font-light leading-relaxed"
               style={{ color: "rgba(234, 234, 234, 0.75)" }}
             >
-              Deposit BTC, ETH, SOL or XRP. Earn yield in the underlying asset through
-              systematic on-chain strategies.
+              Deposit BTC, ETH, SOL or XRP. A transparent on-chain strategy holds your asset in
+              uptrends and rotates to cash in downturns — spot only, no leverage.
               <br />
               Your keys, your crypto — redeem anytime.
             </p>
@@ -513,7 +513,7 @@ export default function Home() {
               }}
             >
               <div className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
-                Alpha Vault Stats
+                Vault Stats
               </div>
               <div className="space-y-4">
                 {[
@@ -587,7 +587,7 @@ export default function Home() {
             className="flex items-center gap-2 text-sm font-semibold"
             style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
           >
-            <span>⬡</span> Alpha Vaults
+            <span>⬡</span> Vaults
           </div>
           <p className="text-xs text-center" style={{ color: "rgba(234,234,234,0.35)" }}>
             Powered by Hyperliquid · On-chain execution · ERC-4626 vaults

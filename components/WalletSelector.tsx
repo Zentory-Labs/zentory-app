@@ -143,26 +143,18 @@ export function WalletButton() {
     return () => window.removeEventListener("open-wallet-modal", handler);
   }, [isConnected]);
 
-  // Auto-reconnect on mount using last connected connector
-  useEffect(() => {
-    if (isConnected || isConnecting) return;
-    const lastConnectorUid = localStorage.getItem("lastConnector");
-    if (!lastConnectorUid) return;
-    const connector = connectors.find(c => c.uid === lastConnectorUid);
-    if (!connector) return;
-    setOpen(false);
-    setConnectionError(null);
-    connect({ connector });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // NOTE: auto-reconnect is handled by wagmi's WagmiProvider (reconnectOnMount
+  // defaults to true). A manual connect() on mount here raced with wagmi's own
+  // hydration (<Hydrate>) and triggered a "setState while rendering" warning that
+  // could break onClick binding across the app — so it's intentionally removed.
 
   async function handleConnect(connectorUid: string) {
     const connector = connectors.find(c => c.uid === connectorUid);
     if (!connector) return;
     setConnectionError(null);
+    setOpen(false); // close the modal deterministically before the wallet prompt
     try {
       connect({ connector });
-      localStorage.setItem("lastConnector", connectorUid);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("rejected") || msg.includes("denied") || msg.includes("cancelled") || msg.includes("rejected the request")) {
