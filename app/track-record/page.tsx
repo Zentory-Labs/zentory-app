@@ -1,0 +1,187 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+// ─── /track-record ────────────────────────────────────────────────────────────
+// The protocol's proof asset: renders the REAL public forward ledger (the same
+// hash-chained JSONL the Railway recorder publishes every 4h) with per-asset
+// HOLD vs GHOST vs ACTUAL, the recent bars, and instructions to verify the
+// chain independently. No mock data — if the fetch fails, we say so.
+
+type Entry = {
+  asset: string;
+  bar_ts: string;
+  price: number;
+  weight?: number;
+  hold_nav: number;
+  ghost_nav: number;
+  actual_nav: number;
+  prev_hash?: string;
+  hash?: string;
+};
+
+const ASSETS = ["BTC", "ETH", "SOL", "XRP"] as const;
+const BUDGET = 100_000; // paper budget each line starts from
+
+function pct(x: number): string {
+  return `${x >= 0 ? "+" : ""}${(x * 100).toFixed(1)}%`;
+}
+
+export default function TrackRecordPage() {
+  const [entries, setEntries] = useState<Entry[] | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    fetch("/forward_ledger.jsonl", { cache: "no-store" })
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+      .then((text) => {
+        const rows = text
+          .split("\n")
+          .filter(Boolean)
+          .map((l) => {
+            try { return JSON.parse(l) as Entry } catch { return null }
+          })
+          .filter((e): e is Entry => !!e && typeof e.hold_nav === "number");
+        setEntries(rows);
+      })
+      .catch(() => setError(true));
+  }, []);
+
+  const latest = new Map<string, Entry>();
+  const firstBar = entries?.[0]?.bar_ts;
+  const lastBar = entries?.[entries.length - 1]?.bar_ts;
+  if (entries) for (const e of entries) latest.set(e.asset, e);
+  const daysLive =
+    firstBar && lastBar
+      ? Math.max(1, Math.round((Date.parse(lastBar) - Date.parse(firstBar)) / 86_400_000))
+      : 0;
+  const recent = entries ? entries.slice(-12).reverse() : [];
+
+  return (
+    <main className="mx-auto max-w-7xl px-6 py-28 space-y-10">
+      <header className="space-y-3">
+        <h1 className="text-4xl font-bold tracking-tight" style={{ color: "#eaeaea" }}>
+          Live Paper Track Record
+        </h1>
+        <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.6)" }}>
+          Every 4 hours, the strategy&apos;s decision and three NAV lines are appended to a public,
+          hash-chained ledger — published before the future is known, impossible to edit after the
+          fact. <span style={{ color: "rgba(234,234,234,0.85)" }}>HOLD</span> = just holding,{" "}
+          <span style={{ color: "rgba(234,234,234,0.85)" }}>GHOST</span> = the strategy at signed
+          prices, <span style={{ color: "rgba(234,234,234,0.85)" }}>ACTUAL</span> = with simulated
+          costs. Paper record on real market prices — not live capital, not a guarantee of future
+          results.
+        </p>
+        {daysLive > 0 && (
+          <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "#34d399" }}>
+            ● Recording live — day {daysLive}
+          </p>
+        )}
+      </header>
+
+      {error && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-sm" style={{ color: "rgba(234,234,234,0.8)" }}>
+          Couldn&apos;t load the ledger right now — fetch{" "}
+          <code className="text-xs">/forward_ledger.jsonl</code> directly or retry shortly.
+        </div>
+      )}
+
+      {/* Per-asset summary */}
+      {entries && (
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {ASSETS.filter((a) => latest.has(a)).map((a) => {
+            const e = latest.get(a)!;
+            const vsHold = e.actual_nav / e.hold_nav - 1;
+            return (
+              <div key={a} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-lg font-semibold" style={{ color: "#eaeaea" }}>{a}</span>
+                  <span className={`text-lg font-bold tabular-nums ${vsHold >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                    {pct(vsHold)}
+                  </span>
+                </div>
+                <div className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>
+                  strategy vs holding
+                </div>
+                <div className="space-y-1 text-xs tabular-nums" style={{ color: "rgba(234,234,234,0.7)" }}>
+                  <div className="flex justify-between"><span>HOLD</span><span>${e.hold_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
+                  <div className="flex justify-between"><span>GHOST</span><span>${e.ghost_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
+                  <div className="flex justify-between"><span>ACTUAL</span><span>${e.actual_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
+                  <div className="flex justify-between pt-1 border-t border-white/5">
+                    <span>last price</span><span>${e.price.toLocaleString()}</span>
+                  </div>
+                </div>
+                <div className="text-[10px]" style={{ color: "rgba(234,234,234,0.35)" }}>
+                  start ${BUDGET.toLocaleString()} · bar {e.bar_ts}
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      )}
+
+      {/* Recent bars */}
+      {entries && recent.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Recent entries</h2>
+          <div className="overflow-x-auto rounded-2xl border border-white/10">
+            <table className="w-full text-xs tabular-nums">
+              <thead>
+                <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
+                  {["Bar (UTC)", "Asset", "Price", "HOLD", "ACTUAL", "Chain hash"].map((h) => (
+                    <th key={h} className="px-4 py-3 font-medium uppercase tracking-wider">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody style={{ color: "rgba(234,234,234,0.75)" }}>
+                {recent.map((e, i) => (
+                  <tr key={`${e.asset}-${e.bar_ts}-${i}`} className="border-b border-white/5">
+                    <td className="px-4 py-2.5">{e.bar_ts}</td>
+                    <td className="px-4 py-2.5 font-semibold">{e.asset}</td>
+                    <td className="px-4 py-2.5">${e.price.toLocaleString()}</td>
+                    <td className="px-4 py-2.5">${e.hold_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                    <td className="px-4 py-2.5">${e.actual_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                    <td className="px-4 py-2.5 font-mono text-[10px]" style={{ color: "rgba(234,234,234,0.4)" }}>
+                      {(e.hash ?? e.prev_hash ?? "").slice(0, 12)}…
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* Verify it yourself */}
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-3">
+        <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Verify it yourself</h2>
+        <ol className="list-decimal list-inside space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+          <li>
+            Download the raw ledger:{" "}
+            <a href="/forward_ledger.jsonl" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
+              /forward_ledger.jsonl
+            </a>{" "}
+            — one JSON entry per asset per 4h bar.
+          </li>
+          <li>
+            Each entry commits to the previous one via <code className="text-xs">prev_hash</code>. Recompute the
+            chain with the open-source verifier (<code className="text-xs">verify_ledger()</code> in the{" "}
+            <a href="https://github.com/Zentory-Labs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
+              zentory-engine repo
+            </a>) — any edited or deleted entry breaks every hash after it.
+          </li>
+          <li>
+            Cross-check any bar&apos;s price against a public exchange API (the feed uses Kraken/Coinbase 4h closes).
+          </li>
+          <li>
+            Each 4h update lands as a timestamped pull request in the{" "}
+            <a href="https://github.com/Zentory-Labs/zentory-app/pulls?q=is%3Apr+forward+ledger" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
+              public repo history
+            </a>{" "}
+            — timestamps are held by GitHub, so entries can&apos;t be backdated.
+          </li>
+        </ol>
+      </section>
+    </main>
+  );
+}

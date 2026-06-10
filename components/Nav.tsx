@@ -47,6 +47,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "Research",
     children: [
+      { href: "/track-record", label: "Track Record", desc: "Live, hash-chained paper record — verify it yourself" },
       { href: "/signals", label: "Signal Arena", desc: "Live feed from on-chain SignalRegistry" },
       { href: "/leaderboard", label: "Leaderboard", desc: "Conviction-ranked quant contributors" },
       { href: "/research", label: "Research Feed", desc: "Published market-structure analysis" },
