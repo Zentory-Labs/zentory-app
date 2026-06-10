@@ -118,7 +118,7 @@ export default function ProviderPage() {
   const isDemoData = demoMode && (summary == null) && (epochs?.length ?? 0) > 0 && !loading;
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-28 space-y-8">
+    <div className="space-y-8 pb-16">
       <Link href="/leaderboard" className="text-xs uppercase tracking-wider" style={{ color: GOLD }}>← Leaderboard</Link>
 
       <header className="space-y-2">
@@ -251,6 +251,6 @@ export default function ProviderPage() {
           <a href={`${EXPLORER}/${addresses.EpochScoring}`} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: GOLD }}>EpochScoring</a>.
         </p>
       </section>
-    </main>
+    </div>
   );
 }
