@@ -21,15 +21,15 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL("https://app.zentorylabs.com"),
   title: {
-    default: "ZENTORY Protocol — Alpha Vaults + Signal Arena on HyperEVM",
+    default: "ZENTORY Protocol — Non-Custodial Crypto Vaults on HyperEVM",
     template: "%s · ZENTORY",
   },
   description:
-    "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM. Deposit BTC, ETH, SOL or XRP and earn alpha. Your keys, always.",
+    "Grow your crypto, defend the drawdowns. Non-custodial BTC, ETH, SOL & XRP vaults on HyperEVM — a transparent on-chain strategy with a public, verifiable track record. Your keys, always.",
   keywords: [
     "ZENTORY Protocol", "ZENT token", "HyperEVM", "Hyperliquid",
-    "Alpha Vault", "ERC-4626 vault", "Signal Arena", "on-chain quant",
-    "non-custodial vault", "DeFi quant", "EIP-712 signals",
+    "non-custodial vault", "ERC-4626 vault", "drawdown protection",
+    "BTC yield", "on-chain track record", "trend following", "EIP-712",
   ],
   // Explicit robots directive — defaults to index/follow but better to be
   // unambiguous for crawlers + Lighthouse SEO score.
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
     canonical: "https://app.zentorylabs.com",
   },
   openGraph: {
-    title: "ZENTORY Protocol — Alpha Vaults + Signal Arena on HyperEVM",
+    title: "ZENTORY Protocol — Non-Custodial Crypto Vaults on HyperEVM",
     description:
-      "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM. Deposit BTC, ETH, SOL or XRP and earn alpha. Your keys, always.",
+      "Grow your crypto, defend the drawdowns. Non-custodial BTC, ETH, SOL & XRP vaults on HyperEVM with a public, verifiable track record. Your keys, always.",
     url: "https://app.zentorylabs.com",
     siteName: "ZENTORY",
     type: "website",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     creator: "@ZENTORYLabs",
     title: "ZENTORY Protocol",
     description:
-      "Non-custodial Alpha Vaults + verifiable quant reputation on HyperEVM.",
+      "Non-custodial crypto vaults that defend the drawdowns — with a verifiable on-chain track record.",
   },
 };
 
