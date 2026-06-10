@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useAccount } from "wagmi";
+import FoundingProviderCard, { type HouseStats } from "@/components/FoundingProviderCard";
 import { createClient } from "@/utils/supabase/client";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoProviders } from "@/lib/demo/data";
@@ -404,6 +405,45 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [house, setHouse] = useState<HouseStats | null>(null);
+
+  // Founding provider = the house systematic bot. Real metrics from the live,
+  // public forward ledger (same hash-chained file the recorder publishes every 4h).
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/forward_ledger.jsonl", { cache: "no-store" })
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+      .then((txt) => {
+        if (cancelled) return;
+        type E = { asset: string; bar_ts: string; hold_nav: number; actual_nav: number };
+        const es: E[] = txt
+          .split("\n")
+          .filter(Boolean)
+          .map((l) => { try { return JSON.parse(l) as E; } catch { return null; } })
+          .filter((x): x is E => !!x && typeof x.hold_nav === "number" && typeof x.actual_nav === "number");
+        if (es.length < 2) return;
+        const latest = new Map<string, E>();
+        for (const e of es) latest.set(e.asset, e);
+        const order = ["BTC", "ETH", "SOL", "XRP"];
+        const perAsset = order
+          .filter((a) => latest.has(a))
+          .map((a) => {
+            const e = latest.get(a)!;
+            return { asset: a, ahead: e.actual_nav / e.hold_nav - 1, strat: e.actual_nav / 100_000 - 1, hold: e.hold_nav / 100_000 - 1 };
+          });
+        if (perAsset.length === 0) return;
+        const first = Date.parse(es[0].bar_ts);
+        const last = Date.parse(es[es.length - 1].bar_ts);
+        setHouse({
+          daysLive: Math.max(1, Math.round((last - first) / 86_400_000)),
+          assets: perAsset.length,
+          avgAhead: perAsset.reduce((s, p) => s + p.ahead, 0) / perAsset.length,
+          perAsset,
+        });
+      })
+      .catch(() => { /* card degrades to "—"; never breaks the page */ });
+    return () => { cancelled = true; };
+  }, []);
 
   const fetchLeaderboard = useCallback(async () => {
     // Demo mode: render seeded top-10 quants. Same shape as the live API
@@ -537,7 +577,7 @@ export default function LeaderboardPage() {
               {demoMode && <DemoBadge />}
             </h1>
             <p className="text-sm mt-1" style={{ color: "rgba(234,234,234,0.5)" }}>
-              Top quant contributors ranked by accuracy and ZENT earned across all asset classes
+              Verifiable, on-chain track records — led by Zentory Core, the protocol&apos;s own systematic engine. Third-party quants are ranked here as their signed signals settle.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -548,13 +588,16 @@ export default function LeaderboardPage() {
           </div>
         </section>
 
-        {/* ── Stat cards ── */}
+        {/* ── Stat cards (live; led by the founding provider) ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Providers" value={providers.length} accent="#b08d57" />
-          <StatCard label="Avg Accuracy" value={providers.length ? `${(providers.reduce((s, p) => s + p.accuracyPercent, 0) / providers.length).toFixed(1)}%` : "—"} accent="#22c55e" />
-          <StatCard label="Total Signals" value={providers.reduce((s, p) => s + p.totalSignals, 0).toLocaleString()} accent="#eaeaea" />
-          <StatCard label="Total ZENT Awarded" value={providers.reduce((s, p) => s + Number(p.zentEarned), 0).toLocaleString("en", { maximumFractionDigits: 0 })} accent="#b08d57" />
+          <StatCard label="Live Providers" value={(house ? 1 : 0) + providers.length} accent="#b08d57" />
+          <StatCard label="Days Recording" value={house ? house.daysLive : "—"} accent="#22c55e" />
+          <StatCard label="Assets Tracked" value={house ? house.assets : "—"} accent="#eaeaea" />
+          <StatCard label="Avg Ahead of Holding" value={house ? `${house.avgAhead >= 0 ? "+" : ""}${(house.avgAhead * 100).toFixed(1)}%` : "—"} accent="#b08d57" />
         </div>
+
+        {/* ── Founding provider: the house systematic bot, live from the ledger ── */}
+        <FoundingProviderCard house={house} />
 
         {/* ── Filter tabs ── */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -574,11 +617,11 @@ export default function LeaderboardPage() {
             </button>
           ))}
           <span className="ml-auto text-xs pr-2" style={{ color: "rgba(234,234,234,0.3)" }}>
-            {filteredProviders.length} provider{filteredProviders.length !== 1 ? "s" : ""}
+            {filteredProviders.length} external provider{filteredProviders.length !== 1 ? "s" : ""}
           </span>
         </div>
 
-        {/* ── Empty state when no real provider data is indexed yet ── */}
+        {/* ── External providers: open, none ranked yet (founding provider is live above) ── */}
         {!loading && providers.length === 0 && (
           <section
             className="rounded-2xl p-10 text-center"
@@ -588,21 +631,22 @@ export default function LeaderboardPage() {
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold mb-4"
               style={{ background: "rgba(176,141,87,0.12)", borderColor: "rgba(176,141,87,0.3)", color: "#b08d57" }}
             >
-              Coming Q3 2026
+              Open for contributors
             </div>
             <h3 className="text-xl font-bold mb-2" style={{ color: "#eaeaea" }}>
-              The Conviction Leaderboard is still indexing
+              Zentory Core is live. Third-party quants join next.
             </h3>
             <p className="text-sm max-w-xl mx-auto" style={{ color: "rgba(234,234,234,0.6)" }}>
-              Quants submit EIP-712 signed signals to{" "}
+              The founding provider above is the protocol&apos;s own systematic engine, already building a public
+              track record. External contributors submit EIP-712 signed signals to{" "}
               <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>SignalRegistry</code>;
-              accuracy is settled every 4&nbsp;hours by{" "}
-              <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code>.
-              Once the first wave of signals has resolved, this leaderboard will rank quants by
-              conviction-weighted accuracy. The ranking is on-chain — no edits, no deletions, no screenshots.
+              accuracy is settled every 4&nbsp;hours on-chain by{" "}
+              <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code>{" "}
+              — and they&apos;ll be ranked here as their signals resolve. No edits, no deletions, no screenshots.
             </p>
             <div className="text-xs mt-6" style={{ color: "rgba(234,234,234,0.4)" }}>
-              Track Auto-Follow + Volatility Brackets launches in <a href="/state-of-protocol" className="underline" style={{ color: "#b08d57" }}>State of Protocol</a>.
+              Want to contribute?{" "}
+              <a href="/contribute" className="underline" style={{ color: "#b08d57" }}>Become a contributor →</a>
             </div>
           </section>
         )}
