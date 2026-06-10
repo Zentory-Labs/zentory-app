@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { useAccount } from "wagmi";
 import { createClient } from "@/utils/supabase/client";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
@@ -155,7 +156,8 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
   const color = TROPHY_COLORS[index];
 
   return (
-    <div
+    <Link
+      href={`/providers/${provider.provider}`}
       className="flex-1 rounded-2xl p-5 flex flex-col gap-4 transition-all duration-200 hover:scale-[1.02]"
       style={{
         background: TROPHY_BG[index],
@@ -228,7 +230,7 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
           color={color}
         />
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -261,9 +263,14 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-2">
           <div className="flex flex-col">
-            <span className="font-mono text-xs font-semibold" style={{ color: rowAccent ?? "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+            <Link
+              href={`/providers/${provider.provider}`}
+              className="font-mono text-xs font-semibold hover:underline"
+              style={{ color: rowAccent ?? "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+              title="View this provider's track record"
+            >
               {provider.providerShort}
-            </span>
+            </Link>
             <div className="flex items-center gap-1 mt-0.5">
               {provider.assetClasses.slice(0, 2).map((ac) => (
                 <span
