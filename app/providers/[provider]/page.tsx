@@ -215,7 +215,7 @@ export default function ProviderPage() {
           <section className="space-y-2">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Epoch history</h3>
             <div className="overflow-x-auto rounded-2xl border border-white/10">
-              <table className="w-full text-xs tabular-nums">
+              <table className="w-full min-w-[480px] text-xs tabular-nums">
                 <thead>
                   <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
                     {["Epoch", "Accuracy", "Settled signals", "ZENT payout"].map((h) => (

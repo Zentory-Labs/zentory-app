@@ -415,7 +415,9 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
           {signals.map((s, i) => {
             const isBuy = s.direction === "LONG" || s.direction === "BUY";
             const payoutColor = (s.payout_zent ?? 0) >= 0 ? "#22c55e" : "#ef4444";
-            const accColor = (s.accuracy_bps ?? 0) >= 65 ? "#22c55e" : (s.accuracy_bps ?? 0) >= 50 ? "#f59e0b" : "#ef4444";
+            // accuracy_bps is basis points (0–10000); display divides by 100, so
+            // the color thresholds must be in bps too (65% = 6500, 50% = 5000).
+            const accColor = (s.accuracy_bps ?? 0) >= 6500 ? "#22c55e" : (s.accuracy_bps ?? 0) >= 5000 ? "#f59e0b" : "#ef4444";
 
             return (
               <tr

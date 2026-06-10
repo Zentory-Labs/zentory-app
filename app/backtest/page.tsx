@@ -239,7 +239,7 @@ export default function BacktestPage() {
                 is real at realistic costs but erodes as fees climb — shown honestly so you can judge the margin.
               </p>
               <div className="overflow-x-auto rounded-2xl border border-white/10">
-                <table className="w-full text-xs tabular-nums">
+                <table className="w-full min-w-[560px] text-xs tabular-nums">
                   <thead>
                     <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
                       {["Cost (bps/side)", "Strategy Sortino", "Holding Sortino", "Strategy CAGR", "Strategy max DD"].map((h) => (
