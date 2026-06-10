@@ -58,7 +58,7 @@ export default function MarketsPage() {
         </h1>
         <p className="text-sm max-w-2xl" style={{ color: "rgba(106,111,117,0.9)" }}>
           The markets ZENTORY supports today and the roadmap to multi-asset. Live markets settle on
-          HyperEVM testnet through the four Alpha Vaults; provider-level statistics will populate as
+          HyperEVM testnet through the four vaults; provider-level statistics will populate as
           quants submit signals via{" "}
           <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>SignalRegistry</code>{" "}
           and resolve through 4-hour <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code>.

@@ -624,10 +624,10 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <div className="flex items-center gap-3 mb-6">
           <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>
-            Signal Arena — Recent Fills
+            Strategy Execution — Recent Fills
           </h3>
           <span className="text-xs px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff" }}>
+            style={{ background: "rgba(176,141,87,0.15)", color: "#b08d57" }}>
             Live from Hyperliquid
           </span>
         </div>
@@ -680,7 +680,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
 
         <div className="mt-4 flex gap-4 text-xs" style={{ color: "rgba(106,111,117,0.6)" }}>
           <span>Venue fills sourced from Hyperliquid testnet</span>
-          <Link href="/signals" className="underline" style={{ color: "#7c5cff" }}>View Signal Arena →</Link>
+          <Link href="/signals" className="underline" style={{ color: "#b08d57" }}>View signal feed →</Link>
         </div>
       </div>
     </div>

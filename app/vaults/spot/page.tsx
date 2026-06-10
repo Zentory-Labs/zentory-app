@@ -187,9 +187,9 @@ export default function SpotVaultPage() {
 
       {/* What this is */}
       <div className="rounded-2xl p-5 mb-6 text-sm leading-relaxed" style={{ ...CARD, color: "rgba(255,255,255,0.65)" }}>
-        Deposits are held in <span style={{ color: "#eaeaea" }}>BTC</span> when the strategy is bullish (<b style={{ color: "#F7931A" }}>LONG</b>)
-        and rotated to cash when it turns defensive (<b style={{ color: "#7c5cff" }}>FLAT</b>), driven by the same signed
-        signals that power the Signal Arena. NAV is marked to the price oracle, so your share value moves with realised
+        Deposits are held in <span style={{ color: "#eaeaea" }}>BTC</span> when the trend is up (<b style={{ color: "#F7931A" }}>LONG</b>)
+        and rotated to cash when it turns down (<b style={{ color: "#b08d57" }}>FLAT</b>), driven by the protocol&apos;s
+        signed on-chain strategy. NAV is marked to the price oracle, so your share value moves with realised
         strategy PnL — not just the spot price. This is a <b>testnet research vault</b> on a self-contained shadow swap
         venue; mainnet routes to real spot liquidity behind an external audit.
       </div>

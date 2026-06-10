@@ -148,7 +148,7 @@ export default function WhitelistPopup() {
               Join the Zentory Waitlist
             </h3>
             <p className="text-sm text-white/60 mb-6">
-              Be first to access alpha vaults, research feeds, and protocol launches. No spam — ever.
+              Be first to access the vaults, research feeds, and protocol launches. No spam — ever.
             </p>
 
             <form onSubmit={handleSubmit} noValidate>

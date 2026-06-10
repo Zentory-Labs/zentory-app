@@ -201,7 +201,7 @@ export default function FaucetPage() {
           Testnet Faucet
         </h1>
         <p className="text-sm max-w-2xl" style={{ color: "rgba(106,111,117,0.9)" }}>
-          Mint mock vault assets to your wallet so you can try the Alpha Vaults on HyperEVM testnet.
+          Mint mock vault assets to your wallet so you can try the ZENTORY vaults on HyperEVM testnet.
           These are unbacked test tokens — no real value. The underlying mock contract exposes a
           permissionless <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#f0c040" }}>mint(address,uint256)</code> for testnet only.
         </p>
