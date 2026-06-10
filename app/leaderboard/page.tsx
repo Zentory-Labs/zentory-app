@@ -677,10 +677,10 @@ export default function LeaderboardPage() {
         {rest.length > 0 && (
           <section>
             <div
-              className="rounded-2xl overflow-hidden"
+              className="rounded-2xl overflow-x-auto"
               style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
             >
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[760px] text-sm">
                 <thead>
                   <tr style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid #2a2f3a" }}>
                     {["Rank", "Provider", "Accuracy", "Total", "Resolved", "ZENT Earned", "Last Signal", "Trend"].map((h) => (

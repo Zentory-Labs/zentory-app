@@ -140,7 +140,7 @@ export default function TrackRecordPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Recent entries</h2>
           <div className="overflow-x-auto rounded-2xl border border-white/10">
-            <table className="w-full text-xs tabular-nums">
+            <table className="w-full min-w-[640px] text-xs tabular-nums">
               <thead>
                 <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
                   {["Bar (UTC)", "Asset", "Price", "HOLD", "ACTUAL", "Chain hash"].map((h) => (
