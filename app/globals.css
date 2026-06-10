@@ -204,3 +204,13 @@ h1, h2, h3, h4, h5, h6 {
 * {
   border-color: var(--border);
 }
+
+/* ── Accessibility: keyboard focus ring (audit a11y theme) ───────────────────
+   :focus-visible only matches keyboard navigation, not mouse clicks, so this adds
+   a clear focus indicator for keyboard/screen-reader users without putting rings
+   on pointer interaction. Gold to match brand. */
+:focus-visible {
+  outline: 2px solid #B08D57;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
