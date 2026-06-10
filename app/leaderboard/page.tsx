@@ -572,18 +572,18 @@ export default function LeaderboardPage() {
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
               Live Leaderboard
             </div>
-            <h1 className="text-4xl font-bold tracking-tight inline-flex items-center gap-3" style={{ color: "#eaeaea" }}>
-              Research Contributor Leaderboard
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight flex flex-wrap items-center gap-3 mt-1" style={{ color: "#eaeaea" }}>
+              Contributor Leaderboard
               {demoMode && <DemoBadge />}
             </h1>
-            <p className="text-sm mt-1" style={{ color: "rgba(234,234,234,0.5)" }}>
+            <p className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: "rgba(234,234,234,0.5)" }}>
               Verifiable, on-chain track records — led by Zentory Core, the protocol&apos;s own systematic engine. Third-party quants are ranked here as their signed signals settle.
             </p>
           </div>
           <div className="flex items-center gap-3">
             <EpochTimerPill hours={hours} minutes={minutes} secs={secs} />
             <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)" }}>
-              Updated {updateLabel}
+              Updated {updateLabel || "just now"}
             </span>
           </div>
         </section>
