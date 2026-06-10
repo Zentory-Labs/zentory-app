@@ -304,6 +304,18 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   const userSharesRaw = fmtBnSimple(userShares.data, shareDecimals);
   const tvlRaw = fmtBnSimple(totalAssets.data, config.decimals);
 
+  // ─── Input validation + loading/empty states (audit #12) ──────────
+  const depositNum = parseFloat(depositAmount || "");
+  const withdrawNum = parseFloat(withdrawShares || "");
+  const depositTooMuch = !isNaN(depositNum) && depositNum > userAssetRaw;
+  const depositInvalid = depositAmount !== "" && (isNaN(depositNum) || depositNum <= 0 || depositTooMuch);
+  const withdrawTooMuch = !isNaN(withdrawNum) && withdrawNum > userSharesRaw;
+  const withdrawInvalid = withdrawShares !== "" && (isNaN(withdrawNum) || withdrawNum <= 0 || withdrawTooMuch);
+  const hasZeroBalance = mounted && isConnected && !userAssetBalance.isLoading && userAssetRaw === 0;
+  const statsLoading =
+    navPerShare.isLoading || totalAssets.isLoading ||
+    (isConnected && (userShares.isLoading || userAssetBalance.isLoading));
+
   // ─── Chart data ───────────────────────────────────────────────────
   const chartData = navHistory.map((snap) => ({
     time: new Date(snap.snapshot_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
@@ -402,9 +414,13 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
             <div className="text-xs uppercase tracking-widest mb-1" style={{ color: "rgba(106,111,117,0.9)" }}>
               {m.label}
             </div>
-            <div className="text-xl font-bold" style={{ color: "#eaeaea" }}>
-              {m.value}
-            </div>
+            {statsLoading ? (
+              <div className="h-7 w-2/3 rounded animate-pulse" style={{ background: "rgba(255,255,255,0.08)" }} />
+            ) : (
+              <div className="text-xl font-bold" style={{ color: "#eaeaea" }}>
+                {m.value}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -443,17 +459,31 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
 
             {activeTab === "deposit" ? (
               <div className="space-y-4">
+                {/* Zero-balance affordance — surface the faucet so a connected user
+                    with no test tokens has a path forward (audit #12). */}
+                {hasZeroBalance && (
+                  <Link
+                    href="/faucet"
+                    className="flex items-center justify-between gap-2 rounded-lg px-4 py-3 text-xs transition-colors"
+                    style={{ background: "rgba(240,192,64,0.08)", border: "1px solid rgba(240,192,64,0.3)", color: "#f0c040" }}
+                  >
+                    <span>No {config.symbol.replace("z", "")} yet? Mint test tokens from the faucet.</span>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                )}
                 <div>
                   <label className="block text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.9)" }}>
                     Amount ({config.symbol.replace("z", "")})
                   </label>
                   <input
                     type="number"
+                    min="0"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
                     placeholder="0.0000"
+                    aria-label={`Amount of ${config.symbol.replace("z", "")} to deposit`}
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
-                    style={{ background: "#12121f", border: "1px solid #2a2f3a", color: "#eaeaea" }}
+                    style={{ background: "#12121f", border: `1px solid ${depositInvalid ? "rgba(239,68,68,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
                   />
                   <div className="flex justify-between text-xs mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
                     <span>Balance: {userAssetRaw.toFixed(4)}</span>
@@ -461,22 +491,25 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                       Max
                     </button>
                   </div>
+                  {depositTooMuch && (
+                    <div className="text-xs mt-1.5" style={{ color: "#ef4444" }}>Amount exceeds your balance.</div>
+                  )}
                 </div>
 
                 {needsApproval ? (
                   <button
                     onClick={handleApprove}
-                    disabled={isApproveLoading}
-                    className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
+                    disabled={isApproveLoading || depositInvalid}
+                    className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                     style={{ background: "rgba(240,192,64,0.15)", color: "#f0c040", border: "1px solid rgba(240,192,64,0.3)" }}
                   >
-                    {isApproveLoading ? "Approving..." : "Approve Token"}
+                    {isApproveLoading ? "Approving..." : isApproveSuccess ? "Approved ✓ — Deposit next" : "Approve Token"}
                   </button>
                 ) : (
                   <button
                     onClick={handleDeposit}
-                    disabled={isDepositLoading || !!isCircuitBreaker.data}
-                    className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
+                    disabled={isDepositLoading || depositInvalid || depositAmount === "" || !!isCircuitBreaker.data}
+                    className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                     style={{ background: "#f0c040", color: "#050507" }}
                   >
                     {isDepositLoading ? "Depositing..." : "Deposit"}
@@ -503,11 +536,13 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   </label>
                   <input
                     type="number"
+                    min="0"
                     value={withdrawShares}
                     onChange={(e) => setWithdrawShares(e.target.value)}
                     placeholder="0.0000"
+                    aria-label="Shares to redeem"
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
-                    style={{ background: "#12121f", border: "1px solid #2a2f3a", color: "#eaeaea" }}
+                    style={{ background: "#12121f", border: `1px solid ${withdrawInvalid ? "rgba(239,68,68,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
                   />
                   <div className="flex justify-between text-xs mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
                     <span>Your shares: {userSharesRaw.toFixed(6)}</span>
@@ -515,12 +550,15 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                       Max
                     </button>
                   </div>
+                  {withdrawTooMuch && (
+                    <div className="text-xs mt-1.5" style={{ color: "#ef4444" }}>You don&apos;t have that many shares.</div>
+                  )}
                 </div>
 
                 <button
                   onClick={handleWithdraw}
-                  disabled={isWithdrawLoading || !!isCircuitBreaker.data}
-                  className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
+                  disabled={isWithdrawLoading || withdrawInvalid || withdrawShares === "" || !!isCircuitBreaker.data}
+                  className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                   style={{ background: "#7c5cff", color: "#fff" }}
                 >
                   {isWithdrawLoading ? "Withdrawing..." : "Withdraw"}
