@@ -55,7 +55,7 @@ export default function ContributePage() {
 
       {/* Waitlist external link instead of broken Connect button */}
       <a
-        href="mailto:contact@zentorylabs.io?subject=Quant%20Contributor%20Application"
+        href="mailto:contact@zentorylabs.com?subject=Quant%20Contributor%20Application"
         className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
         style={{
           background: "linear-gradient(135deg, #b08d57 0%, #8b6635 100%)",
