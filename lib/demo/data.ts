@@ -256,6 +256,8 @@ export interface DemoProtocolStats {
     symbol: string;
     navPerShare: number;
     totalAssets: number;
+    /** USD value — the demo TVL ranges are already USD-denominated. */
+    usdValue: number | null;
     hodlNav: number;
     alphaPct: number;
     cumulativeAlpha: number;
@@ -266,6 +268,7 @@ export interface DemoProtocolStats {
     netFlow: number;
   }>;
   totalTvl: number;
+  tvlComplete: boolean;
   totalDeposits: number;
   totalWithdrawals: number;
   avgAlpha: number;
@@ -297,6 +300,7 @@ export function demoProtocolStats(): DemoProtocolStats {
       symbol: sym,
       navPerShare: last.nav,
       totalAssets,
+      usdValue: totalAssets,
       hodlNav: last.hodl,
       alphaPct: last.alphaPct,
       cumulativeAlpha,
@@ -312,7 +316,7 @@ export function demoProtocolStats(): DemoProtocolStats {
   const totalWithdrawals = vaults.reduce((s, v) => s + v.totalWithdrawals, 0);
   const avgAlpha = vaults.reduce((s, v) => s + v.alphaPct, 0) / vaults.length;
   const avgWinRate = vaults.reduce((s, v) => s + v.avgWinRate, 0) / vaults.length;
-  return { vaults, totalTvl, totalDeposits, totalWithdrawals, avgAlpha, avgWinRate };
+  return { vaults, totalTvl, tvlComplete: true, totalDeposits, totalWithdrawals, avgAlpha, avgWinRate };
 }
 
 // ─── Research feed ───────────────────────────────────────────────────────────

@@ -493,13 +493,21 @@ function ProtocolTVLOverview() {
     zBTC: CHART_COLORS.zBTC,
     zSOL: CHART_COLORS.zSOL,
     zXRP: CHART_COLORS.zXRP,
+    SPOT: "#f0c040",
   };
 
+  // USD per vault (live: ledger-priced; demo: already USD). Vaults without a
+  // price chart as 0 rather than mixing BTC/ETH/SOL units in one axis.
   const chartData = stats.vaults.map((v) => ({
     name: v.symbol,
-    TVL: v.totalAssets,
+    TVL: v.usdValue ?? 0,
     alpha: v.cumulativeAlpha,
   }));
+
+  // Testnet TVL is ~$60K, demo mode ~$60M — one fixed "/1e6 M" format renders
+  // the real number as $0.00M, so scale the unit to the magnitude.
+  const fmtUsd = (n: number) =>
+    n >= 1e6 ? `$${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `$${(n / 1e3).toFixed(1)}K` : `$${n.toFixed(0)}`;
 
   return (
     <div
@@ -508,9 +516,11 @@ function ProtocolTVLOverview() {
     >
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
-          { label: "Total TVL", value: `$${(stats.totalTvl / 1e6).toFixed(2)}M`, accent: "#eaeaea" },
-          { label: "Total Deposits", value: `$${(stats.totalDeposits / 1e6).toFixed(2)}M`, accent: CHART_COLORS.positive },
-          { label: "Total Withdrawals", value: `$${(stats.totalWithdrawals / 1e6).toFixed(2)}M`, accent: CHART_COLORS.negative },
+          { label: "Total TVL", value: stats.totalTvl > 0 ? fmtUsd(stats.totalTvl) : "—", accent: "#eaeaea" },
+          // Flow history starts when the flow indexer ships — show an honest
+          // dash instead of a fake $0.00M (or stale demo-seeded millions).
+          { label: "Total Deposits", value: stats.totalDeposits > 0 ? fmtUsd(stats.totalDeposits) : "—", accent: CHART_COLORS.positive },
+          { label: "Total Withdrawals", value: stats.totalWithdrawals > 0 ? fmtUsd(stats.totalWithdrawals) : "—", accent: CHART_COLORS.negative },
           { label: "Avg Alpha", value: fmtPct(stats.avgAlpha), accent: stats.avgAlpha >= 0 ? CHART_COLORS.positive : CHART_COLORS.negative, pill: fmtPct(stats.avgAlpha) },
         ].map(({ label, value, accent, pill }) => (
           <div key={label} className="rounded-xl p-4 text-center" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
@@ -531,11 +541,11 @@ function ProtocolTVLOverview() {
         <BarChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
           <XAxis dataKey="name" tick={{ fill: CHART_COLORS.text, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fill: CHART_COLORS.text, fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v / 1e6).toFixed(1)}M`} />
+          <YAxis tick={{ fill: CHART_COLORS.text, fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmtUsd(Number(v))} width={70} />
           <Tooltip
             contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, color: "#eaeaea", fontSize: 12 }}
             labelStyle={{ color: "rgba(255,255,255,0.7)" }}
-            formatter={(v) => [`$${(Number(v) / 1e6).toFixed(2)}M`, "TVL"]}
+            formatter={(v) => [fmtUsd(Number(v)), "TVL"]}
           />
           <Legend wrapperStyle={{ fontSize: 12, color: CHART_COLORS.text }} />
           <Bar dataKey="TVL" name="TVL" radius={[4, 4, 0, 0]}>

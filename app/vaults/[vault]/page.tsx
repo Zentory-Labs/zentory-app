@@ -317,10 +317,13 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
     (isConnected && (userShares.isLoading || userAssetBalance.isLoading));
 
   // ─── Chart data ───────────────────────────────────────────────────
+  // vault_nav_history stores RAW integer chain units (1 zBTC share = 1e8,
+  // zETH = 1e18) — normalize so the axis/tooltip read ~1.0, not 1e18.
+  const navUnit = 10 ** config.decimals;
   const chartData = navHistory.map((snap) => ({
     time: new Date(snap.snapshot_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    NAV: snap.nav_per_share,
-    HOLD: snap.hodl_nav,
+    NAV: snap.nav_per_share / navUnit,
+    HOLD: snap.hodl_nav / navUnit,
     Alpha: snap.alpha_pct,
   }));
 
@@ -643,8 +646,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                 contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: "rgba(255,255,255,0.5)" }}
               />
-              <Area type="monotone" dataKey="HOLD" stroke={CHART_COLORS.hold} strokeWidth={1.5} fill="none" dot={false} name="HOLD" />
-              <Area type="monotone" dataKey="NAV" stroke={CHART_COLORS.actual} strokeWidth={2} fill="url(#navGrad)" dot={false} name={`${config.symbol} NAV`} />
+              <Area type="monotone" dataKey="HOLD" stroke={CHART_COLORS.hold} strokeWidth={1.5} fill="none" dot={false} name="HOLD" isAnimationActive={false} />
+              <Area type="monotone" dataKey="NAV" stroke={CHART_COLORS.actual} strokeWidth={2} fill="url(#navGrad)" dot={false} name={`${config.symbol} NAV`} isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
           <div className="flex gap-6 mt-4 justify-center">

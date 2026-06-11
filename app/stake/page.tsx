@@ -150,14 +150,40 @@ export default function StakePage() {
   }
 
   if (!mounted || !isConnected) {
+    // Visitors got a viewport of black with one line of text — explain what
+    // staking actually does before asking for a wallet.
     return (
-      <div className="min-h-screen relative flex items-center justify-center" style={{ background: "#05070c" }}>
+      <div className="min-h-screen relative" style={{ background: "#05070c" }}>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>ZENT Staking</h1>
-          <p className="text-white/50">Connect your wallet to stake ZENT</p>
-        </div>
+        <main className="mx-auto max-w-3xl px-6 py-16">
+          <h1 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>ZENT Staking</h1>
+          <p className="text-white/60 mb-10 max-w-xl">
+            Lock ZENT for 1–730 days to receive <span className="text-white/90">veZENT</span> — time-decaying
+            governance power. Longer locks mint more veZENT per token.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            {[
+              { title: "Govern", body: "veZENT votes on vault risk parameters, treasury actions, and protocol upgrades through the 48-hour timelock." },
+              { title: "Unlock access", body: "Staking gates contributor features: signal-provider bonding and research-network participation require a minimum stake." },
+              { title: "Align long-term", body: "veZENT decays linearly to zero at unlock — influence belongs to those committed for the longest." },
+            ].map((c) => (
+              <div key={c.title} className="rounded-2xl p-5" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+                <div className="text-sm font-semibold text-white mb-2">{c.title}</div>
+                <p className="text-xs leading-relaxed text-white/50">{c.body}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-2xl p-6 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+            <div className="text-sm font-semibold text-white mb-1">Connect your wallet to stake</div>
+            <p className="text-xs text-white/50 mb-1">
+              Use the Connect Wallet button in the top-right. Testnet ZENT is required —
+              it is not yet publicly distributed, so staking is currently for contributors.
+            </p>
+          </div>
+        </main>
       </div>
     );
   }

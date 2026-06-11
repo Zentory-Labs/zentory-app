@@ -138,11 +138,18 @@ export default function ResearchTable({ research }: ResearchTableProps) {
               <td className="px-4 py-3">
                 <DirectionBadge direction={sig.direction} />
               </td>
+              {/* Live rows from /api/research can omit size/price (the signal
+                  pipeline posts direction/confidence only) — an unguarded
+                  .toLocaleString() here crashed the whole /research page. */}
               <td className="px-4 py-3 text-right text-white/70 font-mono text-xs whitespace-nowrap">
-                {sig.size.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                {typeof sig.size === "number"
+                  ? sig.size.toLocaleString(undefined, { maximumFractionDigits: 4 })
+                  : "—"}
               </td>
               <td className="px-4 py-3 text-right text-white/70 font-mono text-xs whitespace-nowrap">
-                ${sig.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {typeof sig.price === "number"
+                  ? `$${sig.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                  : "—"}
               </td>
               <td className="px-4 py-3">
                 <StatusBadge status={sig.status} />

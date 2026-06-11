@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useReadContract } from "wagmi";
+import { parseAbi } from "viem";
 import RecentActivityTicker from "@/components/RecentActivityTicker";
+import { addresses, SPOT_VAULT_ABI, PRICE_ORACLE_ABI } from "@/lib/contracts";
 
 // ─── Static Data ───────────────────────────────────────────────────────────────
 
-const PROTOCOL_STATS = [
-  { label: "Network", value: "HyperEVM Testnet (Chain 998)", sub: "Mainnet Q4 2026 after external audit" },
-  { label: "Contracts Deployed", value: "26", sub: "Vaults, Staking, Registry, Scoring, Fees, Governance" },
-  { label: "Testnet TVL", value: "$0", sub: "Pre-mainnet" },
-  { label: "Total Signals", value: "—", sub: "Live after mainnet" },
-  { label: "Epochs Settled", value: "0", sub: "Live after mainnet" },
-  { label: "ZENT Price", value: "—", sub: "Live on mainnet" },
-  { label: "Total Value Secured", value: "$0", sub: "Non-custodial architecture" },
-];
+// Live counters read directly from chain. These were hardcoded "$0"/"—" from
+// the pre-launch era and flatly contradicted the running protocol (40+ signals,
+// settled epochs, a funded vault) on its own transparency page.
+const REGISTRY_STATS_ABI = parseAbi([
+  "function getSignalCount() view returns (uint256)",
+  "function currentEpochId() view returns (uint256)",
+]);
 
 // Selection of canonical contracts shown in the public table. Addresses MUST match
 // lib/contracts.ts (the single source of truth) and zentory-protocol/DEPLOYMENTS.md.
@@ -213,6 +214,34 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function StateOfProtocolPage() {
+  const signalCount = useReadContract({
+    address: addresses.SignalRegistry as `0x${string}`, abi: REGISTRY_STATS_ABI, functionName: "getSignalCount",
+  });
+  const epochId = useReadContract({
+    address: addresses.SignalRegistry as `0x${string}`, abi: REGISTRY_STATS_ABI, functionName: "currentEpochId",
+  });
+  const spotGross = useReadContract({
+    address: addresses.SpotVault as `0x${string}`, abi: SPOT_VAULT_ABI, functionName: "grossValue",
+  });
+  const oracle = useReadContract({
+    address: addresses.ShadowPriceOracle as `0x${string}`, abi: PRICE_ORACLE_ABI, functionName: "latestRoundData",
+  });
+
+  const btcPrice = oracle.data ? Number((oracle.data as readonly bigint[])[1]) / 1e8 : 0;
+  const spotBtc = spotGross.data !== undefined ? Number(spotGross.data as bigint) / 1e8 : 0;
+  const tvlUsd = btcPrice > 0 && spotBtc > 0 ? spotBtc * btcPrice : 0;
+  const fmtUsd = (n: number) => (n >= 1e6 ? `$${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `$${(n / 1e3).toFixed(1)}K` : `$${n.toFixed(0)}`);
+
+  const PROTOCOL_STATS = [
+    { label: "Network", value: "HyperEVM Testnet (Chain 998)", sub: "Mainnet Q4 2026 after external audit" },
+    { label: "Contracts Deployed", value: "26", sub: "Vaults, Staking, Registry, Scoring, Fees, Governance" },
+    { label: "Testnet TVL", value: tvlUsd > 0 ? fmtUsd(tvlUsd) : "—", sub: "Spot vault, oracle-priced (mock assets)" },
+    { label: "Total Signals", value: signalCount.data !== undefined ? String(signalCount.data) : "—", sub: "On-chain, EIP-712 signed" },
+    { label: "Epochs Settled", value: epochId.data !== undefined ? String(Number(epochId.data) - 1) : "—", sub: "4-hour scoring epochs" },
+    { label: "ZENT Price", value: "—", sub: "Live on mainnet" },
+    { label: "Total Value Secured", value: tvlUsd > 0 ? fmtUsd(tvlUsd) : "—", sub: "Non-custodial architecture" },
+  ];
+
   return (
     <div className="w-full min-h-screen" style={{ background: "#0b0b0d" }}>
       {/* Ambient background glow */}
