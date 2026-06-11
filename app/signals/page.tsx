@@ -2,17 +2,48 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
-import { createPublicClient, http, parseAbiItem } from "viem";
+import { createPublicClient, http, parseAbi } from "viem";
 import { addresses, HYPEREVM_TESTNET, demoProviderLabel } from "@/lib/contracts";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoSignals, demoProviders } from "@/lib/demo/data";
 
-// viem's getLogs needs a parsed AbiEvent object, not a raw human-readable
-// string. Passing the string verbatim throws "Event not found on ABI" — that
-// was the visible error on /signals.
-const SIGNAL_SUBMITTED_EVENT = parseAbiItem(
-  "event SignalSubmitted(bytes32 indexed signalId, address indexed provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 expiresAt)"
-);
+// Registry STATE reads. Signals post once per 4h epoch, but the RPC caps
+// eth_getLogs at 1000 blocks (~10 min of HyperEVM chain) — so any log-scan
+// window was almost always empty and the arena rendered "No signals found"
+// while 40+ signals sat on-chain. The registry keeps a public signalIds array,
+// so we page through state instead: no range limit, real submittedAt times.
+const REGISTRY_INDEX_ABI = parseAbi([
+  "function getSignalCount() view returns (uint256)",
+  "function signalIds(uint256) view returns (bytes32)",
+]);
+
+// getSignal returns a struct — parseAbi can't express inline tuples, so this
+// one entry is spelled out as a JSON ABI fragment.
+const GET_SIGNAL_ABI = [
+  {
+    name: "getSignal",
+    type: "function",
+    stateMutability: "view",
+    inputs: [{ name: "signalId", type: "bytes32" }],
+    outputs: [
+      {
+        type: "tuple",
+        components: [
+          { name: "signalId", type: "bytes32" },
+          { name: "provider", type: "address" },
+          { name: "assetClass", type: "uint8" },
+          { name: "assetId", type: "bytes32" },
+          { name: "direction", type: "int256" },
+          { name: "confidence", type: "uint256" },
+          { name: "submittedAt", type: "uint256" },
+          { name: "expiresAt", type: "uint256" },
+          { name: "signature", type: "bytes" },
+          { name: "status", type: "uint8" },
+        ],
+      },
+    ],
+  },
+] as const;
 
 const ASSET_CLASS_LABEL: Record<number, string> = {
   0: "Crypto Spot",
@@ -139,52 +170,52 @@ export default function SignalsPage() {
     try {
       // Prefer the configured Alchemy URL (rotated, rate-limit-friendly) over
       // the public testnet RPC which throttles aggressively under demo load.
+      // Batched transport folds the per-signal reads into a few HTTP calls.
       const rpcUrl = process.env.NEXT_PUBLIC_HYPEREVM_RPC;
       const publicClient = createPublicClient({
         chain: HYPEREVM_TESTNET,
-        transport: http(rpcUrl),
+        transport: http(rpcUrl, { batch: true }),
       });
 
-      const LATEST_BLOCK = await publicClient.getBlockNumber();
-      // Alchemy + HyperEVM public RPC enforce a 1000-block max range per
-      // eth_getLogs call. 10000 was way over and threw "query exceeds max
-      // block range" on every refresh. 900 keeps us comfortably under the
-      // ceiling and on HyperEVM's ~600ms blocks equals ~9 min of history —
-      // enough for live signal demos; older signals come from the Supabase
-      // mirror populated by the off-chain indexer.
-      const MAX_RANGE = 900n;
-      const FROM_BLOCK = LATEST_BLOCK > MAX_RANGE ? LATEST_BLOCK - MAX_RANGE : 0n;
+      const registry = addresses.SignalRegistry as `0x${string}`;
+      const count = Number(
+        await publicClient.readContract({
+          address: registry,
+          abi: REGISTRY_INDEX_ABI,
+          functionName: "getSignalCount",
+        })
+      );
+      const take = Math.min(count, 25);
+      const idxs = Array.from({ length: take }, (_, i) => BigInt(count - take + i));
+      const ids = await Promise.all(
+        idxs.map((i) =>
+          publicClient.readContract({ address: registry, abi: REGISTRY_INDEX_ABI, functionName: "signalIds", args: [i] })
+        )
+      );
+      const raw = await Promise.all(
+        ids.map((id) =>
+          publicClient.readContract({ address: registry, abi: GET_SIGNAL_ABI, functionName: "getSignal", args: [id] })
+        )
+      );
 
-      const logs = await publicClient.getLogs({
-        address: addresses.SignalRegistry,
-        event: SIGNAL_SUBMITTED_EVENT,
-        fromBlock: FROM_BLOCK,
-        toBlock: "latest",
-      });
+      const decoded: Signal[] = raw
+        .map((s: any) => ({
+          id: s.signalId as string,
+          provider: s.provider as string,
+          assetClass: Number(s.assetClass),
+          assetId: s.assetId as string,
+          direction: Number(s.direction),
+          confidence: Number(s.confidence),
+          submittedAt: Number(s.submittedAt),
+          expiresAt: Number(s.expiresAt),
+          // Real conviction from the off-chain indexer's stake mirror; if it
+          // hasn't caught up, 0 — an honest blank beats a fake number.
+          convictionStaked: convictionMap[s.signalId as string] ?? 0,
+          status: Number(s.status),
+        }))
+        .reverse(); // newest first
 
-      const decoded: Signal[] = logs.map((log: any) => {
-        const args = log.args;
-        // Use the real conviction from the convictionMap (sourced from the
-        // off-chain indexer's mirror of signal stake amounts). If missing
-        // (e.g. the indexer hasn't caught up yet), default to 0 — better
-        // to show an honest blank than a fake random number that misleads
-        // anyone watching the live arena.
-        const conviction = convictionMap[args.signalId] ?? 0;
-        return {
-          id: args.signalId as string,
-          provider: args.provider as string,
-          assetClass: Number(args.assetClass),
-          assetId: args.assetId as string,
-          direction: Number(args.direction),
-          confidence: Number(args.confidence),
-          submittedAt: Number(log.blockNumber ? (log.blockNumber * 12n) / 1000n + 1700000000n : Date.now() / 1000),
-          expiresAt: Number(args.expiresAt),
-          convictionStaked: conviction,
-          status: 0,
-        };
-      });
-
-      setSignals(decoded.slice(0, 50));
+      setSignals(decoded);
     } catch (e: any) {
       setError(e.message ?? "Failed to load signals");
     } finally {

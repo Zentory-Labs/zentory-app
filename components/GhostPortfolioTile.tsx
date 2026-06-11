@@ -135,7 +135,9 @@ export default function GhostPortfolioTile({ asset }: { asset: string }) {
       {!err && entries && entries.length > 0 && (
         <>
           <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+            {/* left:-20 clipped the leading digits off longer Y ticks ("1.3455"
+                read as "3455"); keep the axis fully visible. */}
+            <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -6 }}>
               <defs>
                 <linearGradient id="actualGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={COLOR.actual} stopOpacity={0.22} />
@@ -144,16 +146,18 @@ export default function GhostPortfolioTile({ asset }: { asset: string }) {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={COLOR.grid} />
               <XAxis dataKey="t" tick={{ fill: COLOR.text, fontSize: 11 }} />
-              <YAxis tick={{ fill: COLOR.text, fontSize: 11 }} domain={["dataMin", "dataMax"]} />
+              <YAxis tick={{ fill: COLOR.text, fontSize: 11 }} domain={["dataMin", "dataMax"]} tickFormatter={(v) => Number(v).toFixed(3)} width={52} />
               <Tooltip
                 contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: "rgba(255,255,255,0.5)" }}
                 formatter={(v) => (typeof v === "number" ? v.toFixed(4) : String(v))}
               />
               <Legend wrapperStyle={{ fontSize: 12, color: COLOR.text }} />
-              <Line type="monotone" dataKey="hold"  stroke={COLOR.hold}  strokeWidth={1.5} dot={false} name="HOLD" />
-              <Line type="monotone" dataKey="ghost" stroke={COLOR.ghost} strokeWidth={2}   dot={false} name="GHOST" />
-              <Area type="monotone" dataKey="actual" stroke={COLOR.actual} strokeWidth={2} fill="url(#actualGrad)" dot={false} name="ACTUAL" />
+              {/* Animation disabled: the entry animation raced visibility on
+                  slow renders and the chart could screenshot/paint empty. */}
+              <Line type="monotone" dataKey="hold"  stroke={COLOR.hold}  strokeWidth={1.5} dot={false} name="HOLD" isAnimationActive={false} />
+              <Line type="monotone" dataKey="ghost" stroke={COLOR.ghost} strokeWidth={2}   dot={false} name="GHOST" isAnimationActive={false} />
+              <Area type="monotone" dataKey="actual" stroke={COLOR.actual} strokeWidth={2} fill="url(#actualGrad)" dot={false} name="ACTUAL" isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
 

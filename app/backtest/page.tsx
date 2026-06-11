@@ -169,8 +169,11 @@ export default function BacktestPage() {
           {/* Equity curve */}
           <section className="space-y-2">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Growth of $1 — out-of-sample (log scale)</h3>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4" style={{ height: 380 }}>
-              <ResponsiveContainer width="100%" height="100%">
+            {/* Numeric heights: ResponsiveContainer height="100%" measures -1×-1
+                in recharts 3.8 here ("width(-1) and height(-1)... greater than 0")
+                and all three charts rendered EMPTY in production. */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <ResponsiveContainer width="100%" height={348}>
                 <LineChart data={a.curve} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
                   <XAxis dataKey="t" tick={{ fill: "rgba(234,234,234,0.4)", fontSize: 11 }} minTickGap={48} />
@@ -180,8 +183,8 @@ export default function BacktestPage() {
                     formatter={((v: unknown, n: unknown) => [fmtX(Number(v)), n === "s" ? "Strategy" : "Holding"]) as never}
                   />
                   <Legend formatter={(v) => (v === "s" ? "Strategy" : "Holding")} wrapperStyle={{ fontSize: 12 }} />
-                  <Line type="monotone" dataKey="h" stroke={GRAY} dot={false} strokeWidth={1.5} />
-                  <Line type="monotone" dataKey="s" stroke={GOLD} dot={false} strokeWidth={2} />
+                  <Line type="monotone" dataKey="h" stroke={GRAY} dot={false} strokeWidth={1.5} isAnimationActive={false} />
+                  <Line type="monotone" dataKey="s" stroke={GOLD} dot={false} strokeWidth={2} isAnimationActive={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -190,8 +193,8 @@ export default function BacktestPage() {
           {/* Underwater / drawdown */}
           <section className="space-y-2">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Drawdown — how deep underwater (the real edge)</h3>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4" style={{ height: 300 }}>
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <ResponsiveContainer width="100%" height={268}>
                 <AreaChart data={a.drawdown} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
                   <XAxis dataKey="t" tick={{ fill: "rgba(234,234,234,0.4)", fontSize: 11 }} minTickGap={48} />
@@ -201,8 +204,8 @@ export default function BacktestPage() {
                     formatter={((v: unknown, n: unknown) => [fmtPct(Number(v), 1), n === "s" ? "Strategy" : "Holding"]) as never}
                   />
                   <Legend formatter={(v) => (v === "s" ? "Strategy" : "Holding")} wrapperStyle={{ fontSize: 12 }} />
-                  <Area type="monotone" dataKey="h" stroke={RED} fill={`${RED}22`} strokeWidth={1.2} />
-                  <Area type="monotone" dataKey="s" stroke={GOLD} fill={`${GOLD}33`} strokeWidth={1.6} />
+                  <Area type="monotone" dataKey="h" stroke={RED} fill={`${RED}22`} strokeWidth={1.2} isAnimationActive={false} />
+                  <Area type="monotone" dataKey="s" stroke={GOLD} fill={`${GOLD}33`} strokeWidth={1.6} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -211,8 +214,8 @@ export default function BacktestPage() {
           {/* Per-year returns */}
           <section className="space-y-2">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Calendar-year returns — strategy vs holding</h3>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4" style={{ height: 300 }}>
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <ResponsiveContainer width="100%" height={268}>
                 <BarChart data={yearlyData} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
                   <XAxis dataKey="year" tick={{ fill: "rgba(234,234,234,0.4)", fontSize: 11 }} />
@@ -223,8 +226,8 @@ export default function BacktestPage() {
                   />
                   <Legend formatter={(v) => (v === "strat" ? "Strategy" : "Holding")} wrapperStyle={{ fontSize: 12 }} />
                   <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" />
-                  <Bar dataKey="hold" fill={GRAY} radius={[2, 2, 0, 0]} />
-                  <Bar dataKey="strat" fill={GOLD} radius={[2, 2, 0, 0]} />
+                  <Bar dataKey="hold" fill={GRAY} radius={[2, 2, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="strat" fill={GOLD} radius={[2, 2, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

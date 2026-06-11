@@ -114,24 +114,72 @@ export async function getVaultPerformance(
   }
 }
 
-/** Fetch aggregate stats across all vaults */
+/** Underlying decimals for the RAW integer units the vault-nav indexer writes
+ *  into vault_nav_history. Keep in sync with the [vault] page config and
+ *  zentory-engine/scripts/index_vault_nav.py. */
+export const NAV_DECIMALS: Record<string, number> = { zBTC: 8, zETH: 18, zSOL: 9, zXRP: 6, SPOT: 8 };
+
+/** Which forward-ledger asset prices each vault's underlying. */
+const LEDGER_ASSET: Record<string, string> = { zBTC: "BTC", zETH: "ETH", zSOL: "SOL", zXRP: "XRP", SPOT: "BTC" };
+
+/** Latest USD price per asset from the public hash-chained forward ledger
+ *  (same-origin, published every 4h by the recorder). Returns {} on failure —
+ *  callers must treat USD values as unavailable, never fabricate. */
+async function latestLedgerPrices(): Promise<Record<string, number>> {
+  try {
+    const res = await fetch("/forward_ledger.jsonl", { cache: "no-store" });
+    if (!res.ok) return {};
+    const prices: Record<string, number> = {};
+    for (const line of (await res.text()).split("\n")) {
+      if (!line.trim()) continue;
+      try {
+        const e = JSON.parse(line);
+        if (e.asset && typeof e.price === "number") prices[e.asset] = e.price;
+      } catch {
+        /* skip malformed line */
+      }
+    }
+    return prices;
+  } catch {
+    return {};
+  }
+}
+
+/** Fetch aggregate stats across all vaults.
+ *
+ *  Unit semantics: vault_nav_history stores RAW integer chain units (1 WBTC =
+ *  1e8, 1 WETH = 1e18, ...). Summing those raw values as "USD" once rendered a
+ *  fourteen-digit TVL on the dashboard. Everything returned here is normalized
+ *  to asset units, with USD computed from real ledger prices where available. */
 export async function getProtocolStats() {
   const supabase = createClient();
 
-  const [navData, flowData, perfData] = await Promise.all([
-    supabase.from("vault_nav_history").select("*").order("snapshot_at", { ascending: false }).limit(4),
-    supabase.from("vault_flow").select("vault_symbol, deposits, withdrawals, net_flow").order("date", { ascending: false }),
-    supabase.from("vault_performance").select("*").order("date", { ascending: false }),
+  // Flow/performance tables only contain pre-June demo seed rows; a rolling
+  // 30-day window excludes them permanently without deleting user data.
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const cutoffDate = cutoff.toISOString().split("T")[0];
+
+  const [navData, flowData, perfData, prices] = await Promise.all([
+    supabase.from("vault_nav_history").select("*").order("snapshot_at", { ascending: false }).limit(25),
+    supabase.from("vault_flow").select("vault_symbol, deposits, withdrawals, net_flow").gte("date", cutoffDate).order("date", { ascending: false }),
+    supabase.from("vault_performance").select("*").gte("date", cutoffDate).order("date", { ascending: false }),
+    latestLedgerPrices(),
   ]);
 
   const latestNav = navData.data ?? [];
   const flows = flowData.data ?? [];
   const performance = perfData.data ?? [];
 
-  const vaults = ["zETH", "zBTC", "zSOL", "zXRP"];
+  const vaults = ["zBTC", "zETH", "zSOL", "zXRP", "SPOT"];
 
   const byVault = vaults.map((sym) => {
+    // latest snapshot per symbol (rows are interleaved across vaults)
     const nav = (latestNav as VaultNavSnapshot[]).find((n) => n.vault_symbol === sym);
+    const unit = 10 ** (NAV_DECIMALS[sym] ?? 8);
+    const assets = (nav?.total_assets ?? 0) / unit;
+    const price = prices[LEDGER_ASSET[sym]] ?? 0;
+
     const vaultFlows = (flows as VaultFlow[]).filter((f) => f.vault_symbol === sym);
     const vaultPerf = (performance as VaultPerformance[]).filter((p) => p.vault_symbol === sym);
 
@@ -147,9 +195,10 @@ export async function getProtocolStats() {
 
     return {
       symbol: sym,
-      navPerShare: nav?.nav_per_share ?? 0,
-      totalAssets: nav?.total_assets ?? 0,
-      hodlNav: nav?.hodl_nav ?? 0,
+      navPerShare: (nav?.nav_per_share ?? 0) / unit,
+      totalAssets: assets,
+      usdValue: price > 0 ? assets * price : null,
+      hodlNav: (nav?.hodl_nav ?? 0) / unit,
       alphaPct: nav?.alpha_pct ?? 0,
       totalDeposits,
       totalWithdrawals,
@@ -160,11 +209,13 @@ export async function getProtocolStats() {
     };
   });
 
-  const totalTvl = byVault.reduce((s, v) => s + v.totalAssets, 0);
+  const priced = byVault.filter((v) => v.usdValue !== null);
+  const totalTvl = priced.reduce((s, v) => s + (v.usdValue ?? 0), 0);
+  const tvlComplete = priced.length === byVault.length;
   const totalDeposits = byVault.reduce((s, v) => s + v.totalDeposits, 0);
   const totalWithdrawals = byVault.reduce((s, v) => s + v.totalWithdrawals, 0);
-  const avgAlpha = byVault.reduce((s, v) => s + v.avgAlpha, 0) / 4;
-  const avgWinRate = byVault.reduce((s, v) => s + v.avgWinRate, 0) / 4;
+  const avgAlpha = byVault.reduce((s, v) => s + v.avgAlpha, 0) / byVault.length;
+  const avgWinRate = byVault.reduce((s, v) => s + v.avgWinRate, 0) / byVault.length;
 
-  return { vaults: byVault, totalTvl, totalDeposits, totalWithdrawals, avgAlpha, avgWinRate };
+  return { vaults: byVault, totalTvl, tvlComplete, totalDeposits, totalWithdrawals, avgAlpha, avgWinRate };
 }

@@ -362,7 +362,7 @@ export default function SpotVaultPage() {
         {navChartData.length >= 2 ? (
           <>
             <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={navChartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+              <AreaChart data={navChartData} margin={{ top: 4, right: 4, bottom: 0, left: -6 }}>
                 <defs>
                   <linearGradient id="spotNavGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={NAV_CHART.actual} stopOpacity={0.2} />
@@ -371,14 +371,22 @@ export default function SpotVaultPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={NAV_CHART.grid} />
                 <XAxis dataKey="time" tick={{ fill: NAV_CHART.text, fontSize: 11 }} />
-                <YAxis tick={{ fill: NAV_CHART.text, fontSize: 11 }} domain={["auto", "auto"]} tickFormatter={(v) => Number(v).toFixed(3)} />
+                {/* ±1% padding: a bare auto-domain over a handful of points
+                    renders a 9 bps move as a full-height cliff — visually
+                    "the vault crashed" when nothing happened. */}
+                <YAxis
+                  tick={{ fill: NAV_CHART.text, fontSize: 11 }}
+                  domain={[(min: number) => min * 0.99, (max: number) => max * 1.01]}
+                  tickFormatter={(v) => Number(v).toFixed(3)}
+                  width={52}
+                />
                 <Tooltip
                   contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, fontSize: 12 }}
                   labelStyle={{ color: "rgba(255,255,255,0.5)" }}
                   formatter={(v: unknown) => Number(v).toFixed(5)}
                 />
-                <Area type="monotone" dataKey="HOLD" stroke={NAV_CHART.hold} strokeWidth={1.5} fill="none" dot={false} name="HOLD" />
-                <Area type="monotone" dataKey="NAV" stroke={NAV_CHART.actual} strokeWidth={2} fill="url(#spotNavGrad)" dot={false} name="NAV" />
+                <Area type="monotone" dataKey="HOLD" stroke={NAV_CHART.hold} strokeWidth={1.5} fill="none" dot={false} name="HOLD" isAnimationActive={false} />
+                <Area type="monotone" dataKey="NAV" stroke={NAV_CHART.actual} strokeWidth={2} fill="url(#spotNavGrad)" dot={false} name="NAV" isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
             <div className="flex gap-6 mt-4 justify-center">

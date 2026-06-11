@@ -250,6 +250,8 @@ export const SIGNAL_REGISTRY_ABI = ([
   "function submitSignalBatch(tuple(bytes32 signalId, address provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 submittedAt, uint256 expiresAt, bytes signature, uint8 status)[] calldata batch) returns (bytes32[] ids)",
   // Views
   "function getSignal(bytes32 signalId) view returns (tuple(bytes32 signalId, address provider, uint8 assetClass, bytes32 assetId, int256 direction, uint256 confidence, uint256 submittedAt, uint256 expiresAt, bytes signature, uint8 status))",
+  "function getSignalCount() view returns (uint256)",
+  "function signalIds(uint256) view returns (bytes32)",
   "function providerNonce(address) view returns (uint256)",
   "function signalExists(bytes32) view returns (bool)",
   "function currentEpochId() view returns (uint256)",
