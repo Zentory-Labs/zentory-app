@@ -142,13 +142,16 @@ export default function ProviderPage() {
 
       {!loading && (!epochs || epochs.length === 0) && (
         <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 space-y-3">
-          <h2 className="text-lg font-semibold" style={{ color: TEXT }}>No settled epochs yet</h2>
+          <h2 className="text-lg font-semibold" style={{ color: TEXT }}>No scored epochs yet</h2>
           <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.6)" }}>
-            This track record begins the moment this provider&apos;s signals are scored on-chain. We don&apos;t
-            show projected or sample numbers on a real profile — when there&apos;s a verified epoch, it appears here.
+            A signal goes through two stages: it <em>resolves</em> when its horizon expires (the outcome is
+            known), then its accuracy is <em>scored</em> in a settled epoch by EpochScoring. We don&apos;t show
+            projected or sample numbers on a real profile — the moment this provider has a scored epoch, the
+            charts render here.
             {summary && (
-              <> So far: <strong style={{ color: TEXT }}>{summary.totalSignals}</strong> signals submitted,{" "}
-              <strong style={{ color: TEXT }}>{summary.resolvedSignals}</strong> resolved.</>
+              <> Live so far: <strong style={{ color: TEXT }}>{summary.totalSignals}</strong> signals submitted,{" "}
+              <strong style={{ color: TEXT }}>{summary.resolvedSignals}</strong> resolved and awaiting accuracy
+              settlement.</>
             )}
           </p>
           <p className="text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
