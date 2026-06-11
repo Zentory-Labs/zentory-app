@@ -90,7 +90,14 @@ export async function getRecentHlUserFills(limit = 80): Promise<HlUserFillRow[]>
       .order("time_ms", { ascending: false, nullsFirst: false })
       .limit(limit);
     if (error) return [];
-    return (data as HlUserFillRow[]) ?? [];
+    // The table contains indexer plumbing-test rows recorded against the
+    // placeholder HL user 0x…0001 with an all-zero tx hash. Real venue fills
+    // always carry a hash; surfacing the placeholders under a "Live from
+    // Hyperliquid" badge misrepresents them, so drop them for all callers.
+    const ZERO_HASH = `0x${"0".repeat(64)}`;
+    return ((data as HlUserFillRow[]) ?? []).filter(
+      (r) => r.hash != null && r.hash !== ZERO_HASH
+    );
   } catch {
     return [];
   }
