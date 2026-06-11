@@ -45,6 +45,13 @@ interface RecentSignal {
   created_at: string;
 }
 
+interface LeaderboardProvider {
+  provider: string;
+  totalSignals: number;
+  resolvedSignals: number;
+  lastSignal: string;
+}
+
 // ─── API helpers ──────────────────────────────────────────────────────────────
 
 async function fetchOverview(): Promise<OverviewStats | null> {
@@ -78,6 +85,17 @@ async function fetchEpochs(): Promise<EpochRow[]> {
     const json = await res.json();
     if (json.error) return [];
     return json.epochs as EpochRow[];
+  } catch {
+    return [];
+  }
+}
+
+async function fetchProviders(): Promise<LeaderboardProvider[]> {
+  try {
+    const res = await fetch("/api/leaderboard");
+    if (!res.ok) return [];
+    const json = await res.json();
+    return (json.providers ?? []) as LeaderboardProvider[];
   } catch {
     return [];
   }
@@ -390,7 +408,7 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
   if (signals.length === 0) {
     return (
       <div className="flex items-center justify-center py-12 text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
-        No research yet — research will appear after the first epoch settles
+        No scored research yet — rows appear once epoch scoring settles signal accuracy on-chain
       </div>
     );
   }
@@ -530,21 +548,24 @@ export default function AnalyticsPage() {
   const [assetClasses, setAssetClasses] = useState<AssetClassRow[]>([]);
   const [epochs, setEpochs] = useState<EpochRow[]>([]);
   const [signals, setSignals] = useState<RecentSignal[]>([]);
+  const [providers, setProviders] = useState<LeaderboardProvider[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<"7d" | "30d" | "all">("all");
   const [assetFilter, setAssetFilter] = useState("All");
 
   const load = useCallback(async () => {
-    const [ov, ac, ep, sig] = await Promise.all([
+    const [ov, ac, ep, sig, prov] = await Promise.all([
       fetchOverview(),
       fetchAssetClasses(),
       fetchEpochs(),
       fetchRecentSignals(),
+      fetchProviders(),
     ]);
     setOverview(ov);
     setAssetClasses(ac);
     setEpochs(ep);
     setSignals(sig);
+    setProviders(prov);
     setLoading(false);
   }, []);
 
@@ -564,6 +585,16 @@ export default function AnalyticsPage() {
     const cutoff = Date.now() - (timeRange === "7d" ? 7 : 30) * 24 * 60 * 60 * 1000;
     return signals.filter((s) => new Date(s.created_at).getTime() >= cutoff);
   }, [signals, timeRange]);
+
+  // Accuracy scoring is "live" once at least one signal has settled with a
+  // non-null accuracy. Until then the overview endpoint returns all zeros —
+  // show live submission activity (from provider_stats) instead of dead zeros.
+  const scoringLive = (overview?.totalSignals ?? 0) > 0;
+  const submission = useMemo(() => {
+    const submitted = providers.reduce((s, p) => s + (p.totalSignals ?? 0), 0);
+    const resolved = providers.reduce((s, p) => s + (p.resolvedSignals ?? 0), 0);
+    return { submitted, resolved, providerCount: providers.length, lastSignal: providers[0]?.lastSignal ?? "—" };
+  }, [providers]);
 
   return (
     <div className="w-full overflow-x-hidden" style={{ fontFamily: "'Montserrat', sans-serif" }}>
@@ -615,6 +646,19 @@ export default function AnalyticsPage() {
           </div>
         </section>
 
+        {/* ── Scoring status banner ── */}
+        {!loading && !scoringLive && (
+          <div
+            className="rounded-2xl px-5 py-4 text-sm"
+            style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)", color: "rgba(234,234,234,0.7)" }}
+          >
+            <span style={{ color: "#b08d57", fontWeight: 600 }}>Accuracy scoring not yet settled.</span>{" "}
+            Signals are being submitted and resolved on-chain (live counts below), but per-epoch accuracy
+            publishes only once epoch scoring settles them. Until then this page shows submission activity
+            rather than invented accuracy numbers.
+          </div>
+        )}
+
         {/* ── Summary Cards ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {loading ? (
@@ -623,6 +667,43 @@ export default function AnalyticsPage() {
               <Skeleton className="h-24 rounded-2xl" />
               <Skeleton className="h-24 rounded-2xl" />
               <Skeleton className="h-24 rounded-2xl" />
+            </>
+          ) : !scoringLive && submission.submitted > 0 ? (
+            <>
+              <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                  Signals Submitted
+                </div>
+                <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
+                  {submission.submitted.toLocaleString()}
+                </div>
+                <div className="text-xs mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>on-chain, testnet</div>
+              </div>
+              <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                  Resolved
+                </div>
+                <div className="text-3xl font-bold" style={{ color: "#b08d57" }}>
+                  {submission.resolved.toLocaleString()}
+                </div>
+                <div className="text-xs mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>awaiting accuracy settlement</div>
+              </div>
+              <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                  Active Providers
+                </div>
+                <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
+                  {submission.providerCount}
+                </div>
+              </div>
+              <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                  Last Signal
+                </div>
+                <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
+                  {submission.lastSignal}
+                </div>
+              </div>
             </>
           ) : overview ? (
             <>
@@ -729,7 +810,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* ── Additional Stats Row ── */}
-        {overview && !loading && (
+        {overview && !loading && scoringLive && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-2xl p-4 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
               <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
