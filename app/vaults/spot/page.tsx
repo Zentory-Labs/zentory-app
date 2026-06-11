@@ -13,6 +13,8 @@ import Link from "next/link";
 import { addresses, SPOT_VAULT_ABI, PRICE_ORACLE_ABI } from "@/lib/contracts";
 import LiveSignalWidget from "@/components/LiveSignalWidget";
 import GhostPortfolioTile from "@/components/GhostPortfolioTile";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { getVaultNavHistory, type VaultNavSnapshot } from "@/lib/vault-stats";
 
 // Deposit asset is the testnet WBTC mock (8 decimals); shares carry a +6
 // decimals offset (so 14), but we always read decimals() rather than assume.
@@ -45,6 +47,7 @@ function num(value: unknown, decimals: number): number {
 
 const CARD = { background: "#1c1c21", border: "1px solid #2a2f3a" } as const;
 const DIM = "rgba(106,111,117,0.9)";
+const NAV_CHART = { actual: "#f0c040", hold: "#5a5a6a", grid: "rgba(255,255,255,0.06)", text: "rgba(255,255,255,0.4)" } as const;
 
 export default function SpotVaultPage() {
   const { address: user, isConnected } = useAccount();
@@ -55,6 +58,11 @@ export default function SpotVaultPage() {
   const [withdrawShares, setWithdrawShares] = useState("");
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Real on-chain NAV history, recorded by the vault-nav indexer (every 4h) into
+  // Supabase. Empty until the indexer is live; we never fabricate points.
+  const [navHistory, setNavHistory] = useState<VaultNavSnapshot[]>([]);
+  useEffect(() => { getVaultNavHistory("SPOT", 30).then(setNavHistory); }, []);
 
   // ─── Reads ─────────────────────────────────────────────────────────
   const shareDec = useReadContract({ address: VAULT, abi: SPOT_VAULT_ABI, functionName: "decimals" });
@@ -114,6 +122,21 @@ export default function SpotVaultPage() {
   const tvlUsd = grossBtc * oraclePrice;
   const perfFeePct = perfFee.data !== undefined ? Number(perfFee.data) / 100 : 20;
   const targetPct = targetWeight.data !== undefined ? Number(targetWeight.data) / 100 : 0;
+
+  // NAV history → chart series. Stored NAV/HOLD are raw 1e8 ints; normalize to ~1.0.
+  // Append the current live on-chain NAV as the latest point so the chart always
+  // reflects the chain even before the indexer has accrued a time-series.
+  const liveNav = navPerShare.data !== undefined ? num(navPerShare.data, ASSET_DEC) : null;
+  const navChartData = [
+    ...navHistory.map((s) => ({
+      time: new Date(s.snapshot_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      NAV: s.nav_per_share / 10 ** ASSET_DEC,
+      HOLD: s.hodl_nav / 10 ** ASSET_DEC,
+    })),
+    ...(liveNav !== null
+      ? [{ time: "Now", NAV: liveNav, HOLD: navHistory.length ? navHistory[navHistory.length - 1].hodl_nav / 10 ** ASSET_DEC : liveNav }]
+      : []),
+  ];
 
   // ─── Handlers ──────────────────────────────────────────────────────
   const handleApprove = useCallback(async () => {
@@ -323,6 +346,65 @@ export default function SpotVaultPage() {
           <div className="text-sm" style={{ color: DIM }}>Connect to deposit BTC into the Spot Strategy Vault.</div>
         </div>
       )}
+
+      {/* Real on-chain NAV vs HOLD — from indexer snapshots + the live chain read */}
+      <div className="rounded-2xl p-6 mb-6" style={CARD}>
+        <div className="flex items-center gap-3 mb-1">
+          <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: DIM }}>NAV vs Holding</h3>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff", border: "1px solid rgba(124,92,255,0.3)" }}>
+            On-chain
+          </span>
+        </div>
+        <p className="text-xs mb-5 leading-relaxed" style={{ color: DIM }}>
+          Share value, marked to the price oracle at each rebalance, vs simply holding BTC from the vault&apos;s first
+          snapshot. Read straight from the contract and recorded every 4h — not a backtest.
+        </p>
+        {navChartData.length >= 2 ? (
+          <>
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={navChartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                <defs>
+                  <linearGradient id="spotNavGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={NAV_CHART.actual} stopOpacity={0.2} />
+                    <stop offset="95%" stopColor={NAV_CHART.actual} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={NAV_CHART.grid} />
+                <XAxis dataKey="time" tick={{ fill: NAV_CHART.text, fontSize: 11 }} />
+                <YAxis tick={{ fill: NAV_CHART.text, fontSize: 11 }} domain={["auto", "auto"]} tickFormatter={(v) => Number(v).toFixed(3)} />
+                <Tooltip
+                  contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, fontSize: 12 }}
+                  labelStyle={{ color: "rgba(255,255,255,0.5)" }}
+                  formatter={(v: unknown) => Number(v).toFixed(5)}
+                />
+                <Area type="monotone" dataKey="HOLD" stroke={NAV_CHART.hold} strokeWidth={1.5} fill="none" dot={false} name="HOLD" />
+                <Area type="monotone" dataKey="NAV" stroke={NAV_CHART.actual} strokeWidth={2} fill="url(#spotNavGrad)" dot={false} name="NAV" />
+              </AreaChart>
+            </ResponsiveContainer>
+            <div className="flex gap-6 mt-4 justify-center">
+              {[{ color: NAV_CHART.actual, label: "Vault NAV" }, { color: NAV_CHART.hold, label: "HOLD" }].map((l) => (
+                <div key={l.label} className="flex items-center gap-2 text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <div className="w-3 h-0.5 rounded" style={{ background: l.color }} />
+                  {l.label}
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="text-sm py-6 text-center" style={{ color: DIM }}>
+            {liveNav !== null ? (
+              <>
+                Current on-chain NAV / share:{" "}
+                <span style={{ color: "#eaeaea", fontFamily: "'Space Mono', monospace" }}>{liveNav.toFixed(6)} BTC</span>.
+                <br />
+                The time-series fills in as the indexer records 4-hourly on-chain snapshots.
+              </>
+            ) : (
+              <>NAV history appears here once on-chain snapshots are recorded.</>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Live signal + Ghost Portfolio attribution (forward-recorder driven) */}
       <LiveSignalWidget asset="BTC" />
