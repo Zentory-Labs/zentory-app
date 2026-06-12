@@ -19,21 +19,36 @@ import { redis } from "./upstash";
 type Window = { windowStart: number; count: number };
 const _mem = new Map<string, Window>();
 
+// Circuit breaker: an unreachable/misconfigured Redis (bad URL, DNS failure,
+// egress block) costs a full fetch timeout PER REQUEST before the fallback
+// kicks in — on the hot /api/rpc path that reads as a hung dApp. After 3
+// consecutive failures, skip Redis for 60s, then probe again.
+let _redisFailures = 0;
+let _redisSkipUntil = 0;
+
 export async function rateLimit(
   key: string,
   limit: number,
   windowSec: number,
 ): Promise<{ ok: boolean; remaining: number }> {
-  if (redis) {
+  if (redis && Date.now() >= _redisSkipUntil) {
     try {
       const rkey = `rl:${key}`;
       const count = await redis.incr(rkey);
       // Set the TTL only on the first hit of a new window.
       if (count === 1) await redis.expire(rkey, windowSec);
+      _redisFailures = 0;
       return { ok: count <= limit, remaining: Math.max(0, limit - count) };
     } catch (e) {
       // Redis unavailable mid-request: fall back to in-memory rather than 500.
-      console.warn("[rateLimit] redis error; using in-memory fallback:", e);
+      _redisFailures += 1;
+      if (_redisFailures >= 3) {
+        _redisSkipUntil = Date.now() + 60_000;
+        _redisFailures = 0;
+        console.warn("[rateLimit] redis failing repeatedly; skipping it for 60s:", e);
+      } else {
+        console.warn("[rateLimit] redis error; using in-memory fallback:", e);
+      }
     }
   }
 
