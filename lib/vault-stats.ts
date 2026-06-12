@@ -145,6 +145,42 @@ async function latestLedgerPrices(): Promise<Record<string, number>> {
   }
 }
 
+/** Average "ahead of holding" across assets from the public hash-chained
+ *  forward ledger: latest entry per asset, (actual_nav / hold_nav - 1),
+ *  averaged, in percent. This is the paper-trading ledger the engine publishes
+ *  every 4h — not vault NAV. Returns null when the ledger is unavailable so
+ *  callers render an honest dash, never a fabricated number. */
+export async function getLedgerAheadOfHoldPct(): Promise<number | null> {
+  try {
+    const res = await fetch("/forward_ledger.jsonl", { cache: "no-store" });
+    if (!res.ok) return null;
+    // Lines are appended chronologically — the last line per asset wins.
+    const latest: Record<string, { actual: number; hold: number }> = {};
+    for (const line of (await res.text()).split("\n")) {
+      if (!line.trim()) continue;
+      try {
+        const e = JSON.parse(line);
+        if (
+          e.asset &&
+          typeof e.actual_nav === "number" &&
+          typeof e.hold_nav === "number" &&
+          e.hold_nav > 0
+        ) {
+          latest[e.asset] = { actual: e.actual_nav, hold: e.hold_nav };
+        }
+      } catch {
+        /* skip malformed line */
+      }
+    }
+    const entries = Object.values(latest);
+    if (!entries.length) return null;
+    const avg = entries.reduce((s, e) => s + (e.actual / e.hold - 1), 0) / entries.length;
+    return avg * 100;
+  } catch {
+    return null;
+  }
+}
+
 /** Fetch aggregate stats across all vaults.
  *
  *  Unit semantics: vault_nav_history stores RAW integer chain units (1 WBTC =

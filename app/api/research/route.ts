@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("signals")
-      .select("id, provider, asset, direction, price, status, created_at")
+      .select("id, provider, asset, direction, price, status, created_at, tx_hash")
       .order("created_at", { ascending: false })
       .limit(100);
 
@@ -22,7 +22,16 @@ export async function GET(request: Request) {
       console.error("[GET /api/research]", error.message);
       return NextResponse.json([], { status: 200 });
     }
-    return NextResponse.json(data ?? []);
+    // The signals table still holds April 2026 demo seed rows (includes SHORT
+    // directions the spot vaults never trade). Their synthetic tx_hash values
+    // are 73 chars with long zero-runs — a real EVM tx hash is exactly 66 hex
+    // chars. Only rows backed by a structurally valid hash are public; the
+    // rest stay in the DB but the page renders its honest empty state.
+    const rows = (data ?? []).filter(
+      (r: { tx_hash?: string | null }) =>
+        typeof r.tx_hash === "string" && /^0x[0-9a-fA-F]{64}$/.test(r.tx_hash),
+    );
+    return NextResponse.json(rows);
   } catch (err) {
     console.error("[GET /api/research]", err);
     return NextResponse.json([], { status: 200 });

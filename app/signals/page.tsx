@@ -168,13 +168,13 @@ export default function SignalsPage() {
     }
 
     try {
-      // Prefer the configured Alchemy URL (rotated, rate-limit-friendly) over
-      // the public testnet RPC which throttles aggressively under demo load.
-      // Batched transport folds the per-signal reads into a few HTTP calls.
-      const rpcUrl = process.env.NEXT_PUBLIC_HYPEREVM_RPC;
+      // Read through the server-side proxy (/api/rpc) rather than the raw
+      // provider URL — the upstream endpoint (and its API key) never reaches
+      // the browser or client error messages. The proxy applies the same
+      // allowlist to each call in a batch, so batching stays on.
       const publicClient = createPublicClient({
         chain: HYPEREVM_TESTNET,
-        transport: http(rpcUrl, { batch: true }),
+        transport: http("/api/rpc", { batch: true }),
       });
 
       const registry = addresses.SignalRegistry as `0x${string}`;
@@ -216,8 +216,10 @@ export default function SignalsPage() {
         .reverse(); // newest first
 
       setSignals(decoded);
-    } catch (e: any) {
-      setError(e.message ?? "Failed to load signals");
+    } catch {
+      // Raw RPC errors can echo transport details — show a friendly degraded
+      // state instead and let the retry effect below re-poll.
+      setError("Live feed temporarily unavailable — retrying");
     } finally {
       setLoading(false);
     }
@@ -226,6 +228,13 @@ export default function SignalsPage() {
   useEffect(() => {
     fetchSignals();
   }, [fetchSignals]);
+
+  // Auto-retry while degraded, so the "retrying" copy is honest.
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(fetchSignals, 15_000);
+    return () => clearTimeout(timer);
+  }, [error, fetchSignals]);
 
   // Build leaderboard from signals
   const leaderboard: ProviderStats[] = Object.values(
@@ -268,11 +277,24 @@ export default function SignalsPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl p-4 mb-6 text-sm" style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)", color: "#f87171" }}>
-          {error}
-          <div className="text-xs mt-1" style={{ color: "rgba(248,113,113,0.7)" }}>
-            Check that the HYPEREVM RPC is accessible and the SignalRegistry address is correct.
+        <div
+          className="rounded-xl p-4 mb-6 text-sm flex items-center justify-between gap-4"
+          style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)", color: "#b08d57" }}
+        >
+          <div>
+            {error}
+            <div className="text-xs mt-1" style={{ color: "rgba(234,234,234,0.45)" }}>
+              On-chain signals will reappear automatically once the connection recovers.
+            </div>
           </div>
+          <button
+            onClick={fetchSignals}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 transition-opacity disabled:opacity-50"
+            style={{ background: "rgba(176,141,87,0.12)", color: "#b08d57", border: "1px solid rgba(176,141,87,0.3)", fontFamily: "'Montserrat', sans-serif" }}
+          >
+            Retry now
+          </button>
         </div>
       )}
 

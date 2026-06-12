@@ -167,23 +167,48 @@ export default function TrackRecordPage() {
         </section>
       )}
 
-      {/* Verify it yourself */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-3">
-        <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Verify it yourself</h2>
-        <ol className="list-decimal list-inside space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+      {/* Verify in 60 seconds */}
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+        <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Verify in 60 seconds</h2>
+        <p className="text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+          Each entry commits to the previous one via <code className="text-xs">prev_hash</code> — any edited,
+          inserted or deleted entry breaks every hash after it. Recompute the whole chain yourself with two
+          commands (Node 18+, no installs):
+        </p>
+        <pre className="rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "rgba(234,234,234,0.85)" }}>
+{`curl -sO https://app.zentorylabs.com/verify_ledger.mjs
+curl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mjs`}
+        </pre>
+        <div className="space-y-1">
+          <div className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>
+            expected output
+          </div>
+          <pre className="rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "#34d399" }}>
+            {"CHAIN OK — <entries> entries, <assets> assets, head <hash>"}
+          </pre>
+          <p className="text-xs" style={{ color: "rgba(234,234,234,0.5)" }}>
+            The entry count grows every 4 hours; anything other than CHAIN OK exits non-zero and names the first
+            broken line.
+          </p>
+        </div>
+        <p className="text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+          The verifier is ~100 lines of dependency-free code served from this site (
+          <a href="/verify_ledger.mjs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
+            read it first
+          </a>
+          ) and versioned in the public{" "}
+          <a href="https://github.com/Zentory-Labs/zentory-app" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
+            zentory-app repo
+          </a>{" "}
+          (AGPL).
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
           <li>
-            Download the raw ledger:{" "}
+            Raw ledger:{" "}
             <a href="/forward_ledger.jsonl" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
               /forward_ledger.jsonl
             </a>{" "}
             — one JSON entry per asset per 4h bar.
-          </li>
-          <li>
-            Each entry commits to the previous one via <code className="text-xs">prev_hash</code>. Recompute the
-            chain with the open-source verifier (<code className="text-xs">verify_ledger()</code> in the{" "}
-            <a href="https://github.com/Zentory-Labs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
-              zentory-engine repo
-            </a>) — any edited or deleted entry breaks every hash after it.
           </li>
           <li>
             Cross-check any bar&apos;s price against a public exchange API (the feed uses Kraken/Coinbase 4h closes).
@@ -195,7 +220,7 @@ export default function TrackRecordPage() {
             </a>{" "}
             — timestamps are held by GitHub, so entries can&apos;t be backdated.
           </li>
-        </ol>
+        </ul>
       </section>
     </div>
   );
