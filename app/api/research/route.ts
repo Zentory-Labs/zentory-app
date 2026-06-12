@@ -22,13 +22,14 @@ export async function GET(request: Request) {
       console.error("[GET /api/research]", error.message);
       return NextResponse.json([], { status: 200 });
     }
-    // The signals table still holds April 2026 demo seed rows (no on-chain tx,
-    // includes SHORT directions the spot vaults never trade). Only rows backed
-    // by a real transaction hash are public — the rest stay in the DB but the
-    // page renders its honest empty state instead.
+    // The signals table still holds April 2026 demo seed rows (includes SHORT
+    // directions the spot vaults never trade). Their synthetic tx_hash values
+    // are 73 chars with long zero-runs — a real EVM tx hash is exactly 66 hex
+    // chars. Only rows backed by a structurally valid hash are public; the
+    // rest stay in the DB but the page renders its honest empty state.
     const rows = (data ?? []).filter(
       (r: { tx_hash?: string | null }) =>
-        typeof r.tx_hash === "string" && r.tx_hash.startsWith("0x"),
+        typeof r.tx_hash === "string" && /^0x[0-9a-fA-F]{64}$/.test(r.tx_hash),
     );
     return NextResponse.json(rows);
   } catch (err) {
