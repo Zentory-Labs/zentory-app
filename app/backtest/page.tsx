@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   ResponsiveContainer,
   LineChart,
@@ -76,11 +77,28 @@ export default function BacktestPage() {
   const [error, setError] = useState(false);
   const [asset, setAsset] = useState<Asset>("BTC");
 
+  // Days the hash-chained forward ledger has been recording (same source as
+  // /track-record). null until loaded — the CTA omits the count rather than
+  // showing a made-up number.
+  const [ledgerDays, setLedgerDays] = useState<number | null>(null);
+
   useEffect(() => {
     fetch("/backtest.json", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((j: Backtest) => setData(j))
       .catch(() => setError(true));
+
+    fetch("/forward_ledger.jsonl", { cache: "no-store" })
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+      .then((text) => {
+        const lines = text.split("\n").filter(Boolean);
+        if (lines.length < 2) return;
+        const first = JSON.parse(lines[0]) as { bar_ts?: string };
+        const last = JSON.parse(lines[lines.length - 1]) as { bar_ts?: string };
+        if (!first.bar_ts || !last.bar_ts) return;
+        setLedgerDays(Math.max(1, Math.round((Date.parse(last.bar_ts) - Date.parse(first.bar_ts)) / 86_400_000)));
+      })
+      .catch(() => {});
   }, []);
 
   const a = data?.assets[asset];
@@ -282,6 +300,36 @@ export default function BacktestPage() {
           </section>
         </>
       )}
+
+      {/* Conversion CTA — the proof continues live, not just in history */}
+      <section
+        className="rounded-2xl border p-8 text-center space-y-4"
+        style={{ borderColor: `${GOLD}55`, background: `${GOLD}0d` }}
+      >
+        <h2 className="text-xl font-semibold" style={{ color: TEXT }}>
+          This isn&apos;t just history
+        </h2>
+        <p className="text-sm max-w-2xl mx-auto leading-relaxed" style={{ color: "rgba(234,234,234,0.7)" }}>
+          This exact strategy family is running live right now — a hash-chained paper record
+          {ledgerDays !== null ? ` (day ${ledgerDays})` : ""} and an autonomous on-chain vault on testnet.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3 pt-1">
+          <Link
+            href="/track-record"
+            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.02]"
+            style={{ background: GOLD, color: "#0b0b0d" }}
+          >
+            View the live track record
+          </Link>
+          <Link
+            href="/vaults/spot"
+            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.02]"
+            style={{ border: `1px solid ${GOLD}88`, color: GOLD }}
+          >
+            Open the testnet vault
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

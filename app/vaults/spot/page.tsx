@@ -13,6 +13,7 @@ import Link from "next/link";
 import { addresses, SPOT_VAULT_ABI, PRICE_ORACLE_ABI } from "@/lib/contracts";
 import LiveSignalWidget from "@/components/LiveSignalWidget";
 import GhostPortfolioTile from "@/components/GhostPortfolioTile";
+import VaultTrustPanel from "@/components/VaultTrustPanel";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getVaultNavHistory, type VaultNavSnapshot } from "@/lib/vault-stats";
 
@@ -172,6 +173,23 @@ export default function SpotVaultPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isApproveSuccess, isDepositSuccess, isWithdrawSuccess]);
 
+  // Since-inception decomposition from the same indexer snapshots as the chart.
+  // Both legs use the first → latest SNAPSHOT (not the live read) so the vault
+  // and HOLD returns cover an identical window. This is what explains a
+  // sub-1.0 NAV sitting next to a positive "vs holding" number.
+  const firstSnap = navHistory[0];
+  const lastSnap = navHistory[navHistory.length - 1];
+  const inception =
+    navHistory.length >= 2 && firstSnap.nav_per_share > 0 && firstSnap.hodl_nav > 0
+      ? {
+          vault: lastSnap.nav_per_share / firstSnap.nav_per_share - 1,
+          hold: lastSnap.hodl_nav / firstSnap.hodl_nav - 1,
+        }
+      : null;
+  const spread = inception ? (1 + inception.vault) / (1 + inception.hold) - 1 : 0;
+  const signedPct = (v: number) => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(2)}%`;
+  const upDown = (v: number) => (v >= 0 ? "up" : "down");
+
   const stats = [
     { label: "NAV / Share", value: fmtBn(navPerShare.data, ASSET_DEC, 6) },
     { label: "TVL", value: `${grossBtc.toFixed(4)} BTC` + (oraclePrice ? `  ·  $${tvlUsd.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "") },
@@ -226,6 +244,32 @@ export default function SpotVaultPage() {
           </div>
         ))}
       </div>
+
+      {/* Since-inception strip — vault vs holding over the same window */}
+      {inception && (
+        <div className="rounded-2xl p-5 mb-8" style={CARD}>
+          <div className="grid grid-cols-3 gap-4 mb-3">
+            {[
+              { label: "Vault since inception", value: inception.vault },
+              { label: "BTC same window", value: inception.hold },
+              { label: "Ahead of holding", value: spread },
+            ].map((m) => (
+              <div key={m.label}>
+                <div className="text-xs uppercase tracking-widest mb-1" style={{ color: DIM }}>{m.label}</div>
+                <div className="text-lg font-bold" style={{ color: m.value >= 0 ? "#4ade80" : "#f87171" }}>
+                  {signedPct(m.value)}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs leading-relaxed" style={{ color: DIM }}>
+            NAV is denominated in BTC. The vault is {upDown(inception.vault)}{" "}
+            {signedPct(inception.vault)} absolute; holding BTC over the same window is{" "}
+            {upDown(inception.hold)} {signedPct(inception.hold)}; the strategy is{" "}
+            {signedPct(spread)} {spread >= 0 ? "ahead of" : "behind"} holding.
+          </p>
+        </div>
+      )}
 
       {/* Deposit / Withdraw */}
       {mounted && isConnected ? (
@@ -346,6 +390,9 @@ export default function SpotVaultPage() {
           <div className="text-sm" style={{ color: DIM }}>Connect to deposit BTC into the Spot Strategy Vault.</div>
         </div>
       )}
+
+      {/* Fees / withdrawals / security — the deposit-decision table stakes */}
+      <VaultTrustPanel vaultAddress={VAULT} founderSeeded />
 
       {/* Real on-chain NAV vs HOLD — from indexer snapshots + the live chain read */}
       <div className="rounded-2xl p-6 mb-6" style={CARD}>

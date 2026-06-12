@@ -145,6 +145,7 @@ export default function RootLayout({
                       label: "Protocol",
                       items: [
                         ["State of Protocol", "/state-of-protocol"],
+                        ["Risks", "/risks"],
                         ["Bug Bounty", "/bug-bounty"],
                         ["Whitepaper", "https://zentorylabs.com/whitepaper"],
                         ["Tokenomics", "https://zentorylabs.com/tokenomics"],
