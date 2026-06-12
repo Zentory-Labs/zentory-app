@@ -30,7 +30,7 @@ const OUT_OF_SCOPE = [
 ];
 
 const RULES = [
-  "Report via email to info@zentorylabs.com — the Immunefi listing launches with mainnet",
+  "Report via email to security@zentorylabs.com — the Immunefi listing launches with mainnet",
   "Allow 24 hours for initial response",
   "Do NOT disclose publicly until the vulnerability is patched",
   "Provide detailed reproduction steps with Proof of Concept code",
@@ -137,7 +137,7 @@ export default function BugBountyPage() {
               ZENTORY Labs will list a bug bounty program on Immunefi when the protocol launches on mainnet. Until then, vulnerability reports go directly to the team via email. Rewards are paid in USDC and scaled by severity and impact.
             </p>
             <a
-              href="mailto:info@zentorylabs.com?subject=Security%20Vulnerability%20Report"
+              href="mailto:security@zentorylabs.com?subject=Security%20Vulnerability%20Report"
               className="inline-flex items-center gap-2 text-sm font-semibold transition-all hover:scale-[1.02] rounded-xl px-5 py-3"
               style={{
                 color: "#eaeaea",
@@ -152,7 +152,7 @@ export default function BugBountyPage() {
               Report via Email
             </a>
             <p className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
-              <span style={{ color: "#b08d57" }}>info@zentorylabs.com</span>
+              <span style={{ color: "#b08d57" }}>security@zentorylabs.com</span>
               {" "}· Immunefi listing follows at mainnet launch
             </p>
           </div>
@@ -309,7 +309,7 @@ export default function BugBountyPage() {
         {/* ── Submit CTA ── */}
         <div className="text-center pt-4">
           <a
-            href="mailto:info@zentorylabs.com?subject=Security%20Vulnerability%20Report"
+            href="mailto:security@zentorylabs.com?subject=Security%20Vulnerability%20Report"
             className="inline-flex items-center gap-3 text-sm font-bold transition-all hover:scale-[1.02] rounded-2xl px-8 py-4"
             style={{
               color: "#eaeaea",
