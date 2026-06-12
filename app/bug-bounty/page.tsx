@@ -8,6 +8,9 @@ const SEVERITY_TABLE = [
 ];
 
 const IN_SCOPE = [
+  // SpotVault is the flagship contract actually holding user funds.
+  "SpotVault.sol",
+  "StrategyExecutor.sol (executeRebalance / rebalanceTo keeper surface)",
   "ZENT.sol",
   "ZENTStaking.sol",
   "FeeDistributor.sol",
@@ -27,7 +30,7 @@ const OUT_OF_SCOPE = [
 ];
 
 const RULES = [
-  "Submit via Immunefi (link below) — if not yet listed, email security@zentorylabs.com",
+  "Report via email to info@zentorylabs.com — the Immunefi listing launches with mainnet",
   "Allow 24 hours for initial response",
   "Do NOT disclose publicly until the vulnerability is patched",
   "Provide detailed reproduction steps with Proof of Concept code",
@@ -111,7 +114,7 @@ export default function BugBountyPage() {
               className="w-1.5 h-1.5 rounded-full"
               style={{ background: "#c2353f", boxShadow: "0 0 8px #c2353f" }}
             />
-            Immunefi Bug Bounty · Active
+            Program launching with mainnet — report via email today
           </div>
           <h1
             className="text-4xl sm:text-5xl font-bold tracking-tight mb-4"
@@ -131,12 +134,10 @@ export default function BugBountyPage() {
         <SectionCard title="Bug Bounty Program">
           <div className="space-y-4">
             <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.6)", fontFamily: "'Montserrat', sans-serif" }}>
-              ZENTORY Labs has launched a bug bounty program on Immunefi to reward security researchers who help identify vulnerabilities in our smart contracts. Rewards are paid in USDC and scaled by severity and impact.
+              ZENTORY Labs will list a bug bounty program on Immunefi when the protocol launches on mainnet. Until then, vulnerability reports go directly to the team via email. Rewards are paid in USDC and scaled by severity and impact.
             </p>
             <a
-              href="https://immunefi.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:info@zentorylabs.com?subject=Security%20Vulnerability%20Report"
               className="inline-flex items-center gap-2 text-sm font-semibold transition-all hover:scale-[1.02] rounded-xl px-5 py-3"
               style={{
                 color: "#eaeaea",
@@ -148,14 +149,11 @@ export default function BugBountyPage() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c2353f" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              Submit on Immunefi
-              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="ml-1">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
+              Report via Email
             </a>
             <p className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
-              Or email:{" "}
-              <span style={{ color: "#b08d57" }}>security@zentorylabs.com</span>
+              <span style={{ color: "#b08d57" }}>info@zentorylabs.com</span>
+              {" "}· Immunefi listing follows at mainnet launch
             </p>
           </div>
         </SectionCard>
@@ -231,7 +229,15 @@ export default function BugBountyPage() {
               </svg>
               <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
                 Source:{" "}
-                <span style={{ color: "#b08d57" }}>github.com/edgeza/ZentoryToken/blob/main/contracts/src/</span>
+                <a
+                  href="https://github.com/Zentory-Labs/zentory-protocol"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                  style={{ color: "#b08d57" }}
+                >
+                  github.com/Zentory-Labs/zentory-protocol
+                </a>
                 {" "}· Chain: HyperEVM
               </span>
             </div>
@@ -303,9 +309,7 @@ export default function BugBountyPage() {
         {/* ── Submit CTA ── */}
         <div className="text-center pt-4">
           <a
-            href="https://immunefi.com"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="mailto:info@zentorylabs.com?subject=Security%20Vulnerability%20Report"
             className="inline-flex items-center gap-3 text-sm font-bold transition-all hover:scale-[1.02] rounded-2xl px-8 py-4"
             style={{
               color: "#eaeaea",
@@ -317,7 +321,7 @@ export default function BugBountyPage() {
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            Submit a Vulnerability on Immunefi
+            Report a Vulnerability via Email
           </a>
           <p className="mt-3 text-xs" style={{ color: "rgba(234,234,234,0.25)", fontFamily: "'Montserrat', sans-serif" }}>
             Confidential — do NOT discuss vulnerabilities publicly until patched

@@ -193,17 +193,50 @@ export default function GovernPage() {
 
       <main className="mx-auto max-w-4xl px-6 py-10 space-y-8">
         {/* Governor Info */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { label: "Voting Period", value: votingPeriod.data !== undefined ? `${Math.round(Number(votingPeriod.data as bigint) / 3600)}h` : "—" },
-            { label: "Quorum Required", value: quorum.data !== undefined ? `${(Number(quorum.data as bigint) / 1e18 / 1e6).toFixed(0)}M ZENT` : "—" },
-            { label: "Min. veZENT to Propose", value: "Anyone (threshold = 0)" },
-          ].map(({ label, value }) => (
-            <div key={label} className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-              <div className="text-xs text-white/40 uppercase tracking-wider">{label}</div>
-              <div className="font-mono font-semibold text-white">{value}</div>
-            </div>
-          ))}
+        <div>
+          <div
+            className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold mb-3"
+            style={{ background: "rgba(176,141,87,0.12)", borderColor: "rgba(176,141,87,0.3)", color: "#b08d57" }}
+          >
+            Testnet placeholder parameters
+          </div>
+          <p className="text-xs text-white/40 mb-4 max-w-2xl">
+            Quorum and proposal threshold are deliberately set to zero on testnet so governance
+            flows can be exercised end-to-end. Mainnet values are set together with the external audit.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: "Voting Period", value: votingPeriod.data !== undefined ? `${Math.round(Number(votingPeriod.data as bigint) / 3600)}h` : "—" },
+              { label: "Quorum Required", value: quorum.data !== undefined ? `${(Number(quorum.data as bigint) / 1e18 / 1e6).toFixed(0)}M ZENT` : "—" },
+              { label: "Min. veZENT to Propose", value: "Anyone (threshold = 0)" },
+            ].map(({ label, value }) => (
+              <div key={label} className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
+                <div className="text-xs text-white/40 uppercase tracking-wider">{label}</div>
+                <div className="font-mono font-semibold text-white">{value}</div>
+                <div className="text-[10px] mt-1" style={{ color: "rgba(176,141,87,0.8)" }}>Testnet placeholder</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Who controls the protocol today */}
+        <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
+          <h2 className="text-sm font-semibold mb-3" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+            Who controls the protocol today
+          </h2>
+          <ul className="space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+            <li>
+              · Protocol parameters are currently controlled by the team deployer key, behind a{" "}
+              <strong className="text-white/80">48-hour timelock</strong> — every change is publicly visible on-chain before it executes.
+            </li>
+            <li>
+              · Migration to a <strong className="text-white/80">3-of-5 Gnosis Safe</strong> is a hard gate for mainnet launch.
+            </li>
+            <li>
+              · The keeper can only rotate vault exposure between the vault&rsquo;s asset and USDC —{" "}
+              <strong className="text-white/80">it can never withdraw user funds</strong>.
+            </li>
+          </ul>
         </div>
 
         {/* Proposals */}
