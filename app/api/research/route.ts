@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("signals")
-      .select("id, provider, asset, direction, price, status, created_at")
+      .select("id, provider, asset, direction, price, status, created_at, tx_hash")
       .order("created_at", { ascending: false })
       .limit(100);
 
@@ -22,7 +22,15 @@ export async function GET(request: Request) {
       console.error("[GET /api/research]", error.message);
       return NextResponse.json([], { status: 200 });
     }
-    return NextResponse.json(data ?? []);
+    // The signals table still holds April 2026 demo seed rows (no on-chain tx,
+    // includes SHORT directions the spot vaults never trade). Only rows backed
+    // by a real transaction hash are public — the rest stay in the DB but the
+    // page renders its honest empty state instead.
+    const rows = (data ?? []).filter(
+      (r: { tx_hash?: string | null }) =>
+        typeof r.tx_hash === "string" && r.tx_hash.startsWith("0x"),
+    );
+    return NextResponse.json(rows);
   } catch (err) {
     console.error("[GET /api/research]", err);
     return NextResponse.json([], { status: 200 });

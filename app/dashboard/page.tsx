@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useReadContract } from "wagmi";
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   LineChart,
@@ -18,12 +16,10 @@ import {
 } from "recharts";
 import {
   addresses,
-  ZENT_ABI,
   VAULT_ABI,
-  STAKING_ABI,
   vaultMeta,
 } from "@/lib/contracts";
-import { getProtocolStats, getVaultNavHistory, getVaultFlow, type VaultNavSnapshot, type VaultFlow } from "@/lib/vault-stats";
+import { getProtocolStats, getVaultNavHistory, getVaultFlow, getLedgerAheadOfHoldPct, type VaultNavSnapshot, type VaultFlow } from "@/lib/vault-stats";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoNavHistory, demoFlow, demoProtocolStats, demoHlFills, demoExecutionAttempts } from "@/lib/demo/data";
 import {
@@ -376,66 +372,23 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
 // ─── ZENT Token Metrics ────────────────────────────────────
 
 function ZENTTokenMetrics() {
-  const totalSupply = useReadContract({ address: addresses.ZENT, abi: ZENT_ABI, functionName: "totalSupply" } as any);
-  const totalStaked = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "totalStaked" } as any);
-
-  const supply = Number(((totalSupply.data as bigint) ?? 0n) / 10n ** 18n);
-  const staked = Number(((totalStaked.data as bigint) ?? 0n) / 10n ** 18n);
-  const stakePct = supply > 0 ? (staked / supply) * 100 : 0;
-
-  // Deterministic chart data — no Math.random / new Date() in render
-  // (those broke SSR/client hydration across the app).
-  const chartData = Array.from({ length: 30 }, (_, i) => ({
-    date: `D-${29 - i}`,
-    supply,
-    staked,
-  }));
-
+  // Market cap, price and a price chart only exist once ZENT is listed.
+  // Until TGE this section is a single honest line — no TBD grids, no flat
+  // zero charts.
   return (
     <div
       className="rounded-2xl p-6"
       style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
     >
-      <div className="flex items-center gap-2 mb-5">
+      <div className="flex items-center gap-2 mb-2">
         <div className="w-3 h-3 rounded-full" style={{ background: "#b08d57" }} />
         <h3 className="text-white font-bold text-lg" style={{ fontFamily: "'Montserrat', sans-serif" }}>
           ZENT Token
         </h3>
       </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        {[
-          { label: "Total Supply", value: totalSupply.isLoading ? "—" : `${(supply / 1e9).toFixed(2)}B`, sub: "ZENT (fixed)" },
-          { label: "Market Cap", value: "TBD", sub: "Pre-listing" },
-          { label: "Staked", value: totalStaked.isLoading ? "—" : `${(staked / 1e6).toFixed(1)}M`, sub: `${stakePct.toFixed(1)}% of supply` },
-          { label: "Price", value: "TBD", sub: "Pre-listing" },
-        ].map(({ label, value, sub }) => (
-          <div key={label} className="rounded-xl p-3 text-center" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
-            <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>
-            <div className="text-sm font-bold text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
-            <div className="text-xs" style={{ color: "rgba(176,141,87,0.8)", fontFamily: "'Montserrat', sans-serif" }}>{sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Supply / Staked chart */}
-      <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
-        Supply & Staked (30d)
+      <p className="text-sm" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "'Montserrat', sans-serif" }}>
+        ZENT is not yet listed — token metrics appear at TGE.
       </p>
-      <ResponsiveContainer width="100%" height={160}>
-        <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
-          <XAxis dataKey="date" tick={{ fill: CHART_COLORS.text, fontSize: 10 }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fill: CHART_COLORS.text, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v / 1e6).toFixed(0)}M`} />
-          <Tooltip
-            contentStyle={{ background: "#1c1c21", border: "1px solid #2a2f3a", borderRadius: 8, color: "#eaeaea", fontSize: 12 }}
-            labelStyle={{ color: "rgba(255,255,255,0.7)" }}
-          />
-          <Legend wrapperStyle={{ fontSize: 12, color: CHART_COLORS.text }} />
-          <Area type="monotone" dataKey="supply" stroke="#b08d57" fill="rgba(176,141,87,0.15)" strokeWidth={2} name="Total Supply" />
-          <Area type="monotone" dataKey="staked" stroke="#0d80fa" fill="rgba(13,128,250,0.1)" strokeWidth={2} name="Staked" />
-        </AreaChart>
-      </ResponsiveContainer>
     </div>
   );
 }
@@ -446,6 +399,13 @@ function ProtocolTVLOverview() {
   const { enabled: demoMode } = useDemoMode();
   const [stats, setStats] = useState<Awaited<ReturnType<typeof getProtocolStats>> | null>(null);
   const [loaded, setLoaded] = useState(false);
+  // Real number from the public forward ledger (paper trading, vs holding) —
+  // fetched regardless of demo mode because it is never synthesized.
+  const [aheadPct, setAheadPct] = useState<number | null>(null);
+
+  useEffect(() => {
+    getLedgerAheadOfHoldPct().then(setAheadPct).catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     if (demoMode) {
@@ -517,17 +477,25 @@ function ProtocolTVLOverview() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
           { label: "Total TVL", value: stats.totalTvl > 0 ? fmtUsd(stats.totalTvl) : "—", accent: "#eaeaea" },
-          // Flow history starts when the flow indexer ships — show an honest
-          // dash instead of a fake $0.00M (or stale demo-seeded millions).
-          { label: "Total Deposits", value: stats.totalDeposits > 0 ? fmtUsd(stats.totalDeposits) : "—", accent: CHART_COLORS.positive },
-          { label: "Total Withdrawals", value: stats.totalWithdrawals > 0 ? fmtUsd(stats.totalWithdrawals) : "—", accent: CHART_COLORS.negative },
-          { label: "Avg Alpha", value: fmtPct(stats.avgAlpha), accent: stats.avgAlpha >= 0 ? CHART_COLORS.positive : CHART_COLORS.negative, pill: fmtPct(stats.avgAlpha) },
-        ].map(({ label, value, accent, pill }) => (
+          // No external flow yet — say so explicitly instead of a bare dash.
+          stats.totalDeposits > 0
+            ? { label: "Total Deposits", value: fmtUsd(stats.totalDeposits), accent: CHART_COLORS.positive }
+            : { label: "Total Deposits", value: "No external deposits yet — testnet, founder-seeded", accent: "rgba(234,234,234,0.6)", small: true },
+          stats.totalWithdrawals > 0
+            ? { label: "Total Withdrawals", value: fmtUsd(stats.totalWithdrawals), accent: CHART_COLORS.negative }
+            : { label: "Total Withdrawals", value: "No external withdrawals yet — testnet, founder-seeded", accent: "rgba(234,234,234,0.6)", small: true },
+          {
+            label: "Ahead of holding (live ledger)",
+            value: aheadPct !== null ? fmtPct(aheadPct) : "—",
+            accent: (aheadPct ?? 0) >= 0 ? CHART_COLORS.positive : CHART_COLORS.negative,
+            sub: "paper ledger, vs holding",
+          },
+        ].map(({ label, value, accent, sub, small }: { label: string; value: string; accent: string; sub?: string; small?: boolean }) => (
           <div key={label} className="rounded-xl p-4 text-center" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
             <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>
-            <div className="text-xl font-bold" style={{ color: accent, fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
-            {pill && (
-              <div className="text-xs mt-1 font-semibold" style={{ color: pill.startsWith("+") ? CHART_COLORS.positive : CHART_COLORS.negative, fontFamily: "'Montserrat', sans-serif" }}>{pill}</div>
+            <div className={small ? "text-xs font-medium leading-snug" : "text-xl font-bold"} style={{ color: accent, fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
+            {sub && (
+              <div className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{sub}</div>
             )}
           </div>
         ))}
@@ -735,7 +703,7 @@ export default function DashboardPage() {
           {demoMode && <DemoBadge />}
         </h1>
         <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>
-          Real-time performance, TVL, alpha generation, and capital flow metrics
+          Real-time performance, TVL, vs-holding comparison, and capital flow metrics
         </p>
       </div>
 

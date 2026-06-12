@@ -173,14 +173,14 @@ export default function ResearchPage() {
             <div
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium mb-2"
               style={{
-                background: "rgba(139, 30, 45, 0.15)",
-                borderColor: "rgba(139, 30, 45, 0.4)",
-                color: "#c2353f",
+                background: "rgba(176, 141, 87, 0.12)",
+                borderColor: "rgba(176, 141, 87, 0.3)",
+                color: "#b08d57",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              <div className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "#c2353f", boxShadow: "0 0 8px #c2353f" }} />
-              LIVE
+              <div className="h-1.5 w-1.5 rounded-full" style={{ background: "#b08d57" }} />
+              Testnet
             </div>
             <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>
               <span className="gradient-text-gold">Research Dashboard</span>
