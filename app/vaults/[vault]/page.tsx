@@ -23,6 +23,7 @@ import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoNavHistory, demoHlFills } from "@/lib/demo/data";
 import LiveSignalWidget from "@/components/LiveSignalWidget";
 import GhostPortfolioTile from "@/components/GhostPortfolioTile";
+import VaultTrustPanel from "@/components/VaultTrustPanel";
 
 const VAULT_CONFIG: Record<string, {
   name: string;
@@ -620,6 +621,9 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           </div>
         </div>
       )}
+
+      {/* Fees / withdrawals / security — the deposit-decision table stakes */}
+      <VaultTrustPanel vaultAddress={config.vaultAddress} />
 
       {/* Live signal + Ghost Portfolio attribution (forward-recorder driven) */}
       <LiveSignalWidget asset={config.symbol.slice(1)} />
