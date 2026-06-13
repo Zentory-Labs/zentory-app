@@ -23,7 +23,14 @@ function pct(x: number) {
   return `${x >= 0 ? "+" : ""}${(x * 100).toFixed(1)}%`;
 }
 
-export default function FoundingProviderCard({ house }: { house: HouseStats | null }) {
+export default function FoundingProviderCard({ house, loading = false }: { house: HouseStats | null; loading?: boolean }) {
+  // The "Recording live" indicator and the metrics must move together. Showing
+  // a pulsing green "RECORDING LIVE" next to "—" (the null/loading state) reads
+  // as fake on the protocol's flagship trust surface, so gate the live badge on
+  // having real ledger stats. While the ledger fetch is in flight, show a muted
+  // "Loading track record…" instead of asserting "live".
+  const liveLabel = house ? `Recording · Day ${house.daysLive}` : loading ? "Loading track record…" : "Track record initializing";
+  const showLivePulse = !!house;
   return (
     <section
       className="relative rounded-2xl p-6 md:p-7 overflow-hidden"
@@ -50,9 +57,14 @@ export default function FoundingProviderCard({ house }: { house: HouseStats | nu
               <span className="text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full" style={{ background: "rgba(176,141,87,0.18)", color: GOLD }}>
                 Founding Provider
               </span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#34d399" }}>
-                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
-                {house ? `Recording · Day ${house.daysLive}` : "Recording live"}
+              <span
+                className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider"
+                style={{ color: showLivePulse ? "#34d399" : "rgba(234,234,234,0.4)" }}
+              >
+                {showLivePulse && (
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
+                )}
+                {liveLabel}
               </span>
             </div>
             <h3 className="text-xl font-bold truncate" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>

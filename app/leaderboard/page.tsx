@@ -406,6 +406,7 @@ export default function LeaderboardPage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [house, setHouse] = useState<HouseStats | null>(null);
+  const [houseLoading, setHouseLoading] = useState(true);
 
   // Founding provider = the house systematic bot. Real metrics from the live,
   // public forward ledger (same hash-chained file the recorder publishes every 4h).
@@ -441,7 +442,8 @@ export default function LeaderboardPage() {
           perAsset,
         });
       })
-      .catch(() => { /* card degrades to "—"; never breaks the page */ });
+      .catch(() => { /* card degrades to "—"; never breaks the page */ })
+      .finally(() => { if (!cancelled) setHouseLoading(false); });
     return () => { cancelled = true; };
   }, []);
 
@@ -590,14 +592,14 @@ export default function LeaderboardPage() {
 
         {/* ── Stat cards (live; led by the founding provider) ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Live Providers" value={(house ? 1 : 0) + providers.length} accent="#b08d57" />
+          <StatCard label="Live Providers" value={houseLoading && !house ? "—" : (house ? 1 : 0) + providers.length} accent="#b08d57" />
           <StatCard label="Days Recording" value={house ? house.daysLive : "—"} accent="#22c55e" />
           <StatCard label="Assets Tracked" value={house ? house.assets : "—"} accent="#eaeaea" />
           <StatCard label="Avg Ahead of Holding" value={house ? `${house.avgAhead >= 0 ? "+" : ""}${(house.avgAhead * 100).toFixed(1)}%` : "—"} accent="#b08d57" />
         </div>
 
         {/* ── Founding provider: the house systematic bot, live from the ledger ── */}
-        <FoundingProviderCard house={house} />
+        <FoundingProviderCard house={house} loading={houseLoading} />
 
         {/* ── Filter tabs ── */}
         <div className="flex items-center gap-2 flex-wrap">
