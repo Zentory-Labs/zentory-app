@@ -554,18 +554,23 @@ export default function AnalyticsPage() {
   const [assetFilter, setAssetFilter] = useState("All");
 
   const load = useCallback(async () => {
-    const [ov, ac, ep, sig, prov] = await Promise.all([
+    // Resolve the page on the FAST fetches (overview/asset-classes/epochs/signals
+    // are sub-second). Do NOT block the whole page's loading skeletons on
+    // fetchProviders() — /api/leaderboard can take seconds, and gating the page
+    // on it left every KPI card as a blank pulsing skeleton until it returned.
+    // Providers fill in asynchronously once they arrive.
+    fetchProviders().then(setProviders).catch(() => undefined);
+
+    const [ov, ac, ep, sig] = await Promise.all([
       fetchOverview(),
       fetchAssetClasses(),
       fetchEpochs(),
       fetchRecentSignals(),
-      fetchProviders(),
     ]);
     setOverview(ov);
     setAssetClasses(ac);
     setEpochs(ep);
     setSignals(sig);
-    setProviders(prov);
     setLoading(false);
   }, []);
 

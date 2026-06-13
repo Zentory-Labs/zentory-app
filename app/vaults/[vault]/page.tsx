@@ -625,6 +625,21 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       {/* Fees / withdrawals / security — the deposit-decision table stakes */}
       <VaultTrustPanel vaultAddress={config.vaultAddress} />
 
+      {/* Why NAV sits at 1.0 on testnet — set expectations before the flat chart
+          reads as "dead/broken". Only the SpotVault runs the live keeper loop on
+          testnet; the base vaults hold the asset 1:1 until mainnet. */}
+      <div
+        className="rounded-2xl p-5 mb-8 text-sm"
+        style={{ background: "rgba(176,141,87,0.07)", border: "1px solid rgba(176,141,87,0.22)", color: "rgba(234,234,234,0.7)" }}
+      >
+        <span style={{ color: "#b08d57", fontWeight: 600 }}>Testnet: this vault holds {config.symbol.slice(1)} 1:1 (NAV 1.0).</span>{" "}
+        The autonomous long/flat rebalancing strategy currently runs on the{" "}
+        <Link href="/vaults/spot" className="underline" style={{ color: "#b08d57" }}>SpotVault</Link>{" "}
+        — its NAV moves with real on-chain rebalances every 4 hours. The {config.symbol} vault begins
+        rebalancing at mainnet; until then its NAV is intentionally flat. See the live, hash-chained{" "}
+        <Link href="/track-record" className="underline" style={{ color: "#b08d57" }}>track record</Link>.
+      </div>
+
       {/* Live signal + Ghost Portfolio attribution (forward-recorder driven) */}
       <LiveSignalWidget asset={config.symbol.slice(1)} />
       <GhostPortfolioTile asset={config.symbol.slice(1)} />
@@ -671,9 +686,14 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>
             Strategy Execution — Recent Fills
           </h3>
+          {/* Only badge it "Live from Hyperliquid" when there are actually live
+              fills — otherwise the green-ish badge contradicts the empty body
+              ("venue ingestion goes live with mainnet"). */}
           <span className="text-xs px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(176,141,87,0.15)", color: "#b08d57" }}>
-            Live from Hyperliquid
+            style={fills.length > 0
+              ? { background: "rgba(176,141,87,0.15)", color: "#b08d57" }
+              : { background: "rgba(234,234,234,0.06)", color: "rgba(234,234,234,0.45)" }}>
+            {fills.length > 0 ? "Live from Hyperliquid" : "Pending · mainnet"}
           </span>
         </div>
 
