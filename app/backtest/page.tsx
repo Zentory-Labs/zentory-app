@@ -35,9 +35,14 @@ type Stat = {
   cagr: number; totalReturn: number; sharpe: number; sortino: number;
   maxDd: number; calmar: number; annVol: number;
 };
+type SatsBlock = {
+  endSats: number; satsVsHold: number; maxDdSats: number; pctTimeAhead: number;
+  curve: { t: string; x: number }[];
+};
 type AssetData = {
   oosStart: string; oosEnd: string; nFolds: number; frozenSpec: string;
   avgExposure: number; drawdownWins: number; sortinoWins: number;
+  sats: SatsBlock;
   strategy: Stat; hold: Stat;
   yearly: { strat: Record<string, number>; hold: Record<string, number> };
   curve: { t: string; s: number; h: number }[];
@@ -182,6 +187,51 @@ export default function BacktestPage() {
             <MetricCard label="CAGR (annualized)" strat={a.strategy.cagr} hold={a.hold.cagr} fmt={(n) => fmtPct(n, 0)} betterHigh />
             <MetricCard label="Sortino (downside risk-adj.)" strat={a.strategy.sortino} hold={a.hold.sortino} fmt={(n) => n.toFixed(2)} betterHigh />
             <MetricCard label="Calmar (return / max DD)" strat={a.strategy.calmar} hold={a.hold.calmar} fmt={(n) => n.toFixed(2)} betterHigh />
+          </section>
+
+          {/* In coin terms — stack sats. The vaults are denominated in the
+              underlying, so the benchmark is "did you end with more of the coin",
+              not a USD return. sats = strategy ÷ holding (flat 1.0 = simply holding). */}
+          <section className="space-y-3">
+            <h3 className="text-lg font-semibold" style={{ color: TEXT }}>In {asset} terms — did a share end with more {asset}?</h3>
+            <p className="text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+              The vault is denominated in {asset}, so the honest benchmark is units of the coin, not dollars.
+              A flat line at 1.0 is simply holding {asset}; above 1.0 means a share ended the out-of-sample
+              window worth <em>more</em> {asset} than buy-and-hold — by stepping to cash in downturns and
+              rebuying lower. This is a hypothetical OOS backtest, not a live deposit return.
+            </p>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>{asset} vs holding</div>
+                <div className="text-2xl font-bold tabular-nums" style={{ color: a.sats.satsVsHold >= 0 ? "#34d399" : RED }}>{fmtPct(a.sats.satsVsHold, 1)}</div>
+                <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>a share ended worth {a.sats.endSats.toFixed(2)}× the coin</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>Worst drawdown in {asset}</div>
+                <div className="text-2xl font-bold tabular-nums" style={{ color: TEXT }}>{fmtPct(a.sats.maxDdSats, 0)}</div>
+                <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>deepest dip in coin-per-share vs its own peak</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>Time ahead of holding</div>
+                <div className="text-2xl font-bold tabular-nums" style={{ color: TEXT }}>{fmtPct(a.sats.pctTimeAhead, 0)}</div>
+                <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>share of the OOS window with more coin than holding</div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={a.sats.curve} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+                  <CartesianGrid stroke="rgba(255,255,255,0.06)" />
+                  <XAxis dataKey="t" tick={{ fill: "rgba(234,234,234,0.4)", fontSize: 11 }} minTickGap={48} />
+                  <YAxis domain={["auto", "auto"]} tickFormatter={(v) => `${Number(v).toFixed(2)}×`} tick={{ fill: "rgba(234,234,234,0.4)", fontSize: 11 }} width={48} />
+                  <Tooltip
+                    contentStyle={{ background: "#12141a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: TEXT }}
+                    formatter={((v: unknown) => [`${Number(v).toFixed(3)}× ${asset}`, "Coin per share"]) as never}
+                  />
+                  <ReferenceLine y={1} stroke={GRAY} strokeDasharray="4 4" label={{ value: `Hold ${asset}`, fill: "rgba(234,234,234,0.45)", fontSize: 11, position: "insideTopLeft" }} />
+                  <Line type="monotone" dataKey="x" stroke={GOLD} dot={false} strokeWidth={2} isAnimationActive={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </section>
 
           {/* Equity curve */}
