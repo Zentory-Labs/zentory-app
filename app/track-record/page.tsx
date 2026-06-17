@@ -72,6 +72,15 @@ export default function TrackRecordPage() {
           costs. Paper record on real market prices — not live capital, not a guarantee of future
           results.
         </p>
+        <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.6)" }}>
+          <span style={{ color: "#b08d57", fontWeight: 600 }}>The benchmark is the asset, not dollars.</span>{" "}
+          Each vault is denominated in its underlying, so &ldquo;ahead of holding&rdquo; below means
+          <em> more of the coin</em> (more sats for BTC): the goal is to finish a cycle holding more of the
+          asset than buy-and-hold, by sitting in cash through downturns and rebuying lower. It&apos;s drawdown
+          insurance — in a straight-up rally the strategy can end with <em>less</em> than holding (the cost of
+          stepping aside). This {daysLive}-day window is a single regime, far too short to judge; the 6-year
+          backtest is what tests the full cycle.
+        </p>
         {daysLive > 0 && (
           <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "#34d399" }}>
             ● Recording live — day {daysLive}

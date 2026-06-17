@@ -263,10 +263,19 @@ export default function SpotVaultPage() {
             ))}
           </div>
           <p className="text-xs leading-relaxed" style={{ color: DIM }}>
-            NAV is denominated in BTC. The vault is {upDown(inception.vault)}{" "}
-            {signedPct(inception.vault)} absolute; holding BTC over the same window is{" "}
-            {upDown(inception.hold)} {signedPct(inception.hold)}; the strategy is{" "}
-            {signedPct(spread)} {spread >= 0 ? "ahead of" : "behind"} holding.
+            <span style={{ color: "#b08d57", fontWeight: 600 }}>The benchmark is BTC, not dollars.</span>{" "}
+            A share is worth {signedPct(inception.vault)} in BTC since inception; holding BTC over the same
+            window is {signedPct(inception.hold)}; so a share holds {signedPct(spread)}{" "}
+            {spread >= 0 ? "more" : "fewer"} sats than just holding. The goal is to end a full cycle with
+            more BTC, by stepping to cash in downturns and rebuying lower — drawdown insurance, not a
+            guarantee: in a straight-up rally the vault can hold fewer sats than holding (the cost of
+            stepping aside).
+            {" "}<span style={{ color: "rgba(234,234,234,0.45)" }}>
+              Note: at the current ~1-BTC test seed, NAV is dominated by fixed swap costs from churning a tiny
+              position, not strategy economics — see the{" "}
+              <a href="/backtest" className="underline" style={{ color: "#b08d57" }}>6-year backtest</a>{" "}
+              for the strategy&apos;s edge at scale.
+            </span>
           </p>
         </div>
       )}
