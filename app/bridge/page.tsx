@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import type { WidgetConfig } from "@lifi/widget";
 
 // The LI.FI Widget is client-only — load it without SSR.
 // Setup before this works in production:
@@ -30,19 +31,29 @@ export default function BridgePage() {
   // 0.25% integrator fee (override with NEXT_PUBLIC_BRIDGE_FEE, e.g. 0.003 = 0.3%).
   const fee = Number(process.env.NEXT_PUBLIC_BRIDGE_FEE ?? 0.0025);
 
-  const widgetConfig = useMemo(
+  // hiddenUI drops the widget's third-party chrome (incl. the "Powered by" badge)
+  // so the bridge reads as Zentory's own surface. The flag is an officially
+  // supported LI.FI widget feature — but confirm hiding attribution is permitted
+  // under your LI.FI integrator agreement before going live with the fee.
+  const widgetConfig = useMemo<Partial<WidgetConfig>>(
     () => ({
       integrator: "Zentory",
       fee,
+      fromChain: 1, // populate the origin (Ethereum) so chain/token logos show by default
       toChain: HYPEREVM_CHAIN_ID,
-      appearance: "dark" as const,
+      hiddenUI: { poweredBy: true, language: true, appearance: true },
+      appearance: "dark",
       theme: {
-        palette: {
-          primary: { main: GOLD },
-          secondary: { main: "#eaeaea" },
-          background: { default: "#0d0d10", paper: "#111114" },
+        colorSchemes: {
+          dark: {
+            palette: {
+              primary: { main: GOLD },
+              secondary: { main: "#eaeaea" },
+              background: { default: "#0d0d10", paper: "#111114" },
+            },
+          },
         },
-        shape: { borderRadius: 16, borderRadiusSecondary: 12 },
+        shape: { borderRadius: 16 },
         typography: { fontFamily: "'Montserrat', sans-serif" },
       },
     }),
@@ -80,9 +91,9 @@ export default function BridgePage() {
             </Link>
           </div>
           <ul className="text-xs space-y-2" style={{ color: "rgba(191,195,199,0.6)" }}>
-            <li>• Powered by LI.FI&apos;s aggregated bridge + DEX routes (5 bridges, 9 aggregators into HyperEVM).</li>
-            <li>• Zentory adds a small routing fee; the swap itself is non-custodial and settles on-chain.</li>
-            <li>• Gas into HyperEVM can be as low as ~$0.01, with routes completing in seconds.</li>
+            <li>• Best-price routing across 50+ chains, Solana and Bitcoin into HyperEVM.</li>
+            <li>• Non-custodial — your funds never touch Zentory; every swap settles on-chain.</li>
+            <li>• Gas into HyperEVM as low as ~$0.01, most routes complete in seconds.</li>
           </ul>
         </div>
       </div>
