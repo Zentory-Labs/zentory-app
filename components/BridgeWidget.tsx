@@ -39,6 +39,12 @@ export default function BridgeWidget() {
     () => ({
       integrator: INTEGRATOR,
       fee,
+      // Default slippage tolerance. The widget's default is 0.5%, which is too
+      // tight for two-hop routes (DEX swap + bridge): a real USDT→USDC test
+      // reverted with MinimalOutputBalanceViolation because the ~0.45% swap
+      // haircut + pool drift between quote and signing exceeded 0.5%. 1% is the
+      // common bridge-widget default; users can still tighten it via Settings.
+      slippage: 0.01,
       fromChain: 1, // origin (Ethereum) so chain/token logos render by default
       toChain: HYPEREVM_CHAIN_ID,
       // Give the widget its OWN multi-chain wallet stack. Two things matter here:
