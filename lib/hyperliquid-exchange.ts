@@ -47,22 +47,48 @@ export type PlaceOrderArgs = {
   isMarket: boolean;
 };
 
+const roundTo = (n: number, decimals: number) => Number(n.toFixed(Math.max(0, decimals)));
+
+/** HL size rule: round to the market's szDecimals (excess decimals are rejected). */
+function formatSize(sz: string, szDecimals: number): string {
+  return roundTo(Number(sz), szDecimals).toString();
+}
+
+/** HL perp price rule: <=5 significant figures AND <= (6 - szDecimals) decimal
+ * places (integers always allowed). Mis-formatted prices are the #1 cause of
+ * "invalid price" rejections, so normalize before sending. */
+function formatPrice(px: string, szDecimals: number): string {
+  const fiveSig = Number(Number(px).toPrecision(5));
+  return roundTo(fiveSig, 6 - szDecimals).toString();
+}
+
 /** Place a perp order with the Zentory builder code attached. */
 export async function placeOrder({ walletClient, coin, isBuy, sz, price, isMarket }: PlaceOrderArgs) {
   const universe = await getUniverse();
   const a = universe.findIndex((u) => u.name === coin); // perp asset id = full-universe index
   if (a < 0) throw new Error(`Unknown market: ${coin}`);
+  const { szDecimals } = universe[a];
 
-  return exchange(walletClient).order({
+  const result = await exchange(walletClient).order({
     orders: [{
       a,
       b: isBuy,
-      p: price,
-      s: sz,
+      p: formatPrice(price, szDecimals),
+      s: formatSize(sz, szDecimals),
       r: false,
       t: { limit: { tif: isMarket ? "FrontendMarket" : "Gtc" } },
     }],
     grouping: "na",
     ...(HL_BUILDER ? { builder: { b: HL_BUILDER as `0x${string}`, f: HL_BUILDER_FEE } } : {}),
   });
+
+  // HL responds HTTP 200 even when an order is rejected — the failure is inside the
+  // per-order status. Surface it instead of reporting a false success.
+  const statuses = result?.response?.data?.statuses ?? [];
+  for (const s of statuses) {
+    if (s && typeof s === "object" && "error" in s && s.error) {
+      throw new Error(String((s as { error: string }).error));
+    }
+  }
+  return result;
 }
