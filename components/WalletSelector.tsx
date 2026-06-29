@@ -82,6 +82,14 @@ function WalletIconFallback({ name }: { name: string }) {
   return <InjectedMark />;
 }
 
+// Helper text for the universal connectors so users know what works without a
+// browser extension (the key to "connect any wallet").
+function connectorSubtitle(id: string): string | null {
+  if (id === "walletConnect") return "Scan with any mobile wallet";
+  if (id.toLowerCase().includes("coinbase")) return "No extension needed";
+  return null;
+}
+
 export function WalletButton() {
   const { address, isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
@@ -103,7 +111,15 @@ export function WalletButton() {
   useEffect(() => setMounted(true), []);
 
   const wrongNetwork = mounted && isConnected && chainId !== HYPER_EVM_CHAIN_ID;
-  const noWallet = mounted && !(window as Window & { ethereum?: unknown }).ethereum;
+  // EIP-6963 wallets (MetaMask, Phantom, Rabby, Coinbase extension, …) each show
+  // up as their own connector with an icon. If none are discovered the user has no
+  // browser wallet — but can still connect via WalletConnect (QR) or Coinbase, so
+  // this drives a helpful note, not a dead end. (window.ethereum is unreliable
+  // under EIP-6963 — some wallets only announce via events.)
+  const injectedDetected = connectors.some(
+    (c) => c.id !== "walletConnect" && !c.id.toLowerCase().includes("coinbase") && Boolean((c as { icon?: string }).icon)
+  );
+  const noInjected = mounted && !injectedDetected;
 
   // Clear connection error when modal opens
   useEffect(() => {
@@ -284,10 +300,13 @@ export function WalletButton() {
             <p className="text-xs uppercase tracking-wider" style={{ color: "#9ca3af" }}>Select wallet</p>
           </div>
 
-          {noWallet && (
+          {noInjected && (
             <div className="px-4 py-3" style={{ borderBottom: "1px solid #2a2f3a" }}>
-              <p className="text-xs" style={{ color: "#ef4444", fontFamily: "'Montserrat', sans-serif" }}>
-                No wallet detected. Install MetaMask or use WalletConnect.
+              <p className="text-xs leading-relaxed" style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}>
+                No browser wallet extension found. Use{" "}
+                <span style={{ color: "#b08d57" }}>WalletConnect</span> to scan with any mobile wallet
+                (MetaMask, Phantom, Rabby, Trust…), or Coinbase below — both work without an extension.
+                To use an extension, install one and refresh.
               </p>
             </div>
           )}
@@ -348,7 +367,14 @@ export function WalletButton() {
                       <WalletIconFallback name={name} />
                     )}
                   </span>
-                  <span className="text-sm font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>{name}</span>
+                  <span className="flex flex-col items-start">
+                    <span className="text-sm font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>{name}</span>
+                    {connectorSubtitle(connector.id) && (
+                      <span className="text-[11px]" style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}>
+                        {connectorSubtitle(connector.id)}
+                      </span>
+                    )}
+                  </span>
                 </button>
               );
             })}
