@@ -113,6 +113,8 @@ export default function RootLayout({
                         ["zXRP", "/vaults/zXRP"],
                         ["Dashboard", "/dashboard"],
                         ["Faucet", "/faucet"],
+                        ["Buy Crypto", "/buy"],
+                        ["Bridge", "/bridge"],
                       ],
                     },
                     {
