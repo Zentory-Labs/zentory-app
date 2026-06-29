@@ -41,12 +41,19 @@ export default function BridgeWidget() {
       fee,
       fromChain: 1, // origin (Ethereum) so chain/token logos render by default
       toChain: HYPEREVM_CHAIN_ID,
-      // Full EVM wallet support inside the widget. Without this the widget falls
-      // back to its internal manager, which is EIP-6963-only (installed browser
-      // extensions) — extension-less users hit "no wallets found". The external
-      // EthereumProvider keeps injected/EIP-6963 (MetaMask, Rabby, Phantom…) AND
-      // adds WalletConnect (mobile QR) + Coinbase, and manages every bridge chain
-      // itself (so this does NOT touch the app-wide single-chain wagmi config).
+      // Give the widget its OWN multi-chain wallet stack. Two things matter here:
+      //
+      // 1. providers: an EthereumProvider that keeps injected/EIP-6963 (MetaMask,
+      //    Rabby, Phantom…) and adds WalletConnect (mobile QR) + Coinbase.
+      // 2. forceInternalWalletManagement: the whole app is wrapped in a single
+      //    WagmiProvider configured for ONLY HyperEVM testnet (chain 998). LI.FI's
+      //    EthereumProvider auto-detects that ancestor WagmiProvider and would
+      //    reuse it — but a 998-only config can't switch to Ethereum/Arbitrum/etc.,
+      //    so routes failed with "Chain not configured". This flag tells the widget
+      //    to ignore the host WagmiProvider and build its own config, syncing in
+      //    all 70+ LI.FI chains (incl. HyperEVM 999). The app-wide config is left
+      //    untouched, so the vault dApp is unaffected.
+      walletConfig: { forceInternalWalletManagement: true },
       providers: [
         EthereumProvider({
           ...(WC_ENABLED ? { walletConnect: { projectId: WC_PROJECT_ID } } : {}),
