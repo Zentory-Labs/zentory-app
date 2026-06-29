@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@lifi/widget": "^4.1.0",
+    "@lifi/widget-provider-ethereum": "^4.1.0",
     "@nktkas/hyperliquid": "^0.33.1",
     "@sentry/nextjs": "^10.53.1",
     "@supabase/ssr": "^0.10.2",
@@ -29,7 +30,7 @@
     "tailwindcss": "^4",
     "three": "^0.184.0",
     "viem": "^2.48.4",
-    "wagmi": "^3.6.4"
+    "wagmi": "^3.6.21"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

@@ -1,65 +1,26 @@
 "use client";
 
-import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import type { WidgetConfig } from "@lifi/widget";
 
-// The LI.FI Widget is client-only — load it without SSR.
-// Setup before this works in production:
-//   1. `npm install @lifi/widget` (peer deps wagmi/viem/@tanstack-react-query already in the app)
-//   2. Register the "Zentory" integrator + payout wallet with LI.FI (sales@li.finance)
-//      so the integrator fee below actually accrues to you.
-//   3. Verify the widget version/API against https://docs.li.fi/widget — this is a scaffold.
-const LiFiWidget = dynamic(
-  () => import("@lifi/widget").then((m) => m.LiFiWidget),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-[560px] w-full max-w-[420px] rounded-2xl flex items-center justify-center"
-        style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}>
-        <span className="text-sm" style={{ color: "rgba(191,195,199,0.6)" }}>Loading bridge…</span>
-      </div>
-    ),
-  }
-);
+// The bridge widget (LI.FI + its EVM wallet provider) is client-only — load it
+// without SSR. All the wagmi/viem/widget code lives in BridgeWidget so nothing
+// touches the server render.
+const BridgeWidget = dynamic(() => import("@/components/BridgeWidget"), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="h-[560px] w-full max-w-[420px] rounded-2xl flex items-center justify-center"
+      style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}
+    >
+      <span className="text-sm" style={{ color: "rgba(191,195,199,0.6)" }}>Loading bridge…</span>
+    </div>
+  ),
+});
 
-const HYPEREVM_CHAIN_ID = 999; // default destination — funnel users onto HyperEVM
 const GOLD = "#b08d57";
 
 export default function BridgePage() {
-  // 0.25% integrator fee (override with NEXT_PUBLIC_BRIDGE_FEE, e.g. 0.003 = 0.3%).
-  const fee = Number(process.env.NEXT_PUBLIC_BRIDGE_FEE ?? 0.0025);
-
-  // hiddenUI drops the widget's third-party chrome (incl. the "Powered by" badge)
-  // so the bridge reads as Zentory's own surface. The flag is an officially
-  // supported LI.FI widget feature — but confirm hiding attribution is permitted
-  // under your LI.FI integrator agreement before going live with the fee.
-  const widgetConfig = useMemo<Partial<WidgetConfig>>(
-    () => ({
-      integrator: "Zentory",
-      fee,
-      fromChain: 1, // populate the origin (Ethereum) so chain/token logos show by default
-      toChain: HYPEREVM_CHAIN_ID,
-      hiddenUI: { poweredBy: true, language: true, appearance: true },
-      appearance: "dark",
-      theme: {
-        colorSchemes: {
-          dark: {
-            palette: {
-              primary: { main: GOLD },
-              secondary: { main: "#eaeaea" },
-              background: { default: "#0d0d10", paper: "#111114" },
-            },
-          },
-        },
-        shape: { borderRadius: 16 },
-        typography: { fontFamily: "'Montserrat', sans-serif" },
-      },
-    }),
-    [fee]
-  );
-
   return (
     <div className="space-y-10 pb-12">
       <header className="space-y-3 max-w-2xl">
@@ -74,7 +35,7 @@ export default function BridgePage() {
 
       <div className="grid lg:grid-cols-[420px_1fr] gap-10 items-start">
         <div className="flex justify-center lg:justify-start">
-          <LiFiWidget integrator="Zentory" config={widgetConfig} />
+          <BridgeWidget />
         </div>
 
         {/* The funnel: once they're on HyperEVM, one tap to the vaults */}
