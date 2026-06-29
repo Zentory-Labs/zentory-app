@@ -36,11 +36,14 @@ const queryClient = new QueryClient();
 const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC || "https://rpc.hyperliquid-testnet.xyz/evm";
 const TRANSPORT_URL = process.env.NODE_ENV === "production" ? "/api/rpc" : RPC_URL;
 
-// Read once. We treat empty-string and unset identically — both mean
-// "WalletConnect is disabled." Empty was the production failure mode: WC v2
-// strictly requires a non-empty UUID, throwing 'Connection rejected' on
-// click otherwise.
-const WALLETCONNECT_PROJECT_ID = (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "").trim();
+// WalletConnect projectId. A Reown projectId is a PUBLIC client-side identifier
+// (it ships in the browser bundle either way), so we default to the Zentory
+// project's id and let an env var override it for rotation. Misuse is prevented
+// by the domain allowlist in the Reown dashboard, NOT by hiding the id.
+// Empty/"placeholder" is still treated as disabled (WC v2 throws on an empty id).
+const WALLETCONNECT_PROJECT_ID = (
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "7ec1c35f80c02a967c01bc724e2c1219"
+).trim();
 const WALLETCONNECT_ENABLED =
   WALLETCONNECT_PROJECT_ID.length > 0 && WALLETCONNECT_PROJECT_ID !== "placeholder";
 
