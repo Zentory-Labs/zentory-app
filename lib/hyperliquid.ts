@@ -44,9 +44,14 @@ export type ClearinghouseState = {
   assetPositions: AssetPosition[];
 };
 
-/** Tradable perps (delisted filtered out), ordered as Hyperliquid lists them. */
-export const getPerps = () =>
-  info<{ universe: PerpMeta[] }>({ type: "meta" }).then((d) => d.universe.filter((u) => !u.isDelisted));
+/** Full perp universe, in Hyperliquid's order. The array index IS the perp asset
+ * id used when placing orders, so this must stay unfiltered. */
+export const getUniverse = () =>
+  info<{ universe: PerpMeta[] }>({ type: "meta" }).then((d) => d.universe);
+
+/** Tradable perps for the UI (delisted hidden). Do NOT use the index of THIS list
+ * as an asset id — use getUniverse() for that. */
+export const getPerps = () => getUniverse().then((u) => u.filter((p) => !p.isDelisted));
 
 /** Mid price for every market, keyed by coin name (perps) — e.g. mids["BTC"]. */
 export const getAllMids = () => info<Record<string, string>>({ type: "allMids" });

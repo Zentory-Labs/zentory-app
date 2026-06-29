@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@lifi/widget": "^4.1.0",
+    "@nktkas/hyperliquid": "^0.33.1",
     "@sentry/nextjs": "^10.53.1",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.104.1",

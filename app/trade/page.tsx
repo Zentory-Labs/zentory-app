@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 import {
   getPerps, getAllMids, getL2Book, getClearinghouseState,
   HL_BUILDER_FEE, HL_LIVE_ORDERS, fmtUsd,
   type PerpMeta, type L2Book, type ClearinghouseState,
 } from "@/lib/hyperliquid";
+import { approveBuilderFee, placeOrder } from "@/lib/hyperliquid-exchange";
 
 const GOLD = "#b08d57";
 const GREEN = "#34d399";
@@ -29,6 +30,12 @@ export default function TradePage() {
   const [type, setType] = useState<"market" | "limit">("market");
   const [size, setSize] = useState("");
   const [limitPx, setLimitPx] = useState("");
+
+  // live-order state
+  const { data: walletClient } = useWalletClient();
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [feeApproved, setFeeApproved] = useState(false);
 
   const meta = useMemo(() => perps.find((p) => p.name === coin), [perps, coin]);
   const mark = mids[coin] ? Number(mids[coin]) : null;
@@ -67,20 +74,37 @@ export default function TradePage() {
   // builder fee (f is tenths of a bp → fraction = f / 100_000)
   const builderFee = notional * (HL_BUILDER_FEE / 100_000);
 
-  const placeOrder = useCallback(() => {
-    // Live order routing is wired via @nktkas/hyperliquid with the builder code
-    // attached — but enabling it needs a funded builder account + a one-time
-    // ApproveBuilderFee, then testnet verification. See TERMINAL_BUILD_PLAN.md.
-    alert(
-      "Live order routing is the final wiring step:\n\n" +
-      "1. Fund the Zentory builder wallet (≥100 USDC) and set NEXT_PUBLIC_HL_BUILDER_ADDRESS.\n" +
-      "2. One-time ApproveBuilderFee for this wallet.\n" +
-      "3. Verify on Hyperliquid testnet, then enable.\n\n" +
-      `Prepared order: ${side.toUpperCase()} ${size || 0} ${coin} ` +
-      `(${type}${type === "limit" ? ` @ ${limitPx || "—"}` : ""}) · ` +
-      `notional ~$${fmtUsd(notional)} · Zentory builder fee ~$${fmtUsd(builderFee, 4)}.`
-    );
-  }, [side, size, coin, type, limitPx, notional, builderFee]);
+  const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
+
+  // One-time: authorize Zentory's builder fee for the connected wallet.
+  const onApprove = useCallback(async () => {
+    if (!walletClient) { setStatus("Connect your wallet first."); return; }
+    setBusy(true); setStatus(null);
+    try {
+      await approveBuilderFee(walletClient);
+      setFeeApproved(true);
+      setStatus("Builder fee approved — you can place orders.");
+    } catch (e) { setStatus(`Approval failed: ${errMsg(e)}`); }
+    finally { setBusy(false); }
+  }, [walletClient]);
+
+  // Place a live order with the Zentory builder code attached.
+  const onPlace = useCallback(async () => {
+    if (!HL_LIVE_ORDERS) { setStatus("Live routing isn't configured yet — set NEXT_PUBLIC_HL_BUILDER_ADDRESS."); return; }
+    if (!walletClient) { setStatus("Connect your wallet first."); return; }
+    if (!Number(size)) { setStatus("Enter a size."); return; }
+    // Market orders still need a price on HL — use an aggressive marketable price (~5 sig figs).
+    const px = type === "limit"
+      ? limitPx
+      : mark ? Number((side === "buy" ? mark * 1.02 : mark * 0.98).toPrecision(5)).toString() : "";
+    if (!px) { setStatus("No price available — try again in a moment."); return; }
+    setBusy(true); setStatus(null);
+    try {
+      await placeOrder({ walletClient, coin, isBuy: side === "buy", sz: size, price: px, isMarket: type === "market" });
+      setStatus(`Order submitted ✓ — ${side === "buy" ? "long" : "short"} ${size} ${coin}.`);
+    } catch (e) { setStatus(`Order failed: ${errMsg(e)}`); }
+    finally { setBusy(false); }
+  }, [walletClient, coin, side, size, type, limitPx, mark]);
 
   const bids = book?.levels?.[0]?.slice(0, 11) ?? [];
   const asks = (book?.levels?.[1]?.slice(0, 11) ?? []).slice().reverse();
@@ -172,11 +196,21 @@ export default function TradePage() {
             <div className="flex justify-between"><span>Zentory builder fee ({(HL_BUILDER_FEE / 1000).toFixed(2)} bp)</span><span className="tabular-nums" style={{ color: GOLD }}>~${fmtUsd(builderFee, 4)}</span></div>
           </div>
 
-          <button onClick={placeOrder} disabled={!Number(size)}
+          {HL_LIVE_ORDERS && isConnected && !feeApproved && (
+            <button onClick={onApprove} disabled={busy}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40"
+              style={{ border: `1px solid ${GOLD}`, color: GOLD }}>
+              {busy ? "Approving…" : "Approve Zentory builder fee (one-time)"}
+            </button>
+          )}
+          <button onClick={onPlace}
+            disabled={!Number(size) || busy || (HL_LIVE_ORDERS && isConnected && !feeApproved)}
             className="w-full py-3 rounded-xl text-sm font-semibold transition-transform hover:scale-[1.01] disabled:opacity-40 disabled:hover:scale-100"
             style={{ background: side === "buy" ? GREEN : RED, color: "#0b0b0d" }}>
-            {isConnected ? `${side === "buy" ? "Long" : "Short"} ${coin}` : "Connect wallet to trade"}
+            {!isConnected ? "Connect wallet to trade" : busy ? "Submitting…" : `${side === "buy" ? "Long" : "Short"} ${coin}`}
           </button>
+
+          {status && <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.7)" }}>{status}</p>}
 
           {!HL_LIVE_ORDERS && (
             <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.4)" }}>
