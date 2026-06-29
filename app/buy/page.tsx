@@ -51,10 +51,13 @@ export default function BuyPage() {
               style={{ border: "1px solid rgba(42,47,58,0.6)", background: "#111114" }}
             />
           ) : (
-            <div className="h-[630px] w-full max-w-[420px] rounded-2xl flex items-center justify-center text-center p-8"
+            <div className="h-[630px] w-full max-w-[420px] rounded-2xl flex flex-col items-center justify-center text-center p-8 gap-3"
               style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}>
-              <span className="text-sm" style={{ color: "rgba(191,195,199,0.6)" }}>
-                On-ramp loads once <code className="text-[#b08d57]">NEXT_PUBLIC_ONRAMPER_API_KEY</code> is set.
+              <span className="text-[11px] uppercase tracking-[0.2em]" style={{ color: GOLD }}>Coming soon</span>
+              <span className="text-sm leading-relaxed" style={{ color: "rgba(191,195,199,0.75)" }}>
+                Card &amp; bank on-ramp is launching shortly. For now,{" "}
+                <Link href="/bridge" className="underline" style={{ color: GOLD }}>bridge crypto from another chain</Link>{" "}
+                onto HyperEVM in seconds.
               </span>
             </div>
           )}
