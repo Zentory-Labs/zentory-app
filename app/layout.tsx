@@ -101,7 +101,7 @@ export default function RootLayout({
                 {/* Site map — every reachable page grouped by section.
                     Mirrors the top-nav dropdowns so investors can find any
                     surface even if they skipped the dropdown. */}
-                <div className="w-full max-w-5xl mb-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 text-left">
+                <div className="w-full max-w-5xl mb-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 text-left">
                   {[
                     {
                       label: "Vaults",
@@ -113,6 +113,14 @@ export default function RootLayout({
                         ["zXRP", "/vaults/zXRP"],
                         ["Dashboard", "/dashboard"],
                         ["Faucet", "/faucet"],
+                      ],
+                    },
+                    {
+                      label: "Trade",
+                      items: [
+                        ["Zentory Terminal", "/trade"],
+                        ["Bridge", "/bridge"],
+                        ["Buy Crypto", "/buy"],
                       ],
                     },
                     {
