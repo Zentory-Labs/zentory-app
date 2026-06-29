@@ -45,6 +45,14 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: "Trade",
+    children: [
+      { href: "/trade", label: "Zentory Terminal", desc: "Trade Hyperliquid perps — live on-chain orderbook" },
+      { href: "/bridge", label: "Bridge", desc: "Move any asset onto HyperEVM in seconds" },
+      { href: "/buy", label: "Buy Crypto", desc: "Card → USDC via a licensed on-ramp" },
+    ],
+  },
+  {
     label: "Research",
     children: [
       { href: "/track-record", label: "Track Record", desc: "Live, hash-chained paper record — verify it yourself" },
@@ -76,6 +84,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Protocol",
     children: [
       { href: "/state-of-protocol", label: "State of Protocol", desc: "All 26 contracts + security posture" },
+      { href: "/risks", label: "Risks", desc: "Honest, plain-language risk disclosure" },
       { href: "/bug-bounty", label: "Bug Bounty", desc: "Security disclosure program" },
       { href: "https://zentorylabs.com/whitepaper", label: "Whitepaper", desc: "Architecture + tokenomics + roadmap", external: true },
       { href: "https://zentorylabs.com/tokenomics", label: "Tokenomics", desc: "ZENT supply, distribution, buyback", external: true },
