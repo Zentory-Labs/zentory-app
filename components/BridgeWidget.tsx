@@ -11,6 +11,18 @@ import { EthereumProvider } from "@lifi/widget-provider-ethereum";
 const GOLD = "#b08d57";
 const HYPEREVM_CHAIN_ID = 999; // default destination — funnel users onto HyperEVM
 
+// MUST exactly match the integration string registered in the LI.FI dashboard
+// (dashboard → Integrations → "integration-string"). LI.FI uses this to apply the
+// 25bps fee and route it to the configured EVM fee wallet. A mismatch ("Zentory"
+// vs "zentory-labs") means fees don't accrue to your integration.
+const INTEGRATOR = "zentory-labs";
+
+// NOTE: deliberately NO LI.FI apiKey here. LI.FI's own guidance is that the
+// Widget operates without a key and the x-lifi-api-key must NEVER be exposed
+// client-side (it would ship in the browser bundle). The key is server-side
+// only; if we ever need higher rate limits we'd proxy the LI.FI API through a
+// Next.js route handler that injects the key on the server.
+
 // Same public Reown projectId the rest of the app uses (domain-allowlisted in the
 // Reown dashboard). Lets the bridge offer WalletConnect (QR → any mobile wallet)
 // in addition to installed browser extensions.
@@ -25,7 +37,7 @@ export default function BridgeWidget() {
 
   const config = useMemo<Partial<WidgetConfig>>(
     () => ({
-      integrator: "Zentory",
+      integrator: INTEGRATOR,
       fee,
       fromChain: 1, // origin (Ethereum) so chain/token logos render by default
       toChain: HYPEREVM_CHAIN_ID,
@@ -61,5 +73,5 @@ export default function BridgeWidget() {
     [fee]
   );
 
-  return <LiFiWidget integrator="Zentory" config={config} />;
+  return <LiFiWidget integrator={INTEGRATOR} config={config} />;
 }
