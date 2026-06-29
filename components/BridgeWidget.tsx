@@ -11,6 +11,20 @@ import { EthereumProvider } from "@lifi/widget-provider-ethereum";
 const GOLD = "#b08d57";
 const HYPEREVM_CHAIN_ID = 999; // default destination — funnel users onto HyperEVM
 
+// Reliability guardrails: default the form to a SAME-ASSET stablecoin route
+// (USDC on Ethereum → USDC on HyperEVM). A same-asset bridge needs no DEX swap,
+// so there's nothing to slip — it's the most reliable possible default path.
+// Users can still switch to any token/chain (the "bring any asset" promise is
+// intact); this only sets the starting point. Addresses are LI.FI's canonical
+// USDC for each chain (verified via li.quest/v1/tokens).
+const FROM_CHAIN = 1; // Ethereum — most universal origin
+const FROM_TOKEN_USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // USDC on Ethereum (6 dp)
+const TO_TOKEN_USDC = "0xb88339CB7199b77E23DB6E890353E22632Ba630f"; // USDC on HyperEVM (6 dp)
+// Block dust bridges: cross-chain fixed costs (gas both sides + bridge fee) make
+// tiny transfers fail bridge minimums or simply not be worth it. Widget shows a
+// clear "minimum is $X" message and disables the route below this.
+const MIN_FROM_AMOUNT_USD = 20;
+
 // MUST exactly match the integration string registered in the LI.FI dashboard
 // (dashboard → Integrations → "integration-string"). LI.FI uses this to apply the
 // 25bps fee and route it to the configured EVM fee wallet. A mismatch ("Zentory"
@@ -45,8 +59,17 @@ export default function BridgeWidget() {
       // haircut + pool drift between quote and signing exceeded 0.5%. 1% is the
       // common bridge-widget default; users can still tighten it via Settings.
       slippage: 0.01,
-      fromChain: 1, // origin (Ethereum) so chain/token logos render by default
+      // Block dust bridges that would fail bridge minimums / not be worth the gas.
+      minFromAmountUSD: MIN_FROM_AMOUNT_USD,
+      // Default to a clean USDC→USDC route (no swap = nothing to slip). Users can
+      // change either side to bridge any asset from any chain.
+      fromChain: FROM_CHAIN,
+      fromToken: FROM_TOKEN_USDC,
       toChain: HYPEREVM_CHAIN_ID,
+      toToken: TO_TOKEN_USDC,
+      // Show only the recommended (best/most-reliable) route — keeps users from
+      // hand-picking an exotic, failure-prone path.
+      showSingleRoute: true,
       // Give the widget its OWN multi-chain wallet stack. Two things matter here:
       //
       // 1. providers: an EthereumProvider that keeps injected/EIP-6963 (MetaMask,
