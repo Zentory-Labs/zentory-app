@@ -9,17 +9,17 @@ import { EthereumProvider } from "@lifi/widget-provider-ethereum";
 // the EVM wallet provider here — none of this wagmi/viem code runs during SSR.
 
 const GOLD = "#b08d57";
-const HYPEREVM_CHAIN_ID = 999; // default destination — funnel users onto HyperEVM
 
-// Reliability guardrails: default the form to a SAME-ASSET stablecoin route
-// (USDC on Ethereum → USDC on HyperEVM). A same-asset bridge needs no DEX swap,
-// so there's nothing to slip — it's the most reliable possible default path.
-// Users can still switch to any token/chain (the "bring any asset" promise is
-// intact); this only sets the starting point. Addresses are LI.FI's canonical
-// USDC for each chain (verified via li.quest/v1/tokens).
+// This is a GENERAL cross-chain bridge — any wallet can move any token to any of
+// the 70+ supported chains (HyperEVM included, but NOT forced). The from/to below
+// are just the opening DEFAULTS; users can change either side freely. We open on a
+// same-asset USDC→USDC route across two major chains so the default path needs no
+// DEX swap (nothing to slip) and demonstrates a real cross-chain transfer.
+// Addresses are LI.FI's canonical native USDC per chain (li.quest/v1/tokens).
 const FROM_CHAIN = 1; // Ethereum — most universal origin
 const FROM_TOKEN_USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // USDC on Ethereum (6 dp)
-const TO_TOKEN_USDC = "0xb88339CB7199b77E23DB6E890353E22632Ba630f"; // USDC on HyperEVM (6 dp)
+const TO_CHAIN = 42161; // Arbitrum — cheap, deep liquidity (changeable to any chain)
+const TO_TOKEN_USDC = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831"; // USDC on Arbitrum (6 dp)
 // Block dust bridges: cross-chain fixed costs (gas both sides + bridge fee) make
 // tiny transfers fail bridge minimums or simply not be worth it. Widget shows a
 // clear "minimum is $X" message and disables the route below this.
@@ -65,7 +65,7 @@ export default function BridgeWidget() {
       // change either side to bridge any asset from any chain.
       fromChain: FROM_CHAIN,
       fromToken: FROM_TOKEN_USDC,
-      toChain: HYPEREVM_CHAIN_ID,
+      toChain: TO_CHAIN,
       toToken: TO_TOKEN_USDC,
       // Show only the recommended (best/most-reliable) route — keeps users from
       // hand-picking an exotic, failure-prone path.
