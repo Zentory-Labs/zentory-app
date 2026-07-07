@@ -61,7 +61,7 @@ const TIERS: Tier[] = [
     emoji: "Bolt",
     assets: ["Crypto Spot", "Crypto Perp", "Equity"],
     assetKeys: ["CRYPTO_SPOT", "CRYPTO_PERP", "EQUITY"],
-    description: "Everything in Basic plus equity research powered by Ondo and Synthetix.",
+    description: "Everything in Basic. Equity research (Ondo / Synthetix) — coming Q3 2026.",
     color: "#c2353f",
     badge: "rgba(194,53,63,0.12)",
     badgeBorder: "rgba(194,53,63,0.3)",
@@ -75,7 +75,7 @@ const TIERS: Tier[] = [
     emoji: "Crown",
     assets: ["Crypto Spot", "Crypto Perp", "Equity", "Forex", "Commodities"],
     assetKeys: ["CRYPTO_SPOT", "CRYPTO_PERP", "EQUITY", "FOREX", "COMMODITIES"],
-    description: "Full multi-asset coverage: crypto, equities, forex, and commodities.",
+    description: "Crypto research today; equities, forex & commodities coming Q3 2026.",
     color: "#eaeaea",
     badge: "rgba(234,234,234,0.06)",
     badgeBorder: "rgba(234,234,234,0.12)",
@@ -86,9 +86,9 @@ const TIERS: Tier[] = [
 const ASSET_CLASS_TABLE = [
   { label: "Crypto Spot",    basic: true,  pro: true,  elite: true  },
   { label: "Crypto Perp",   basic: true,  pro: true,  elite: true  },
-  { label: "Equity",         basic: false, pro: true,  elite: true  },
-  { label: "Forex",         basic: false, pro: false, elite: true  },
-  { label: "Commodities",    basic: false, pro: false, elite: true  },
+  { label: "Equity (Q3 2026)",       basic: false, pro: true,  elite: true  },
+  { label: "Forex (Q3 2026)",        basic: false, pro: false, elite: true  },
+  { label: "Commodities (Q3 2026)",  basic: false, pro: false, elite: true  },
 ];
 
 const FAQ_ITEMS = [

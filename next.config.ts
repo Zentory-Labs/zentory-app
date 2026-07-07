@@ -2,7 +2,17 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Contributor onboarding is "Coming Q3 2026" (see /contribute). The dashboard,
+  // API-keys and submissions sub-pages are built but not yet live (no first-key
+  // bootstrap), so gate them to /contribute until the program opens. Temporary
+  // (not permanent) so they can be re-enabled when the signal pipeline is ready.
+  async redirects() {
+    return [
+      { source: "/contribute/dashboard", destination: "/contribute", permanent: false },
+      { source: "/contribute/api-keys", destination: "/contribute", permanent: false },
+      { source: "/contribute/submissions", destination: "/contribute", permanent: false },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {
