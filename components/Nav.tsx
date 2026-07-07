@@ -74,10 +74,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "Contribute",
     children: [
-      { href: "/contribute", label: "Become a Contributor", desc: "Stake ZENT, publish, earn payouts" },
-      { href: "/contribute/dashboard", label: "Contributor Dashboard", desc: "Your performance + payouts" },
-      { href: "/contribute/api-keys", label: "API Keys", desc: "Generate keys for programmatic submission" },
-      { href: "/contribute/submissions", label: "My Submissions", desc: "History of your published research" },
+      { href: "/contribute", label: "Become a Contributor", desc: "Public quant onboarding — opening Q3 2026" },
     ],
   },
   {

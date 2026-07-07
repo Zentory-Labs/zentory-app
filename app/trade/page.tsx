@@ -156,8 +156,19 @@ export default function TradePage() {
           </div>
         </div>
 
-        {/* order ticket */}
+        {/* order ticket — hidden until live order routing is enabled + verified */}
         <div className="rounded-2xl p-5 space-y-4" style={{ background: PANEL, border: BORDER }}>
+          {!HL_LIVE_ORDERS ? (
+            <div className="space-y-2 py-1">
+              <p className="text-sm font-semibold text-white">Trading launches soon</p>
+              <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.5)" }}>
+                The live orderbook and your Hyperliquid positions are shown in real time below.
+                Order routing turns on once the Zentory builder wallet is funded and verified —
+                non-custodial, you sign every trade.
+              </p>
+            </div>
+          ) : (
+          <>
           <div className="grid grid-cols-2 gap-2">
             {(["buy", "sell"] as const).map((s) => (
               <button key={s} onClick={() => setSide(s)}
@@ -211,13 +222,7 @@ export default function TradePage() {
           </button>
 
           {status && <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.7)" }}>{status}</p>}
-
-          {!HL_LIVE_ORDERS && (
-            <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.4)" }}>
-              Live routing turns on once the Zentory builder wallet is funded (≥100 USDC) and{" "}
-              <code style={{ color: GOLD }}>NEXT_PUBLIC_HL_BUILDER_ADDRESS</code> is set. The book and your
-              positions are live now.
-            </p>
+          </>
           )}
         </div>
       </div>
