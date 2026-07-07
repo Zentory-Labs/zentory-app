@@ -66,6 +66,9 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
   const isLong = latest.target_weight >= 0.5;
   const badgeBg = isLong ? "rgba(39,209,130,0.15)" : "rgba(255,255,255,0.06)";
   const badgeFg = isLong ? "#27d182" : "rgba(255,255,255,0.6)";
+  // The recorder runs every 4h; anything older than ~8h means the feed is behind,
+  // so don't call it "Live" — label it the last recorded signal + flag the delay.
+  const stale = Date.now() - new Date(latest.recorded_at).getTime() > 8 * 3600 * 1000;
 
   return (
     <div
@@ -74,7 +77,7 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
     >
       <div className="flex items-center gap-3">
         <div className="text-xs uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>
-          Live signal
+          {stale ? "Last signal" : "Live signal"}
         </div>
         <span
           className="text-xs px-2 py-0.5 rounded-full"
@@ -96,9 +99,9 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
           <span style={{ color: "rgba(106,111,117,0.9)" }}>bar </span>
           {latest.bar_ts.replace("T", " ").replace("Z", "")}Z
         </div>
-        <div>
+        <div style={stale ? { color: "#e0a13a" } : undefined}>
           <span style={{ color: "rgba(106,111,117,0.9)" }}>age </span>
-          {timeAgo(latest.recorded_at)}
+          {timeAgo(latest.recorded_at)}{stale ? " · delayed" : ""}
         </div>
       </div>
     </div>
