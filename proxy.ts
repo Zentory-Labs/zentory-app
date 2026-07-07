@@ -1,17 +1,11 @@
 import { updateSession } from "@/utils/supabase/middleware";
 import { NextResponse } from "next/server";
+import { isRestrictedCountry } from "@/lib/geo-blocking";
 
-// Countries restricted from interacting with the testnet protocol per
-// docs/regulatory-memo.md. Whitepaper §6.5 + ToS §8 promise this surface.
-const RESTRICTED_COUNTRIES = new Set([
-  "US", // United States
-  // EU member states (27)
-  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-  "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
-  "PL", "PT", "RO", "SK", "SI", "ES", "SE",
-  // OFAC + comprehensively sanctioned
-  "KP", "IR", "SY", "BY", "MM", "VE", "CU",
-]);
+// The restricted-country list (US securities law, EU MiCA, OFAC sanctions) is the
+// single source of truth in lib/geo-blocking.ts — imported above so this site-wide
+// proxy and the per-route API checks can never drift apart. Rationale + scope:
+// docs/regulatory-memo.md, whitepaper §6.5, ToS §8.
 
 // Always-public routes — never geo-blocked, regardless of country. These are
 // pure-content marketing/informational pages and the geo-block landing page
@@ -43,7 +37,7 @@ export async function proxy(request: Request) {
   // datacenter (often US-east), so geo-blocking them would brick the keeper.
   const isInternal = pathname.startsWith("/api/cron/") || pathname === "/api/version";
 
-  if (!isAlwaysOpen && !isInternal && RESTRICTED_COUNTRIES.has(country)) {
+  if (!isAlwaysOpen && !isInternal && isRestrictedCountry(country)) {
     // For /api/* paths, return JSON 451 — redirecting an API call to an
     // HTML page would break clients. For everything else, redirect to the
     // /blocked landing page.
