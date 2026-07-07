@@ -47,9 +47,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "Trade",
     children: [
-      { href: "/trade", label: "Zentory Terminal", desc: "Trade Hyperliquid perps — live on-chain orderbook" },
+      { href: "/trade", label: "Zentory Terminal", desc: "Live Hyperliquid orderbook — trading launches soon" },
       { href: "/bridge", label: "Bridge", desc: "Move any asset onto HyperEVM in seconds" },
-      { href: "/buy", label: "Buy Crypto", desc: "Card → USDC via a licensed on-ramp" },
+      { href: "/buy", label: "Buy Crypto", desc: "Card → USDC — launching soon" },
     ],
   },
   {

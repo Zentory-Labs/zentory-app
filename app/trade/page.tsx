@@ -118,6 +118,10 @@ export default function TradePage() {
           Live perps on Hyperliquid&apos;s on-chain orderbook. Hyperliquid provides the liquidity;
           Zentory routes your order and earns a small builder fee — non-custodial, you sign every trade.
         </p>
+        <p className="text-[11px]" style={{ color: "rgba(224,161,58,0.9)" }}>
+          Note: the orderbook and positions shown are <strong>Hyperliquid L1 mainnet</strong>. Zentory&apos;s
+          vaults run on HyperEVM testnet — these are separate networks.
+        </p>
       </header>
 
       {/* market bar */}

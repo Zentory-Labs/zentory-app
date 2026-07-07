@@ -234,7 +234,7 @@ export default function StateOfProtocolPage() {
 
   const PROTOCOL_STATS = [
     { label: "Network", value: "HyperEVM Testnet (Chain 998)", sub: "Mainnet Q4 2026 after external audit" },
-    { label: "Contracts Deployed", value: "26", sub: "Vaults, Staking, Registry, Scoring, Fees, Governance" },
+    { label: "Contracts Deployed", value: String(CONTRACTS.length), sub: "Vaults, Staking, Registry, Scoring, Fees, Governance" },
     { label: "Testnet TVL", value: tvlUsd > 0 ? fmtUsd(tvlUsd) : "—", sub: "Spot vault, oracle-priced (mock assets)" },
     { label: "Total Signals", value: signalCount.data !== undefined ? String(signalCount.data) : "—", sub: "On-chain, EIP-712 signed" },
     { label: "Epochs Settled", value: epochId.data !== undefined ? String(Number(epochId.data) - 1) : "—", sub: "4-hour scoring epochs" },
@@ -327,7 +327,7 @@ export default function StateOfProtocolPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
-              All 26 contracts are deployed on HyperEVM Testnet (Chain 998). Mainnet deployment targeted for Q4 2026 after external audit.
+              All {CONTRACTS.length} core contracts are deployed on HyperEVM Testnet (Chain 998). Mainnet deployment targeted for Q1 2027 after external audit.
             </span>
           </div>
         </SectionCard>
