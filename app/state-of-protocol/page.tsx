@@ -463,7 +463,7 @@ export default function StateOfProtocolPage() {
         {/* ── 6. Disclaimer ── */}
         <div
           className="p-4 rounded-xl border"
-          style={{ background: "rgba(255,180,0,0.07)", borderColor: "rgba(255,180,0,0.25)" }}
+          style={{ background: "rgba(176,141,87,0.07)", borderColor: "rgba(176,141,87,0.25)" }}
         >
           <div className="flex items-start gap-3">
             <svg

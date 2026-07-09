@@ -13,7 +13,7 @@ const BridgeWidget = dynamic(() => import("@/components/BridgeWidget"), {
       className="h-[560px] w-full max-w-[420px] rounded-2xl flex items-center justify-center"
       style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}
     >
-      <span className="text-sm" style={{ color: "rgba(191,195,199,0.6)" }}>Loading bridge…</span>
+      <span className="text-sm" style={{ color: "#bfc3c7" }}>Loading bridge…</span>
     </div>
   ),
 });
@@ -51,7 +51,7 @@ export default function BridgePage() {
               Explore the vaults →
             </Link>
           </div>
-          <ul className="text-xs space-y-2" style={{ color: "rgba(191,195,199,0.6)" }}>
+          <ul className="text-xs space-y-2" style={{ color: "#bfc3c7" }}>
             <li>• Best-price routing across 70+ chains, plus Solana and Bitcoin.</li>
             <li>• Non-custodial — your funds never touch Zentory; every route settles on-chain.</li>
             <li>• One interface for every major bridge and DEX aggregator.</li>

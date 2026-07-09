@@ -33,7 +33,7 @@ const bannerText = (
 export default function LegalDisclaimer({ variant = 'footer', className = '' }: LegalDisclaimerProps) {
   if (variant === 'footer') {
     return (
-      <p className={`text-[#e6e2de]/50 text-xs font-light max-w-2xl leading-relaxed ${className}`}>
+      <p className={`text-[#bfc3c7] text-xs font-light max-w-2xl leading-relaxed ${className}`}>
         {footerText}
       </p>
     )

@@ -45,7 +45,7 @@ export default function AdminPage() {
 
   if (!mounted || !isConnected) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white/60 p-8">
+      <div className="min-h-screen flex items-center justify-center text-[#bfc3c7] p-8">
         Connect a wallet to access the admin console.
       </div>
     );
@@ -56,7 +56,7 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center text-center p-8">
         <div className="max-w-md">
           <div className="text-2xl font-bold text-white mb-2">Not authorized</div>
-          <div className="text-sm text-white/60">
+          <div className="text-sm text-[#bfc3c7]">
             This page is restricted to wallets holding{" "}
             <code>GUARDIAN_ROLE</code> on the StrategyExecutor contract.
             Connected: <code>{shorten(address!)}</code>.
@@ -157,35 +157,32 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen relative">
 
-      <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
-        <div className="mx-auto max-w-7xl px-6 py-4">
+      <div className="mx-auto max-w-4xl space-y-8">
+        <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}><span className="gradient-text-gold">Admin Panel</span></h1>
             <span className="text-xs bg-red-500/10 border border-red-500/20 text-red-400 rounded-full px-3 py-1">
               Role-gated
             </span>
           </div>
-          <p className="text-xs text-white/40 mt-0.5">Manage risk parameters, emergency pause, and keeper configuration</p>
+          <p className="text-sm text-[#bfc3c7] mt-1">Manage risk parameters, emergency pause, and keeper configuration</p>
         </div>
-      </header>
-
-      <div className="mx-auto max-w-4xl space-y-8">
         {/* Executor Status */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-            <div className="text-xs text-white/40 mb-1 uppercase tracking-wider">Executor Status</div>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
+            <div className="text-xs text-[#bfc3c7] mb-1 uppercase tracking-wider">Executor Status</div>
             <div className="text-2xl font-bold" style={{ color: (isPaused.data as boolean) ? "#b08d57" : "#c2353f" }}>
               {(isPaused.data as boolean) ? "PAUSED" : "Active"}
             </div>
           </div>
-          <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-            <div className="text-xs text-white/40 mb-1 uppercase tracking-wider">Keeper Role Hash</div>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
+            <div className="text-xs text-[#bfc3c7] mb-1 uppercase tracking-wider">Keeper Role Hash</div>
             <div className="font-mono text-xs text-white break-all leading-tight">
               {keeperRole.data ? (keeperRole.data as string).slice(0, 16) + "…" : "—"}
             </div>
           </div>
-          <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-            <div className="text-xs text-white/40 mb-1 uppercase tracking-wider">Guardian Role Hash</div>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
+            <div className="text-xs text-[#bfc3c7] mb-1 uppercase tracking-wider">Guardian Role Hash</div>
             <div className="font-mono text-xs text-white break-all leading-tight">
               {guardianRole.data ? (guardianRole.data as string).slice(0, 16) + "…" : "—"}
             </div>
@@ -193,9 +190,9 @@ export default function AdminPage() {
         </div>
 
         {/* Emergency Pause */}
-        <div className="glass-card p-6">
+        <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6">
           <h2 className="text-lg font-semibold text-red-400 mb-1">Emergency Pause</h2>
-          <p className="text-xs text-white/40 mb-4">
+          <p className="text-xs text-[#bfc3c7] mb-4">
             Immediately halts all trade execution. Guardian role required.
           </p>
           <button
@@ -212,18 +209,18 @@ export default function AdminPage() {
               }`}
             />
           </button>
-          <span className="ml-3 text-sm text-white/60">
+          <span className="ml-3 text-sm text-[#bfc3c7]">
             {(isPaused.data as boolean) ? "Executor is paused" : "Executor is operational"}
           </span>
         </div>
 
         {/* Vault Risk Parameters */}
-        <div className="glass-card p-6">
+        <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Vault Risk Parameters</h2>
 
           {/* Vault Selector */}
           <div className="mb-5">
-            <label className="mb-2 block text-xs font-medium text-white/60 uppercase tracking-wider">Select Vault</label>
+            <label className="mb-2 block text-xs font-medium text-[#bfc3c7] uppercase tracking-wider">Select Vault</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {VAULTS.map((v) => {
                 const m = vaultMeta[v];
@@ -234,7 +231,7 @@ export default function AdminPage() {
                     className={`rounded-xl border py-2 px-3 text-sm font-medium transition-all duration-300 ${
                       selectedVault === v
                         ? "border-[#8b1e2d] bg-[rgba(139,30,45,0.15)] text-[#c2353f]"
-                        : "border-white/10 bg-white/5 text-white/60 hover:border-white/30 hover:bg-white/10"
+                        : "border-white/10 bg-white/5 text-[#bfc3c7] hover:border-white/30 hover:bg-white/10"
                     }`}
                   >
                     {m.symbol}
@@ -247,13 +244,13 @@ export default function AdminPage() {
           {/* Current values */}
           <div className="grid grid-cols-2 gap-4 mb-5 p-4 rounded-xl bg-white/5 border border-white/10">
             <div>
-              <div className="text-xs text-white/40 mb-1">Max Position Size ({meta.symbol})</div>
+              <div className="text-xs text-[#bfc3c7] mb-1">Max Position Size ({meta.symbol})</div>
               <div className="font-mono font-semibold text-white">
                 {vaultMaxPos.data !== undefined ? `${(Number(vaultMaxPos.data as bigint) / 1e18).toFixed(4)}` : "—"}
               </div>
             </div>
             <div>
-              <div className="text-xs text-white/40 mb-1">Max Leverage</div>
+              <div className="text-xs text-[#bfc3c7] mb-1">Max Leverage</div>
               <div className="font-mono font-semibold text-white">
                 {vaultMaxLev.data !== undefined ? fmtBPS(vaultMaxLev.data as bigint) : "—"}
               </div>
@@ -263,7 +260,7 @@ export default function AdminPage() {
           {/* Set forms */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-white/60">Max Position Size (asset units)</label>
+              <label className="mb-1.5 block text-xs font-medium text-[#bfc3c7]">Max Position Size (asset units)</label>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -288,7 +285,7 @@ export default function AdminPage() {
               </div>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-white/60">Max Leverage (% or bps)</label>
+              <label className="mb-1.5 block text-xs font-medium text-[#bfc3c7]">Max Leverage (% or bps)</label>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -325,7 +322,7 @@ export default function AdminPage() {
         )}
 
         {/* Keeper Info */}
-        <div className="glass-card p-5">
+        <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
           <h2 className="text-lg font-semibold text-white mb-4">Contract Addresses</h2>
           <div className="space-y-2">
             {[

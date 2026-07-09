@@ -99,7 +99,7 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
           <span style={{ color: "rgba(106,111,117,0.9)" }}>bar </span>
           {latest.bar_ts.replace("T", " ").replace("Z", "")}Z
         </div>
-        <div style={stale ? { color: "#e0a13a" } : undefined}>
+        <div style={stale ? { color: "#b08d57" } : undefined}>
           <span style={{ color: "rgba(106,111,117,0.9)" }}>age </span>
           {timeAgo(latest.recorded_at)}{stale ? " · delayed" : ""}
         </div>

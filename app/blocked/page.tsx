@@ -7,7 +7,7 @@ export default function BlockedPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#050507',
+      background: '#0b0b0d',
       color: '#eaeaea',
       fontFamily: "var(--font-montserrat), sans-serif",
     }}>

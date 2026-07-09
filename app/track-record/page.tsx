@@ -110,10 +110,10 @@ export default function TrackRecordPage() {
             const holdRet = e.hold_nav / BUDGET - 1;       // absolute: what holding did
             const vsHold = e.actual_nav / e.hold_nav - 1;  // the gap = mostly loss avoided
             return (
-              <div key={a} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-3">
+              <div key={a} className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 space-y-3">
                 <div className="flex items-baseline justify-between">
                   <span className="text-lg font-semibold" style={{ color: "#eaeaea" }}>{a}</span>
-                  <span className={`text-lg font-bold tabular-nums ${vsHold >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  <span className={`text-lg font-bold tabular-nums ${vsHold >= 0 ? "text-[#34d399]" : "text-[#c2353f]"}`}>
                     {pct(vsHold)}
                   </span>
                 </div>
@@ -124,11 +124,11 @@ export default function TrackRecordPage() {
                 <div className="space-y-1 text-xs tabular-nums" style={{ color: "rgba(234,234,234,0.7)" }}>
                   <div className="flex justify-between">
                     <span>Strategy return</span>
-                    <span className={stratRet >= 0 ? "text-emerald-400" : "text-red-400"}>{pct(stratRet, 1)}</span>
+                    <span className={stratRet >= 0 ? "text-[#34d399]" : "text-[#c2353f]"}>{pct(stratRet, 1)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Holding return</span>
-                    <span className={holdRet >= 0 ? "text-emerald-400" : "text-red-400"}>{pct(holdRet, 1)}</span>
+                    <span className={holdRet >= 0 ? "text-[#34d399]" : "text-[#c2353f]"}>{pct(holdRet, 1)}</span>
                   </div>
                   <div className="flex justify-between pt-1 border-t border-white/5" style={{ color: "rgba(234,234,234,0.5)" }}>
                     <span>last price</span><span>${e.price.toLocaleString()}</span>
@@ -148,10 +148,10 @@ export default function TrackRecordPage() {
       {entries && recent.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Recent entries</h2>
-          <div className="overflow-x-auto rounded-2xl border border-white/10">
+          <div className="overflow-x-auto rounded-2xl border border-[#2a2f3a]">
             <table className="w-full min-w-[640px] text-xs tabular-nums">
               <thead>
-                <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
+                <tr className="border-b border-[#2a2f3a] text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
                   {["Bar (UTC)", "Asset", "Price", "HOLD", "ACTUAL", "Chain hash"].map((h) => (
                     <th key={h} className="px-4 py-3 font-medium uppercase tracking-wider">{h}</th>
                   ))}
@@ -177,14 +177,14 @@ export default function TrackRecordPage() {
       )}
 
       {/* Verify in 60 seconds */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+      <section className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6 space-y-4">
         <h2 className="text-xl font-semibold" style={{ color: "#eaeaea" }}>Verify in 60 seconds</h2>
         <p className="text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
           Each entry commits to the previous one via <code className="text-xs">prev_hash</code> — any edited,
           inserted or deleted entry breaks every hash after it. Recompute the whole chain yourself with two
           commands (Node 18+, no installs):
         </p>
-        <pre className="rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "rgba(234,234,234,0.85)" }}>
+        <pre className="rounded-xl border border-[#2a2f3a] bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "rgba(234,234,234,0.85)" }}>
 {`curl -sO https://app.zentorylabs.com/verify_ledger.mjs
 curl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mjs`}
         </pre>
@@ -192,7 +192,7 @@ curl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mj
           <div className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>
             expected output
           </div>
-          <pre className="rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "#34d399" }}>
+          <pre className="rounded-xl border border-[#2a2f3a] bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "#34d399" }}>
             {"CHAIN OK — <entries> entries, <assets> assets, head <hash>"}
           </pre>
           <p className="text-xs" style={{ color: "rgba(234,234,234,0.5)" }}>

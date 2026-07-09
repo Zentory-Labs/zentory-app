@@ -62,7 +62,7 @@ function MetricCard({ label, strat, hold, fmt, betterHigh = true, sub }: {
 }) {
   const stratWins = betterHigh ? strat >= hold : strat <= hold;
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
       <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>{label}</div>
       <div className="flex items-baseline gap-2">
         <span className="text-2xl font-bold tabular-nums" style={{ color: stratWins ? "#34d399" : RED }}>{fmt(strat)}</span>
@@ -201,23 +201,23 @@ export default function BacktestPage() {
               rebuying lower. This is a hypothetical OOS backtest, not a live deposit return.
             </p>
             <div className="grid grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
                 <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>{asset} vs holding</div>
                 <div className="text-2xl font-bold tabular-nums" style={{ color: a.sats.satsVsHold >= 0 ? "#34d399" : RED }}>{fmtPct(a.sats.satsVsHold, 1)}</div>
                 <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>a share ended worth {a.sats.endSats.toFixed(2)}× the coin</div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
                 <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>Worst drawdown in {asset}</div>
                 <div className="text-2xl font-bold tabular-nums" style={{ color: TEXT }}>{fmtPct(a.sats.maxDdSats, 0)}</div>
                 <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>deepest dip in coin-per-share vs its own peak</div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
                 <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>Time ahead of holding</div>
                 <div className="text-2xl font-bold tabular-nums" style={{ color: TEXT }}>{fmtPct(a.sats.pctTimeAhead, 0)}</div>
                 <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>share of the OOS window with more coin than holding</div>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-4">
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={a.sats.curve} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
@@ -240,7 +240,7 @@ export default function BacktestPage() {
             {/* Numeric heights: ResponsiveContainer height="100%" measures -1×-1
                 in recharts 3.8 here ("width(-1) and height(-1)... greater than 0")
                 and all three charts rendered EMPTY in production. */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-4">
               <ResponsiveContainer width="100%" height={348}>
                 <LineChart data={a.curve} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
@@ -261,7 +261,7 @@ export default function BacktestPage() {
           {/* Underwater / drawdown */}
           <section className="space-y-2">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Drawdown — how deep underwater (the real edge)</h3>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-4">
               <ResponsiveContainer width="100%" height={268}>
                 <AreaChart data={a.drawdown} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
@@ -282,7 +282,7 @@ export default function BacktestPage() {
           {/* Per-year returns */}
           <section className="space-y-2">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Calendar-year returns — strategy vs holding</h3>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-4">
               <ResponsiveContainer width="100%" height={268}>
                 <BarChart data={yearlyData} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
@@ -309,10 +309,10 @@ export default function BacktestPage() {
                 We model {data?.costBpsPerSide} bps per side. The downside-risk edge (strategy Sortino minus holding)
                 is real at realistic costs but erodes as fees climb — shown honestly so you can judge the margin.
               </p>
-              <div className="overflow-x-auto rounded-2xl border border-white/10">
+              <div className="overflow-x-auto rounded-2xl border border-[#2a2f3a]">
                 <table className="w-full min-w-[560px] text-xs tabular-nums">
                   <thead>
-                    <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
+                    <tr className="border-b border-[#2a2f3a] text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
                       {["Cost (bps/side)", "Strategy Sortino", "Holding Sortino", "Strategy CAGR", "Strategy max DD"].map((h) => (
                         <th key={h} className="px-4 py-3 font-medium uppercase tracking-wider">{h}</th>
                       ))}
@@ -338,7 +338,7 @@ export default function BacktestPage() {
           )}
 
           {/* Methodology */}
-          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+          <section className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6 space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Methodology & honest disclaimers</h3>
             <ul className="list-disc list-inside space-y-1.5">
               <li><strong style={{ color: TEXT }}>Walk-forward OOS:</strong> {a.nFolds} folds; every trade is on out-of-sample data after its training window.</li>

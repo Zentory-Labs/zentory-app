@@ -43,7 +43,7 @@ const PLANNED_SIGNAL_MARKETS: PlannedSignalMarket[] = [
 ];
 
 const ASSET_CLASS_COLORS: Record<AssetClass, string> = {
-  CRYPTO_SPOT: "#34d399",
+  CRYPTO_SPOT: "#b08d57",
   CRYPTO_PERP: "#B08D57",
   EQUITY: "#627EEA",
   FOREX: "#14F195",

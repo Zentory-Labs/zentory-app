@@ -12,8 +12,8 @@ import { approveBuilderFee, placeOrder } from "@/lib/hyperliquid-exchange";
 const GOLD = "#b08d57";
 const GREEN = "#34d399";
 const RED = "#c2353f";
-const PANEL = "#111114";
-const BORDER = "1px solid rgba(42,47,58,0.6)";
+const PANEL = "#1c1c21";
+const BORDER = "1px solid #2a2f3a";
 const POLL_MS = 2500;
 
 export default function TradePage() {
@@ -129,7 +129,7 @@ export default function TradePage() {
         <select value={coin} onChange={(e) => setCoin(e.target.value)}
           className="bg-transparent text-white text-lg font-semibold outline-none cursor-pointer"
           style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
-          {perps.map((p) => <option key={p.name} value={p.name} style={{ background: "#15171c" }}>{p.name}-PERP</option>)}
+          {perps.map((p) => <option key={p.name} value={p.name} style={{ background: "#1c1c21" }}>{p.name}-PERP</option>)}
         </select>
         <div className="text-2xl font-bold tabular-nums text-white">
           {mark !== null ? `$${fmtUsd(mark, mark < 10 ? 5 : 2)}` : <span style={{ color: "rgba(234,234,234,0.4)" }}>—</span>}
@@ -150,7 +150,7 @@ export default function TradePage() {
             {asks.map((l, i) => (
               <div key={`a${i}`} className="grid grid-cols-2"><span style={{ color: RED }}>{fmtUsd(Number(l.px), Number(l.px) < 10 ? 5 : 1)}</span><span className="text-right" style={{ color: "rgba(234,234,234,0.6)" }}>{l.sz}</span></div>
             ))}
-            <div className="py-1.5 my-1 text-center text-base font-semibold tabular-nums border-y" style={{ color: GOLD, borderColor: "rgba(42,47,58,0.6)" }}>
+            <div className="py-1.5 my-1 text-center text-base font-semibold tabular-nums border-y" style={{ color: GOLD, borderColor: "#2a2f3a" }}>
               {mark !== null ? `$${fmtUsd(mark, mark < 10 ? 5 : 2)}` : "—"}
             </div>
             {bids.map((l, i) => (
