@@ -157,7 +157,7 @@ export default function StakePage() {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="mx-auto max-w-3xl">
-          <h1 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>ZENT Staking</h1>
+          <h1 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>ZENT Staking</h1>
           <p className="text-white/60 mb-10 max-w-xl">
             Lock ZENT for 1–730 days to receive <span className="text-white/90">veZENT</span> — time-decaying
             governance power. Longer locks mint more veZENT per token.
@@ -212,7 +212,7 @@ export default function StakePage() {
 
         {/* Your Position */}
         <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-          <h2 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>Your Position</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>Your Position</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div>
               <div className="text-xs text-white/40 mb-1">Staked ZENT</div>
@@ -317,7 +317,7 @@ export default function StakePage() {
               style={{
                 background: "#8b1e2d",
                 color: "#eaeaea",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
                 boxShadow: "0 0 30px rgba(139,30,45,0.3)",
               }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#c2353f"; }}
@@ -369,7 +369,7 @@ function TopStakersBlock() {
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
-          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
         >
           Top Stakers
           <DemoBadge />
@@ -393,7 +393,7 @@ function TopStakersBlock() {
             </span>
             <span
               className="flex-1 text-sm font-mono truncate"
-              style={{ color: s.ens ? "#c2353f" : "#bfc3c7", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+              style={{ color: s.ens ? "#c2353f" : "#bfc3c7", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
               title={s.address}
             >
               {s.ens ?? `${s.address.slice(0, 6)}…${s.address.slice(-4)}`}

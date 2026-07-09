@@ -9,7 +9,7 @@ export default function BlockedPage() {
       justifyContent: 'center',
       background: '#050507',
       color: '#eaeaea',
-      fontFamily: "'Montserrat', sans-serif",
+      fontFamily: "var(--font-montserrat), sans-serif",
     }}>
       <div style={{ textAlign: 'center', maxWidth: 480, padding: 32 }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>

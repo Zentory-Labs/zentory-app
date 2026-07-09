@@ -221,7 +221,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
               className="text-xs"
               style={{
                 color: "#c2353f",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               Wrong network
@@ -231,7 +231,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
               className="text-xs font-semibold underline"
               style={{
                 color: "#c2353f",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               Switch
@@ -245,7 +245,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
             background: "rgba(139,30,45,0.12)",
             border: "1px solid rgba(139,30,45,0.35)",
             color: "#c2353f",
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           Connect Wallet
@@ -262,7 +262,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
           background: "rgba(52,211,153,0.12)",
           border: "1px solid rgba(52,211,153,0.3)",
           color: "#34d399",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
         }}
       >
         Subscription Active
@@ -289,7 +289,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
               : tier.color === "#b08d57"
               ? "#0b0b0d"
               : "#eaeaea",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
           boxShadow: isWorking ? undefined : `0 0 24px ${tier.badge}`,
         }}
       >
@@ -307,7 +307,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       {state === "error" && error && (
         <p
           className="text-xs text-center"
-          style={{ color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
+          style={{ color: "#c2353f", fontFamily: "var(--font-montserrat), sans-serif" }}
         >
           {error}
         </p>
@@ -319,7 +319,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
           target="_blank"
           rel="noopener noreferrer"
           className="block text-xs text-center transition-colors"
-          style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+          style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
         >
           View transaction →
         </a>
@@ -358,7 +358,7 @@ function HowItWorks() {
         <h2
           className="text-3xl font-bold tracking-tight mb-3"
           style={{
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
             color: "#eaeaea",
           }}
         >
@@ -368,7 +368,7 @@ function HowItWorks() {
           className="text-sm"
           style={{
             color: "rgba(234,234,234,0.5)",
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           Three steps to access the full research network
@@ -384,7 +384,7 @@ function HowItWorks() {
             <s.icon className="mx-auto mb-4 h-8 w-8" strokeWidth={1.5} style={{ color: "#b08d57" }} />
             <div
               className="text-xs font-bold mb-2 uppercase tracking-widest"
-              style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {s.num}
             </div>
@@ -392,7 +392,7 @@ function HowItWorks() {
               className="text-base font-semibold mb-2"
               style={{
                 color: "#eaeaea",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               {s.title}
@@ -401,7 +401,7 @@ function HowItWorks() {
               className="text-sm"
               style={{
                 color: "rgba(234,234,234,0.5)",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               {s.desc}
@@ -424,7 +424,7 @@ function FAQ() {
         <h2
           className="text-3xl font-bold tracking-tight mb-3"
           style={{
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
             color: "#eaeaea",
           }}
         >
@@ -446,7 +446,7 @@ function FAQ() {
                 className="font-medium text-sm"
                 style={{
                   color: "#eaeaea",
-                  fontFamily: "'Montserrat', sans-serif",
+                  fontFamily: "var(--font-montserrat), sans-serif",
                 }}
               >
                 {item.q}
@@ -467,7 +467,7 @@ function FAQ() {
                   className="pt-4 pb-4 px-6 text-sm leading-relaxed"
                   style={{
                     color: "rgba(234,234,234,0.55)",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {item.a}
@@ -490,7 +490,7 @@ function AssetClassTable() {
         <h2
           className="text-3xl font-bold tracking-tight mb-3"
           style={{
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
             color: "#eaeaea",
           }}
         >
@@ -500,7 +500,7 @@ function AssetClassTable() {
           className="text-sm"
           style={{
             color: "rgba(234,234,234,0.5)",
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           Each tier unlocks different asset classes
@@ -522,7 +522,7 @@ function AssetClassTable() {
                 className="px-6 py-4 text-left font-semibold uppercase tracking-wider"
                 style={{
                   color: "rgba(234,234,234,0.5)",
-                  fontFamily: "'Montserrat', sans-serif",
+                  fontFamily: "var(--font-montserrat), sans-serif",
                 }}
               >
                 Asset Class
@@ -533,7 +533,7 @@ function AssetClassTable() {
                   className="px-6 py-4 text-center font-semibold uppercase tracking-wider"
                   style={{
                     color: "rgba(234,234,234,0.5)",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {t}
@@ -556,7 +556,7 @@ function AssetClassTable() {
                   className="px-6 py-4 font-medium"
                   style={{
                     color: "#eaeaea",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {row.label}
@@ -585,7 +585,7 @@ export default function SubscriptionVaultPage() {
   return (
     <div
       className="w-full overflow-x-hidden"
-      style={{ fontFamily: "'Montserrat', sans-serif" }}
+      style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
     >
       {/* Ambient glows */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -635,7 +635,7 @@ export default function SubscriptionVaultPage() {
           <div className="text-center mb-8">
             <h2
               className="text-2xl font-bold tracking-tight mb-2"
-              style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               Subscribe with ZENT
             </h2>
@@ -643,7 +643,7 @@ export default function SubscriptionVaultPage() {
               className="text-sm"
               style={{
                 color: "rgba(234,234,234,0.5)",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               Pay monthly in ZENT tokens — stake, subscribe, and access the full research network
@@ -671,7 +671,7 @@ export default function SubscriptionVaultPage() {
                     style={{
                       background: tier.color,
                       color: "#0b0b0d",
-                      fontFamily: "'Montserrat', sans-serif",
+                      fontFamily: "var(--font-montserrat), sans-serif",
                     }}
                   >
                     Most Popular
@@ -686,7 +686,7 @@ export default function SubscriptionVaultPage() {
                         className="text-xl font-bold uppercase tracking-widest mb-1"
                         style={{
                           color: tier.color,
-                          fontFamily: "'Montserrat', sans-serif",
+                          fontFamily: "var(--font-montserrat), sans-serif",
                         }}
                       >
                         {tier.name}
@@ -695,7 +695,7 @@ export default function SubscriptionVaultPage() {
                         className="text-base font-semibold"
                         style={{
                           color: "rgba(234,234,234,0.7)",
-                          fontFamily: "'Montserrat', sans-serif",
+                          fontFamily: "var(--font-montserrat), sans-serif",
                         }}
                       >
                         Subscription
@@ -707,7 +707,7 @@ export default function SubscriptionVaultPage() {
                         background: "rgba(176,141,87,0.1)",
                         borderColor: "rgba(176,141,87,0.25)",
                         color: "#b08d57",
-                        fontFamily: "'Montserrat', sans-serif",
+                        fontFamily: "var(--font-montserrat), sans-serif",
                       }}
                     >
                       ZENT
@@ -721,7 +721,7 @@ export default function SubscriptionVaultPage() {
                         className="text-3xl font-bold"
                         style={{
                           color: "#eaeaea",
-                          fontFamily: "'Montserrat', sans-serif",
+                          fontFamily: "var(--font-montserrat), sans-serif",
                         }}
                       >
                         {tier.priceZent.toLocaleString()}
@@ -730,7 +730,7 @@ export default function SubscriptionVaultPage() {
                         className="text-sm font-medium"
                         style={{
                           color: "#b08d57",
-                          fontFamily: "'Montserrat', sans-serif",
+                          fontFamily: "var(--font-montserrat), sans-serif",
                         }}
                       >
                         ZENT/mo
@@ -762,7 +762,7 @@ export default function SubscriptionVaultPage() {
                           background: tier.badge,
                           borderColor: tier.badgeBorder,
                           color: tier.color,
-                          fontFamily: "'Montserrat', sans-serif",
+                          fontFamily: "var(--font-montserrat), sans-serif",
                         }}
                       >
                         {asset}
@@ -809,7 +809,7 @@ function SubscriberStatsBlock() {
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
-          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "'Montserrat', sans-serif" }}
+          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), sans-serif" }}
         >
           Active Subscriptions
           <DemoBadge />
@@ -825,10 +825,10 @@ function SubscriberStatsBlock() {
             className="rounded-xl p-4 text-center"
             style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
           >
-            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: c.color, fontFamily: "'Montserrat', sans-serif" }}>
+            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: c.color, fontFamily: "var(--font-montserrat), sans-serif" }}>
               {c.tier}
             </div>
-            <div className="text-2xl font-bold" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+            <div className="text-2xl font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
               {c.count}
             </div>
             <div className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.7)" }}>

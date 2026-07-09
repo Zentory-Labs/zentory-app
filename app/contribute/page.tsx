@@ -33,20 +33,20 @@ export default function ContributePage() {
       {/* Heading */}
       <h1
         className="text-4xl sm:text-5xl font-bold tracking-tight mb-4"
-        style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         Contribute Research
       </h1>
       <p
         className="text-base leading-relaxed max-w-lg mb-3"
-        style={{ color: "rgba(234,234,234,0.7)", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "rgba(234,234,234,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         Build a publicly verifiable on-chain track record. Stake ZENT as a bond against
         accuracy. Earn payouts on profitable epochs.
       </p>
       <p
         className="text-sm leading-relaxed max-w-lg mb-10"
-        style={{ color: "rgba(234,234,234,0.45)", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "rgba(234,234,234,0.45)", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         Public quant onboarding opens when the on-chain signal pipeline
         (SignalRegistry + EpochScoring + keeper bot) finishes integration.
@@ -60,7 +60,7 @@ export default function ContributePage() {
         style={{
           background: "linear-gradient(135deg, #b08d57 0%, #8b6635 100%)",
           color: "#0b0b0d",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
           boxShadow: "0 0 40px rgba(176,141,87,0.25)",
         }}
       >
@@ -114,13 +114,13 @@ export default function ContributePage() {
             </div>
             <h3
               className="text-sm font-bold mb-1"
-              style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {f.title}
             </h3>
             <p
               className="text-xs leading-relaxed"
-              style={{ color: "rgba(234,234,234,0.45)", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ color: "rgba(234,234,234,0.45)", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {f.desc}
             </p>

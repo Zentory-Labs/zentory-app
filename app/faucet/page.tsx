@@ -112,7 +112,7 @@ function AssetCard({
         <div className="flex flex-col">
           <span
             className="text-xs uppercase tracking-widest font-semibold"
-            style={{ color: asset.accent, fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: asset.accent, fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {asset.key}
           </span>
@@ -141,7 +141,7 @@ function AssetCard({
           background: user && !isMinting ? asset.accent : "rgba(255,255,255,0.06)",
           color: user && !isMinting ? "#0b0b0d" : "rgba(255,255,255,0.4)",
           cursor: user && !isMinting ? "pointer" : "not-allowed",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
           border: "1px solid rgba(255,255,255,0.08)",
         }}
       >

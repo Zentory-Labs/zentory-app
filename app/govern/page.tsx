@@ -186,7 +186,7 @@ export default function GovernPage() {
     <div className="min-h-screen relative">
       <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
         <div className="mx-auto max-w-7xl px-6 py-4">
-          <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}><span className="gradient-text-gold">Governance</span>{demoMode && <DemoBadge />}</h1>
+          <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}><span className="gradient-text-gold">Governance</span>{demoMode && <DemoBadge />}</h1>
           <p className="text-xs text-white/40 mt-0.5">Vote on protocol upgrades, risk parameters, and treasury allocations</p>
         </div>
       </header>
@@ -221,7 +221,7 @@ export default function GovernPage() {
 
         {/* Who controls the protocol today */}
         <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+          <h2 className="text-sm font-semibold mb-3" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Who controls the protocol today
           </h2>
           <ul className="space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>

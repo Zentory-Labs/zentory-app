@@ -209,7 +209,7 @@ export function WalletButton() {
               background: "rgba(194,53,63,0.1)",
               borderColor: "rgba(194,53,63,0.4)",
               color: "#c2353f",
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "var(--font-montserrat), sans-serif",
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLButtonElement).style.borderColor = "#c2353f";
@@ -229,8 +229,8 @@ export function WalletButton() {
             style={{
               background: "transparent",
               borderColor: "#2a2f3a",
-              color: "#9ca3af",
-              fontFamily: "'Montserrat', sans-serif",
+              color: "#bfc3c7",
+              fontFamily: "var(--font-montserrat), sans-serif",
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLButtonElement).style.borderColor = "#8b1e2d";
@@ -238,7 +238,7 @@ export function WalletButton() {
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2f3a";
-              (e.currentTarget as HTMLButtonElement).style.color = "#9ca3af";
+              (e.currentTarget as HTMLButtonElement).style.color = "#bfc3c7";
             }}
           >
             Disconnect
@@ -258,7 +258,7 @@ export function WalletButton() {
           background: isConnecting ? "rgba(139,30,45,0.1)" : "rgba(139,30,45,0.2)",
           borderColor: isConnecting ? "rgba(139,30,45,0.3)" : "rgba(139,30,45,0.45)",
           color: isConnecting ? "#b08d57" : "#c2353f",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
         }}
       >
         {isConnecting ? (
@@ -297,12 +297,12 @@ export function WalletButton() {
           }}
         >
           <div className="px-4 py-3" style={{ borderBottom: "1px solid #2a2f3a" }}>
-            <p className="text-xs uppercase tracking-wider" style={{ color: "#9ca3af" }}>Select wallet</p>
+            <p className="text-xs uppercase tracking-wider" style={{ color: "#bfc3c7" }}>Select wallet</p>
           </div>
 
           {noInjected && (
             <div className="px-4 py-3" style={{ borderBottom: "1px solid #2a2f3a" }}>
-              <p className="text-xs leading-relaxed" style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}>
+              <p className="text-xs leading-relaxed" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 No browser wallet extension found. Use{" "}
                 <span style={{ color: "#b08d57" }}>WalletConnect</span> to scan with any mobile wallet
                 (MetaMask, Phantom, Rabby, Trust…), or Coinbase below — both work without an extension.
@@ -313,7 +313,7 @@ export function WalletButton() {
 
           {connectionError && (
             <div className="px-4 py-2" style={{ borderBottom: "1px solid #2a2f3a" }}>
-              <p className="text-xs" style={{ color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}>
+              <p className="text-xs" style={{ color: "#c2353f", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 {connectionError}
               </p>
             </div>
@@ -368,9 +368,9 @@ export function WalletButton() {
                     )}
                   </span>
                   <span className="flex flex-col items-start">
-                    <span className="text-sm font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>{name}</span>
+                    <span className="text-sm font-medium" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>{name}</span>
                     {connectorSubtitle(connector.id) && (
-                      <span className="text-[11px]" style={{ color: "#6a6f75", fontFamily: "'Montserrat', sans-serif" }}>
+                      <span className="text-[11px]" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                         {connectorSubtitle(connector.id)}
                       </span>
                     )}

@@ -60,14 +60,14 @@ function ResearchTable({ research }: { research: Research[] }) {
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(106,111,117,0.3)" strokeWidth="1.5" className="mx-auto mb-3">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
         </svg>
-        <p className="text-sm" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "'Montserrat', sans-serif" }}>No research found</p>
+        <p className="text-sm" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>No research found</p>
       </div>
     );
   }
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+      <table className="w-full text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
         <thead>
           <tr style={{ color: "rgba(106,111,117,0.7)", textAlign: "left", borderBottom: "1px solid #2a2f3a" }}>
             {["Time", "Epoch", "Asset", "Class", "Direction", "Confidence", "Accuracy", "Payout", "Expires", "Status"].map((h) => (
@@ -173,8 +173,8 @@ export default function SubmissionsPage() {
   if (!isConnected) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
-        <h1 className="text-2xl font-bold mb-3" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>Connect your wallet</h1>
-        <p className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>Connect your wallet to view your research submissions.</p>
+        <h1 className="text-2xl font-bold mb-3" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet</h1>
+        <p className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet to view your research submissions.</p>
       </div>
     );
   }
@@ -187,10 +187,10 @@ export default function SubmissionsPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <div className="w-2 h-2 rounded-full" style={{ background: "#b08d57", boxShadow: "0 0 8px #b08d57" }} />
-          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>Research Contributor</span>
+          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>Research Contributor</span>
         </div>
-        <h1 className="text-3xl font-bold" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>Research Submissions</h1>
-        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>
+        <h1 className="text-3xl font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Research Submissions</h1>
+        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Full history of your submitted research across all epochs
         </p>
       </div>
@@ -198,7 +198,7 @@ export default function SubmissionsPage() {
       {/* Filters */}
       <div className="rounded-2xl p-5" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-3 text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="flex items-center gap-3 text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             <span className="uppercase tracking-widest font-semibold">Filters</span>
             <span>·</span>
             <span>{total} total research</span>
@@ -208,7 +208,7 @@ export default function SubmissionsPage() {
               value={assetClass}
               onChange={(e) => { setAssetClass(e.target.value); setPage(0); }}
               className="rounded-xl px-3 py-2 text-xs outline-none"
-              style={{ background: "#0b0b0d", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ background: "#0b0b0d", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {ASSET_CLASSES_FILTER.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </select>
@@ -216,7 +216,7 @@ export default function SubmissionsPage() {
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(0); }}
               className="rounded-xl px-3 py-2 text-xs outline-none"
-              style={{ background: "#0b0b0d", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ background: "#0b0b0d", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {STATUS_FILTER.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </select>
@@ -225,7 +225,7 @@ export default function SubmissionsPage() {
             onClick={exportCsv}
             disabled={research.length === 0}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.03] disabled:opacity-40"
-            style={{ background: "rgba(176,141,87,0.1)", border: "1px solid rgba(176,141,87,0.3)", color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: "rgba(176,141,87,0.1)", border: "1px solid rgba(176,141,87,0.3)", color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export CSV
@@ -255,18 +255,18 @@ export default function SubmissionsPage() {
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
             className="w-9 h-9 rounded-xl text-sm font-semibold transition-all disabled:opacity-30 hover:scale-[1.05]"
-            style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             ‹
           </button>
-          <span className="text-sm" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <span className="text-sm" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Page {page + 1} of {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
             className="w-9 h-9 rounded-xl text-sm font-semibold transition-all disabled:opacity-30 hover:scale-[1.05]"
-            style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             ›
           </button>

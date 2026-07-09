@@ -174,7 +174,7 @@ export default function RootLayout({
                     <div key={col.label}>
                       <div
                         className="text-[10px] uppercase tracking-widest font-bold mb-3"
-                        style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+                        style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
                       >
                         {col.label}
                       </div>
@@ -183,7 +183,7 @@ export default function RootLayout({
                           const external = href.startsWith("http");
                           // py-2 + text-sm ≈ 36px tap target on mobile.
                           const linkClass = "block py-2 text-sm transition-colors hover:!text-[#eaeaea]";
-                          const linkStyle = { color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" } as const;
+                          const linkStyle = { color: "rgba(191,195,199,0.6)", fontFamily: "var(--font-montserrat), sans-serif" } as const;
                           if (external) {
                             return (
                               <li key={href}>
@@ -211,14 +211,14 @@ export default function RootLayout({
                   className="w-full max-w-2xl rounded-2xl p-5 mb-6"
                   style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}
                 >
-                  <p className="text-[11px] uppercase tracking-wider font-semibold mb-3" style={{ color: "rgba(191,195,199,0.65)", fontFamily: "'Montserrat', sans-serif" }}>
+                  <p className="text-[11px] uppercase tracking-wider font-semibold mb-3" style={{ color: "rgba(191,195,199,0.65)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                     Legal &amp; risk disclosure
                   </p>
                   <LegalDisclaimer variant="footer" className="mb-4" />
                 </div>
 
                 {/* Links — block padding so they're ≥36px tap targets on mobile */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-sm" style={{ color: "rgba(191,195,199,0.6)", fontFamily: "'Montserrat', sans-serif" }}>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-sm" style={{ color: "rgba(191,195,199,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   <span className="py-2">© {currentYear} Zentory Labs</span>
                   <a href="https://zentorylabs.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="py-2 px-3 transition-colors hover:!text-[#b08d57]" style={{ color: "rgba(191,195,199,0.6)" }}>
                     Terms of Service
@@ -236,7 +236,7 @@ export default function RootLayout({
               className="py-5 px-6 border-t"
               style={{ background: "#0d0d10", borderColor: "rgba(42,47,58,0.5)" }}
             >
-              <p className="text-center text-[13px]" style={{ color: "rgba(191,195,199,0.55)", fontFamily: "'Montserrat', sans-serif" }}>
+              <p className="text-center text-[13px]" style={{ color: "rgba(191,195,199,0.55)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 Not financial or legal advice. No offer or solicitation. High risk. Seek independent advice. See{' '}
                 <a href="https://zentorylabs.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#b08d57]" style={{ color: "rgba(191,195,199,0.55)" }}>
                   Terms
