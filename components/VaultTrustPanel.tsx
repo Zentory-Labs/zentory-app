@@ -8,7 +8,7 @@ import Link from "next/link";
 const CARD = { background: "#1c1c21", border: "1px solid #2a2f3a" } as const;
 const DIM = "rgba(106,111,117,0.9)";
 const TEXT = { color: "#eaeaea" } as const;
-const BODY = { color: "rgba(234,234,234,0.6)" } as const;
+const BODY = { color: "#bfc3c7" } as const;
 const LINK = { color: "#b08d57" } as const;
 
 function PanelCard({ title, children }: { title: string; children: React.ReactNode }) {

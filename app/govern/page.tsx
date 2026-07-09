@@ -25,14 +25,14 @@ function timeRemaining(deadline: bigint): string {
 function StateBadge({ state }: { state: number }) {
   const labels = ["Pending", "Active", "Canceled", "Defeated", "Succeeded", "Queued", "Expired", "Executed"];
   const colors = [
-    "bg-white/[0.06] text-white/60 border border-white/10",
+    "bg-white/[0.06] text-[#bfc3c7] border border-white/10",
     "bg-[rgba(139,30,45,0.15)] text-[#c2353f] border border-[rgba(139,30,45,0.3)]",
-    "bg-white/[0.04] text-white/40 border border-white/10",
+    "bg-white/[0.04] text-[#bfc3c7] border border-white/10",
     "bg-red-500/10 text-red-400 border border-red-500/20",
-    "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+    "bg-[#34d399]/10 text-[#34d399] border border-[#34d399]/20",
     "bg-[rgba(176,141,87,0.12)] text-[#b08d57] border border-[rgba(176,141,87,0.25)]",
-    "bg-white/[0.04] text-white/30 border border-white/10",
-    "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20",
+    "bg-white/[0.04] text-[#bfc3c7] border border-white/10",
+    "bg-[#34d399]/10 text-[#34d399] border border-[#34d399]/20",
   ];
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${colors[state] ?? colors[0]}`}>
@@ -61,10 +61,10 @@ function ProposalCard({ proposal, onVote }: {
   const againstPct = total > 0n ? Math.round(Number(proposal.againstVotes * 10000n / total)) / 100 : 0;
 
   return (
-    <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
+    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
-          <div className="text-xs text-white/40 mb-1">Proposal #{proposal.id}</div>
+          <div className="text-xs text-[#bfc3c7] mb-1">Proposal #{proposal.id}</div>
           <h3 className="text-white font-semibold text-base leading-tight">{proposal.description.split("\n")[0]}</h3>
         </div>
         <StateBadge state={proposal.state} />
@@ -72,18 +72,18 @@ function ProposalCard({ proposal, onVote }: {
 
       {proposal.state === 1 && (
         <div className="mb-4 space-y-1">
-          <div className="flex justify-between text-xs text-white/40 mb-1">
+          <div className="flex justify-between text-xs text-[#bfc3c7] mb-1">
             <span>For: {forPct}%</span>
             <span>Against: {againstPct}%</span>
           </div>
-          <div className="h-2 rounded-full bg-red-900/60 overflow-hidden flex">
-            <div className="bg-emerald-500 transition-all" style={{ width: `${forPct}%` }} />
+          <div className="h-2 rounded-full bg-[#2a2f3a] overflow-hidden flex">
+            <div className="bg-[#34d399] transition-all" style={{ width: `${forPct}%` }} />
           </div>
         </div>
       )}
 
       <div className="flex items-center justify-between">
-        <span className="text-xs text-white/40">
+        <span className="text-xs text-[#bfc3c7]">
           {proposal.state === 1 ? timeRemaining(proposal.deadline) : `State: ${PROPOSAL_STATES[proposal.state]}`}
         </span>
         {proposal.state === 1 && (
@@ -93,9 +93,9 @@ function ProposalCard({ proposal, onVote }: {
               onClick={() => onVote(proposal.id, 1)}
               className="rounded-lg px-3 py-1.5 text-xs font-semibold disabled:opacity-50 transition-colors border"
               style={{
-                background: "rgba(139, 30, 45, 0.15)",
-                color: "#c2353f",
-                borderColor: "rgba(139, 30, 45, 0.3)",
+                background: "rgba(52, 211, 153, 0.15)",
+                color: "#34d399",
+                borderColor: "rgba(52, 211, 153, 0.3)",
               }}
             >
               {isPending ? "…" : "Vote For"}
@@ -184,14 +184,11 @@ export default function GovernPage() {
 
   return (
     <div className="min-h-screen relative">
-      <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}><span className="gradient-text-gold">Governance</span>{demoMode && <DemoBadge />}</h1>
-          <p className="text-xs text-white/40 mt-0.5">Vote on protocol upgrades, risk parameters, and treasury allocations</p>
-        </div>
-      </header>
-
       <div className="mx-auto max-w-4xl space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}><span className="gradient-text-gold">Governance</span>{demoMode && <DemoBadge />}</h1>
+          <p className="text-sm text-[#bfc3c7] mt-1">Vote on protocol upgrades, risk parameters, and treasury allocations</p>
+        </div>
         {/* Governor Info */}
         <div>
           <div
@@ -200,7 +197,7 @@ export default function GovernPage() {
           >
             Testnet placeholder parameters
           </div>
-          <p className="text-xs text-white/40 mb-4 max-w-2xl">
+          <p className="text-xs text-[#bfc3c7] mb-4 max-w-2xl">
             Quorum and proposal threshold are deliberately set to zero on testnet so governance
             flows can be exercised end-to-end. Mainnet values are set together with the external audit.
           </p>
@@ -210,8 +207,8 @@ export default function GovernPage() {
               { label: "Quorum Required", value: quorum.data !== undefined ? `${(Number(quorum.data as bigint) / 1e18 / 1e6).toFixed(0)}M ZENT` : "—" },
               { label: "Min. veZENT to Propose", value: "Anyone (threshold = 0)" },
             ].map(({ label, value }) => (
-              <div key={label} className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-                <div className="text-xs text-white/40 uppercase tracking-wider">{label}</div>
+              <div key={label} className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
+                <div className="text-xs text-[#bfc3c7] uppercase tracking-wider">{label}</div>
                 <div className="font-mono font-semibold text-white">{value}</div>
                 <div className="text-[10px] mt-1" style={{ color: "rgba(176,141,87,0.8)" }}>Testnet placeholder</div>
               </div>
@@ -250,8 +247,8 @@ export default function GovernPage() {
               ))}
             </div>
           ) : proposals.length === 0 ? (
-            <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-12 text-center">
-              <p className="text-white/40 text-sm">No proposals yet. Be the first to propose a protocol upgrade.</p>
+            <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-12 text-center">
+              <p className="text-[#bfc3c7] text-sm">No proposals yet. Be the first to propose a protocol upgrade.</p>
             </div>
           ) : (
             <div className="space-y-4">

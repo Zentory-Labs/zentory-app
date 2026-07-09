@@ -10,8 +10,8 @@ import { demoResearch } from "@/lib/demo/data";
 // ─── Performance Metrics ─────────────────────────────────────
 
 const DEMO_BANNER = (
-  <div style={{ background: "rgba(255,180,0,0.12)", border: "1px solid rgba(255,180,0,0.35)", borderRadius: 12, padding: "12px 16px", marginBottom: 16 }}>
-    <span style={{ color: "#FFB400", fontWeight: 700, fontSize: 12 }}>IMPORTANT:</span>
+  <div style={{ background: "rgba(176,141,87,0.12)", border: "1px solid rgba(176,141,87,0.35)", borderRadius: 12, padding: "12px 16px", marginBottom: 16 }}>
+    <span style={{ color: "#b08d57", fontWeight: 700, fontSize: 12 }}>IMPORTANT:</span>
     <span style={{ color: "rgba(234,234,234,0.7)", fontSize: 12, marginLeft: 8 }}>All performance data shown is for illustrative purposes only. No guarantees are made. Results may vary. This is not financial advice.</span>
   </div>
 );
@@ -26,12 +26,12 @@ function ResearchPerformanceBar({ research }: { research: Research[] }) {
   // hl_user_fills + on-chain price feeds. Until that pipeline is live we do
   // not synthesize numbers — an empty state is more honest than a 0% win rate.
   return (
-    <div className="glass-card p-6">
+    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6">
       <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Performance Summary
       </p>
       <div className="flex flex-col items-center justify-center py-8 gap-2">
-        <p className="text-sm text-white/60" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm text-[#bfc3c7]" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           {executedCount > 0
             ? `${executedCount} executed signal${executedCount === 1 ? "" : "s"} — awaiting epoch settlement.`
             : "No executed signals yet."}
@@ -72,7 +72,7 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
   const maxCount = Math.max(1, ...contributorDefs.map((d) => d.count));
 
   return (
-    <div className="glass-card p-6">
+    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6">
       <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Research Contributors
       </p>
@@ -173,7 +173,7 @@ export default function ResearchPage() {
 
       <div className="space-y-8">
         {/* Header */}
-        <div className="glass-card p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6 flex items-center justify-between">
           <div>
             <div
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium mb-2"
@@ -191,7 +191,7 @@ export default function ResearchPage() {
               <span className="gradient-text-gold">Research Dashboard</span>
               {demoMode && <DemoBadge />}
             </h1>
-            <p className="mt-1 text-sm text-white/40">
+            <p className="mt-1 text-sm text-[#bfc3c7]">
               Multi-asset market structure analysis. Published research from the ZENT network. Not investment advice.
             </p>
           </div>
@@ -206,7 +206,7 @@ export default function ResearchPage() {
         )}
 
         {error && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 glass-card px-4 py-3 text-sm text-red-400 backdrop-blur-sm">
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] px-4 py-3 text-sm text-red-400 backdrop-blur-sm">
             {error}
           </div>
         )}
@@ -218,7 +218,7 @@ export default function ResearchPage() {
               <div className="h-8 w-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
             </div>
           ) : (
-            <div className="glass-card overflow-hidden">
+            <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] overflow-hidden">
               <ResearchTable research={research} />
             </div>
           )}

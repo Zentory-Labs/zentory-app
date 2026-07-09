@@ -203,23 +203,23 @@ export default function StakePage() {
             { label: "Min. Stake Required", value: minStake.data !== undefined ? fmtZENT(minStake.data as bigint) : "—" },
             { label: "Your veZENT Balance", value: userVeBalance.data !== undefined ? fmtVeZENT(userVeBalance.data as bigint) : "—", accent: true },
           ].map(({ label, value, accent }) => (
-            <div key={label} className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
-              <div className="text-xs text-white/40 mb-1 uppercase tracking-wider">{label}</div>
+            <div key={label} className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
+              <div className="text-xs text-[#bfc3c7] mb-1 uppercase tracking-wider">{label}</div>
               <div className={`text-2xl font-bold font-mono ${accent ? "gradient-text-gold" : "text-white"}`}>{value}</div>
             </div>
           ))}
         </div>
 
         {/* Your Position */}
-        <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
+        <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5 glass-hover">
           <h2 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>Your Position</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div>
-              <div className="text-xs text-white/40 mb-1">Staked ZENT</div>
+              <div className="text-xs text-[#bfc3c7] mb-1">Staked ZENT</div>
               <div className="font-mono font-medium text-white">{userStaked.data !== undefined ? fmtZENT(userStaked.data as bigint) : "—"}</div>
             </div>
             <div>
-              <div className="text-xs text-white/40 mb-1">Lock Expires</div>
+              <div className="text-xs text-[#bfc3c7] mb-1">Lock Expires</div>
               <div className="font-mono font-medium text-white">
                 {userLockEnd.data !== undefined && Number(userLockEnd.data) > 0
                   ? <Countdown targetTimestamp={userLockEnd.data as bigint} />
@@ -227,13 +227,13 @@ export default function StakePage() {
               </div>
             </div>
             <div>
-              <div className="text-xs text-white/40 mb-1">Vault Access</div>
+              <div className="text-xs text-[#bfc3c7] mb-1">Vault Access</div>
               <div className={`font-semibold ${(userHasAccess.data as boolean) ? "text-emerald-400" : "text-red-400"}`}>
                 {(userHasAccess.data as boolean) ? "Granted" : "Denied"}
               </div>
             </div>
             <div>
-              <div className="text-xs text-white/40 mb-1">veZENT</div>
+              <div className="text-xs text-[#bfc3c7] mb-1">veZENT</div>
               <div className="font-mono font-medium gradient-text-amber">
                 {userVeBalance.data !== undefined ? fmtVeZENT(userVeBalance.data as bigint) : "—"}
               </div>
@@ -247,9 +247,9 @@ export default function StakePage() {
         </div>
 
         {/* Stake Form */}
-        <div className="glass-card p-8 glass-hover">
+        <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-8 glass-hover">
           <h2 className="text-sm font-semibold text-[#b08d57] uppercase tracking-wider mb-1">Stake ZENT</h2>
-          <p className="text-xs text-white/40 mb-6">Lock ZENT for up to 730 days. Longer locks = more veZENT = more governance power.</p>
+          <p className="text-xs text-[#bfc3c7] mb-6">Lock ZENT for up to 730 days. Longer locks = more veZENT = more governance power.</p>
 
           <form onSubmit={handleStake} className="space-y-5">
             <div>
@@ -285,7 +285,7 @@ export default function StakePage() {
                 onChange={(e) => setLockDays(Number(e.target.value))}
                 className="w-full" style={{ accentColor: "#8b1e2d" }}
               />
-              <div className="flex justify-between text-xs text-white/40 mt-1">
+              <div className="flex justify-between text-xs text-[#bfc3c7] mt-1">
                 <span>7 days</span>
                 <span>730 days</span>
               </div>

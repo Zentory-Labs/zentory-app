@@ -70,7 +70,7 @@ export default function FoundingProviderCard({ house, loading = false }: { house
             <h3 className="text-xl font-bold truncate" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
               Zentory Core
             </h3>
-            <p className="text-xs" style={{ color: "rgba(234,234,234,0.55)" }}>
+            <p className="text-xs" style={{ color: "#bfc3c7" }}>
               The protocol&apos;s own systematic engine — trend + volatility, long/flat spot. Provider #1.
             </p>
           </div>

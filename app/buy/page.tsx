@@ -54,7 +54,7 @@ export default function BuyPage() {
             <div className="h-[630px] w-full max-w-[420px] rounded-2xl flex flex-col items-center justify-center text-center p-8 gap-3"
               style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}>
               <span className="text-[11px] uppercase tracking-[0.2em]" style={{ color: GOLD }}>Coming soon</span>
-              <span className="text-sm leading-relaxed" style={{ color: "rgba(191,195,199,0.75)" }}>
+              <span className="text-sm leading-relaxed" style={{ color: "#bfc3c7" }}>
                 Card &amp; bank on-ramp is launching shortly. For now,{" "}
                 <Link href="/bridge" className="underline" style={{ color: GOLD }}>bridge crypto from another chain</Link>{" "}
                 onto HyperEVM in seconds.
@@ -73,7 +73,7 @@ export default function BuyPage() {
               <li><span className="font-mono" style={{ color: GOLD }}>3.</span> <Link href="/" className="underline hover:text-[#b08d57]">Deposit in a vault</Link> and track NAV on-chain.</li>
             </ol>
           </div>
-          <p className="text-xs" style={{ color: "rgba(191,195,199,0.6)" }}>
+          <p className="text-xs" style={{ color: "#bfc3c7" }}>
             Payments and KYC are handled by Onramper&apos;s licensed ramp partners. Zentory is a non-custodial
             interface and is not a money transmitter.
           </p>

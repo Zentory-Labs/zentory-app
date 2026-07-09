@@ -79,7 +79,7 @@ interface ResearchTableProps {
 export default function ResearchTable({ research }: ResearchTableProps) {
   if (research.length === 0) {
     return (
-      <div className="glass-card p-8 text-center">
+      <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-8 text-center">
         <svg
           className="mx-auto mb-4 h-12 w-12 opacity-30"
           fill="none"
