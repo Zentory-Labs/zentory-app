@@ -31,9 +31,9 @@ function Panel({ tone, children }: { tone: "neutral" | "gold" | "green" | "red" 
   const tones: Record<string, { bg: string; border: string }> = {
     neutral: { bg: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)" },
     gold: { bg: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)" },
-    green: { bg: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.25)" },
-    red: { bg: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)" },
-    violet: { bg: "rgba(124,92,255,0.04)", border: "1px solid rgba(124,92,255,0.2)" },
+    green: { bg: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)" },
+    red: { bg: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)" },
+    violet: { bg: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)" },
   };
   return (
     <div className="rounded-2xl p-6 mb-6 text-sm" style={{ background: tones[tone].bg, border: tones[tone].border, color: "rgba(234,234,234,0.85)" }}>
@@ -93,7 +93,7 @@ export default function ClaimPage() {
   const notLive = !DISTRIBUTOR || proofsState === "absent";
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12">
+    <div className="mx-auto max-w-3xl">
       <div className="mb-10">
         <div className="text-xs uppercase tracking-widest font-semibold mb-3" style={{ color: gold }}>
           Testnet · HyperEVM {HYPEREVM_TESTNET.id}
@@ -138,12 +138,12 @@ export default function ClaimPage() {
           )}
 
           {entry && (
-            <div className="rounded-2xl p-8 mb-6" style={{ background: "rgba(124,92,255,0.05)", border: "1px solid rgba(124,92,255,0.25)" }}>
-              <div className="text-xs uppercase tracking-widest mb-2" style={{ color: "#7c5cff" }}>Your allocation</div>
+            <div className="rounded-2xl p-8 mb-6" style={{ background: "rgba(194,53,63,0.05)", border: "1px solid rgba(194,53,63,0.25)" }}>
+              <div className="text-xs uppercase tracking-widest mb-2" style={{ color: "#c2353f" }}>Your allocation</div>
               <div className="text-4xl font-bold mb-4" style={{ color: text }}>{amountLabel}</div>
 
               {claimed ? (
-                <Panel tone="green"><span style={{ color: "#4ade80", fontWeight: 600 }}>Already claimed.</span> This allocation has been claimed to {user}.</Panel>
+                <Panel tone="green"><span style={{ color: "#34d399", fontWeight: 600 }}>Already claimed.</span> This allocation has been claimed to {user}.</Panel>
               ) : deadlinePassed ? (
                 <Panel tone="red">The claim window has closed. Unclaimed allocations have been swept back to the treasury.</Panel>
               ) : (
@@ -151,7 +151,7 @@ export default function ClaimPage() {
                   onClick={handleClaim}
                   disabled={isSigning || isTxPending}
                   className="px-6 py-3 rounded-xl font-semibold transition-opacity disabled:opacity-50"
-                  style={{ background: "#7c5cff", color: "#fff" }}
+                  style={{ background: "#c2353f", color: "#fff" }}
                 >
                   {isSigning ? "Confirm in wallet…" : isTxPending ? "Claiming…" : `Claim ${amountLabel}`}
                 </button>
@@ -160,8 +160,8 @@ export default function ClaimPage() {
           )}
 
           {txHash && (
-            <div className="rounded-2xl p-4 mb-6 text-xs" style={{ background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.25)", color: "rgba(234,234,234,0.85)", fontFamily: "'Space Mono', monospace" }}>
-              <div className="font-semibold mb-1" style={{ color: "#4ade80" }}>
+            <div className="rounded-2xl p-4 mb-6 text-xs" style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(234,234,234,0.85)", fontFamily: "var(--font-space-mono), monospace" }}>
+              <div className="font-semibold mb-1" style={{ color: "#34d399" }}>
                 {isTxPending ? "Claim pending" : isTxSuccess ? "Claim confirmed — ZENT sent" : "Transaction submitted"}
               </div>
               <div className="break-all">tx: {txHash}</div>
@@ -170,12 +170,12 @@ export default function ClaimPage() {
         </>
       )}
 
-      <div className="rounded-2xl p-6 mt-4 text-xs" style={{ background: "rgba(124,92,255,0.04)", border: "1px solid rgba(124,92,255,0.2)", color: "rgba(234,234,234,0.7)" }}>
-        <div className="font-semibold mb-2" style={{ color: "#7c5cff" }}>How eligibility works</div>
+      <div className="rounded-2xl p-6 mt-4 text-xs" style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "rgba(234,234,234,0.7)" }}>
+        <div className="font-semibold mb-2" style={{ color: "#c2353f" }}>How eligibility works</div>
         The snapshot scores three tracks — faucet usage, vault deposits, and signal submissions — at a
         fixed block. Proofs are published statically; the contract verifies your proof against the
         on-chain Merkle root, so claims are trustless and can&apos;t be forged.
       </div>
-    </main>
+    </div>
   );
 }

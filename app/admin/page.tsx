@@ -169,7 +169,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-6 py-10 space-y-8">
+      <div className="mx-auto max-w-4xl space-y-8">
         {/* Executor Status */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-white/[0.1] bg-black/60 backdrop-blur-xl p-5 glass-hover">
@@ -319,7 +319,7 @@ export default function AdminPage() {
 
         {/* Status */}
         {(txStatus || error) && (
-          <div className={`rounded-xl border px-4 py-3 text-sm ${error ? "border-red-500/20 bg-red-500/10 text-red-400" : "border-[#f59e0b]/20 bg-[#f59e0b]/10 text-[#f59e0b]"}`}>
+          <div className={`rounded-xl border px-4 py-3 text-sm ${error ? "border-red-500/20 bg-red-500/10 text-red-400" : "border-[#b08d57]/20 bg-[#b08d57]/10 text-[#b08d57]"}`}>
             {error ?? txStatus}
           </div>
         )}
@@ -349,7 +349,7 @@ export default function AdminPage() {
             ))}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -64,8 +64,8 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
   }
 
   const isLong = latest.target_weight >= 0.5;
-  const badgeBg = isLong ? "rgba(39,209,130,0.15)" : "rgba(255,255,255,0.06)";
-  const badgeFg = isLong ? "#27d182" : "rgba(255,255,255,0.6)";
+  const badgeBg = isLong ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.06)";
+  const badgeFg = isLong ? "#34d399" : "rgba(255,255,255,0.6)";
   // The recorder runs every 4h; anything older than ~8h means the feed is behind,
   // so don't call it "Live" — label it the last recorded signal + flag the delay.
   const stale = Date.now() - new Date(latest.recorded_at).getTime() > 8 * 3600 * 1000;
@@ -73,7 +73,7 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
   return (
     <div
       className="rounded-2xl p-4 mb-4 flex flex-wrap items-center gap-4 justify-between"
-      style={{ background: "#1c1c21", border: "1px solid #2a2f3a", fontFamily: "'Space Mono', monospace" }}
+      style={{ background: "#1c1c21", border: "1px solid #2a2f3a", fontFamily: "var(--font-space-mono), monospace" }}
     >
       <div className="flex items-center gap-3">
         <div className="text-xs uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>

@@ -288,14 +288,14 @@ export default function BugBountyPage() {
         <SectionCard title="Safe Harbor">
           <div
             className="rounded-xl p-5 border"
-            style={{ background: "rgba(39,174,96,0.07)", borderColor: "rgba(39,174,96,0.25)" }}
+            style={{ background: "rgba(52,211,153,0.07)", borderColor: "rgba(52,211,153,0.25)" }}
           >
             <div className="flex items-start gap-3">
-              <svg width="18" height="18" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#27ae60" strokeWidth={1.5}>
+              <svg width="18" height="18" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#34d399" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <div>
-                <p className="text-sm font-semibold mb-1" style={{ color: "#27ae60", fontFamily: "'Montserrat', sans-serif" }}>
+                <p className="text-sm font-semibold mb-1" style={{ color: "#34d399", fontFamily: "'Montserrat', sans-serif" }}>
                   Safe Harbor Commitment
                 </p>
                 <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "'Montserrat', sans-serif" }}>

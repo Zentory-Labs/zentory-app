@@ -55,7 +55,7 @@ const ASSETS: Array<{
     decimals: 9, // on-chain WSOL is 9 decimals (matches SOL native)
     amount: 100n * 10n ** 9n, // 100 WSOL
     amountLabel: "100 WSOL",
-    accent: "#9945FF",
+    accent: "#c2353f",
   },
   {
     key: "WXRP",
@@ -127,7 +127,7 @@ function AssetCard({
           <div className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.7)" }}>
             Your balance
           </div>
-          <div className="text-sm font-semibold mt-1" style={{ color: "#eaeaea", fontFamily: "'Space Mono', monospace" }}>
+          <div className="text-sm font-semibold mt-1" style={{ color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}>
             {fmtBalance(balance.data as bigint | undefined, asset.decimals)} {asset.key}
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function FaucetPage() {
         <p className="text-sm max-w-2xl" style={{ color: "rgba(106,111,117,0.9)" }}>
           Mint mock vault assets to your wallet so you can try the ZENTORY vaults on HyperEVM testnet.
           These are unbacked test tokens — no real value. The underlying mock contract exposes a
-          permissionless <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#f0c040" }}>mint(address,uint256)</code> for testnet only.
+          permissionless <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>mint(address,uint256)</code> for testnet only.
         </p>
       </div>
 
@@ -219,7 +219,7 @@ export default function FaucetPage() {
       {isConnected && !onCorrectChain && (
         <div
           className="rounded-2xl p-6 mb-8 text-sm"
-          style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", color: "rgba(234,234,234,0.85)" }}
+          style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "rgba(234,234,234,0.85)" }}
         >
           You are connected to chain <span className="font-mono">{chainId}</span>. Switch your wallet to <span className="font-semibold">HyperEVM Testnet ({HYPEREVM_TESTNET.id})</span> to use the faucet.
         </div>
@@ -228,9 +228,9 @@ export default function FaucetPage() {
       {txHash && (
         <div
           className="rounded-2xl p-4 mb-6 text-xs"
-          style={{ background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.25)", color: "rgba(234,234,234,0.85)", fontFamily: "'Space Mono', monospace" }}
+          style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(234,234,234,0.85)", fontFamily: "var(--font-space-mono), monospace" }}
         >
-          <div className="font-semibold mb-1" style={{ color: "#4ade80" }}>
+          <div className="font-semibold mb-1" style={{ color: "#34d399" }}>
             {isTxPending ? "Transaction pending" : isTxSuccess ? "Mint confirmed" : "Transaction submitted"}
           </div>
           <div className="break-all">tx: {txHash}</div>
@@ -251,9 +251,9 @@ export default function FaucetPage() {
 
       <div
         className="rounded-2xl p-6 mt-10 text-xs"
-        style={{ background: "rgba(124,92,255,0.04)", border: "1px solid rgba(124,92,255,0.2)", color: "rgba(234,234,234,0.7)" }}
+        style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "rgba(234,234,234,0.7)" }}
       >
-        <div className="font-semibold mb-2" style={{ color: "#7c5cff" }}>What next?</div>
+        <div className="font-semibold mb-2" style={{ color: "#c2353f" }}>What next?</div>
         Once you have testnet assets, head to a vault page and deposit. You will receive vault
         shares (zBTC / zETH / zSOL / zXRP) that you can redeem for the underlying at any time.
         <div className="mt-2">
@@ -264,7 +264,7 @@ export default function FaucetPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="underline"
-            style={{ color: "#7c5cff" }}
+            style={{ color: "#c2353f" }}
           >
             app.hyperliquid-testnet.xyz/drip
           </a>.

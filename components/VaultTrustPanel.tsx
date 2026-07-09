@@ -78,7 +78,7 @@ export default function VaultTrustPanel({
               rel="noopener noreferrer"
               title={vaultAddress}
               className="underline"
-              style={{ ...LINK, fontFamily: "'Space Mono', monospace", fontSize: 12 }}
+              style={{ ...LINK, fontFamily: "var(--font-space-mono), monospace", fontSize: 12 }}
             >
               {shortAddr} ↗
             </a>

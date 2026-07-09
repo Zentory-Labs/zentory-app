@@ -11,7 +11,7 @@ import { approveBuilderFee, placeOrder } from "@/lib/hyperliquid-exchange";
 
 const GOLD = "#b08d57";
 const GREEN = "#34d399";
-const RED = "#f0616d";
+const RED = "#c2353f";
 const PANEL = "#111114";
 const BORDER = "1px solid rgba(42,47,58,0.6)";
 const POLL_MS = 2500;

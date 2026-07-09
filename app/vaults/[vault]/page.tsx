@@ -66,7 +66,7 @@ const VAULT_CONFIG: Record<string, {
     name: "zSOL Vault",
     symbol: "zSOL",
     decimals: 9,
-    color: "#9945FF",
+    color: "#c2353f",
     bgColor: "rgba(153,69,255,0.1)",
     assetName: "Wrapped Solana",
     vaultAddress: addresses.zSOL,
@@ -85,7 +85,7 @@ const VAULT_CONFIG: Record<string, {
 };
 
 const CHART_COLORS = {
-  actual: "#f0c040",
+  actual: "#b08d57",
   hold: "#5a5a6a",
   grid: "rgba(255,255,255,0.06)",
   text: "rgba(255,255,255,0.4)",
@@ -375,7 +375,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   if (!config) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="text-2xl font-bold mb-4" style={{ color: "#f0c040" }}>Vault not found</div>
+        <div className="text-2xl font-bold mb-4" style={{ color: "#b08d57" }}>Vault not found</div>
         <Link href="/dashboard" className="text-sm underline" style={{ color: "rgba(255,255,255,0.5)" }}>
           Back to dashboard
         </Link>
@@ -400,7 +400,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
         </div>
         {!!isCircuitBreaker.data && (
           <span className="ml-auto px-3 py-1 rounded-full text-xs font-bold"
-            style={{ background: "rgba(248,113,113,0.15)", color: "#f87171", border: "1px solid rgba(248,113,113,0.3)" }}>
+            style={{ background: "rgba(194,53,63,0.15)", color: "#c2353f", border: "1px solid rgba(194,53,63,0.3)" }}>
             Circuit Breaker Active
           </span>
         )}
@@ -443,16 +443,16 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   style={{
                     background: activeTab === tab
                       ? tab === "deposit"
-                        ? "rgba(240,192,64,0.15)"
-                        : "rgba(124,92,255,0.15)"
+                        ? "rgba(176,141,87,0.15)"
+                        : "rgba(194,53,63,0.15)"
                       : "transparent",
                     color: activeTab === tab
                       ? tab === "deposit"
-                        ? "#f0c040"
-                        : "#7c5cff"
+                        ? "#b08d57"
+                        : "#c2353f"
                       : "rgba(255,255,255,0.4)",
                     border: activeTab === tab
-                      ? `1px solid ${tab === "deposit" ? "rgba(240,192,64,0.3)" : "rgba(124,92,255,0.3)"}`
+                      ? `1px solid ${tab === "deposit" ? "rgba(176,141,87,0.3)" : "rgba(194,53,63,0.3)"}`
                       : "1px solid transparent",
                   }}
                 >
@@ -469,7 +469,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   <Link
                     href="/faucet"
                     className="flex items-center justify-between gap-2 rounded-lg px-4 py-3 text-xs transition-colors"
-                    style={{ background: "rgba(240,192,64,0.08)", border: "1px solid rgba(240,192,64,0.3)", color: "#f0c040" }}
+                    style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.3)", color: "#b08d57" }}
                   >
                     <span>No {config.symbol.replace("z", "")} yet? Mint test tokens from the faucet.</span>
                     <span aria-hidden="true">→</span>
@@ -487,7 +487,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     placeholder="0.0000"
                     aria-label={`Amount of ${config.symbol.replace("z", "")} to deposit`}
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
-                    style={{ background: "#12121f", border: `1px solid ${depositInvalid ? "rgba(239,68,68,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
+                    style={{ background: "#141417", border: `1px solid ${depositInvalid ? "rgba(194,53,63,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
                   />
                   <div className="flex justify-between text-xs mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
                     <span>Balance: {userAssetRaw.toFixed(4)}</span>
@@ -496,7 +496,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     </button>
                   </div>
                   {depositTooMuch && (
-                    <div className="text-xs mt-1.5" style={{ color: "#ef4444" }}>Amount exceeds your balance.</div>
+                    <div className="text-xs mt-1.5" style={{ color: "#c2353f" }}>Amount exceeds your balance.</div>
                   )}
                 </div>
 
@@ -505,7 +505,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     onClick={handleApprove}
                     disabled={isApproveLoading || depositInvalid}
                     className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-                    style={{ background: "rgba(240,192,64,0.15)", color: "#f0c040", border: "1px solid rgba(240,192,64,0.3)" }}
+                    style={{ background: "rgba(176,141,87,0.15)", color: "#b08d57", border: "1px solid rgba(176,141,87,0.3)" }}
                   >
                     {isApproveLoading ? "Approving..." : isApproveSuccess ? "Approved ✓ — Deposit next" : "Approve Token"}
                   </button>
@@ -514,20 +514,20 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     onClick={handleDeposit}
                     disabled={isDepositLoading || depositInvalid || depositAmount === "" || !!isCircuitBreaker.data}
                     className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-                    style={{ background: "#f0c040", color: "#050507" }}
+                    style={{ background: "#b08d57", color: "#050507" }}
                   >
                     {isDepositLoading ? "Depositing..." : "Deposit"}
                   </button>
                 )}
 
                 {(approveError || depositError) && (
-                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "monospace" }}>
+                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "#c2353f", fontFamily: "monospace" }}>
                     {(approveError || depositError)?.message?.split("\n")[0] ?? String(approveError ?? depositError)}
                   </div>
                 )}
 
                 {isDepositSuccess && (
-                  <div className="text-center text-sm" style={{ color: "#4ade80" }}>
+                  <div className="text-center text-sm" style={{ color: "#34d399" }}>
                     Deposit successful!
                   </div>
                 )}
@@ -546,7 +546,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     placeholder="0.0000"
                     aria-label="Shares to redeem"
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
-                    style={{ background: "#12121f", border: `1px solid ${withdrawInvalid ? "rgba(239,68,68,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
+                    style={{ background: "#141417", border: `1px solid ${withdrawInvalid ? "rgba(194,53,63,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
                   />
                   <div className="flex justify-between text-xs mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
                     <span>Your shares: {userSharesRaw.toFixed(6)}</span>
@@ -555,7 +555,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     </button>
                   </div>
                   {withdrawTooMuch && (
-                    <div className="text-xs mt-1.5" style={{ color: "#ef4444" }}>You don&apos;t have that many shares.</div>
+                    <div className="text-xs mt-1.5" style={{ color: "#c2353f" }}>You don&apos;t have that many shares.</div>
                   )}
                 </div>
 
@@ -563,19 +563,19 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   onClick={handleWithdraw}
                   disabled={isWithdrawLoading || withdrawInvalid || withdrawShares === "" || !!isCircuitBreaker.data}
                   className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-                  style={{ background: "#7c5cff", color: "#fff" }}
+                  style={{ background: "#c2353f", color: "#fff" }}
                 >
                   {isWithdrawLoading ? "Withdrawing..." : "Withdraw"}
                 </button>
 
                 {withdrawError && (
-                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "monospace" }}>
+                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "#c2353f", fontFamily: "monospace" }}>
                     {withdrawError?.message?.split("\n")[0] ?? String(withdrawError)}
                   </div>
                 )}
 
                 {isWithdrawSuccess && (
-                  <div className="text-center text-sm" style={{ color: "#4ade80" }}>
+                  <div className="text-center text-sm" style={{ color: "#34d399" }}>
                     Withdrawal successful!
                   </div>
                 )}
@@ -597,7 +597,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between items-center text-sm border-b border-[#2a2f3a] pb-3 last:border-0">
                 <span style={{ color: "rgba(106,111,117,0.9)" }}>{label}</span>
-                <span style={{ color: "#eaeaea", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>
+                <span style={{ color: "#eaeaea", fontSize: 12, fontFamily: "var(--font-space-mono), monospace" }}>
                   {String(value).slice(0, 42)}
                 </span>
               </div>
@@ -703,7 +703,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs" style={{ fontFamily: "'Space Mono', monospace" }}>
+            <table className="w-full text-xs" style={{ fontFamily: "var(--font-space-mono), monospace" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #2a2f3a" }}>
                   {["Time", "Coin", "Side", "Size", "Price", "Fee", "P&L", "HL User"].map((h) => (
@@ -721,14 +721,14 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     </td>
                     <td className="py-3 pr-4" style={{ color: "#eaeaea" }}>{fill.coin ?? "—"}</td>
                     <td className="py-3 pr-4">
-                      <span style={{ color: fill.side === "Buy" ? "#4ade80" : "#f87171" }}>{fill.side ?? "—"}</span>
+                      <span style={{ color: fill.side === "Buy" ? "#34d399" : "#c2353f" }}>{fill.side ?? "—"}</span>
                     </td>
                     <td className="py-3 pr-4" style={{ color: "#eaeaea" }}>{fill.sz ?? "—"}</td>
                     <td className="py-3 pr-4" style={{ color: "#eaeaea" }}>{fill.px ? parseFloat(fill.px).toFixed(4) : "—"}</td>
                     <td className="py-3 pr-4" style={{ color: "rgba(255,255,255,0.4)" }}>{fill.fee ?? "—"}</td>
                     <td className="py-3 pr-4">
                       {fill.closed_pnl ? (
-                        <span style={{ color: parseFloat(fill.closed_pnl) >= 0 ? "#4ade80" : "#f87171" }}>
+                        <span style={{ color: parseFloat(fill.closed_pnl) >= 0 ? "#34d399" : "#c2353f" }}>
                           {parseFloat(fill.closed_pnl) >= 0 ? "+" : ""}{parseFloat(fill.closed_pnl).toFixed(4)}
                         </span>
                       ) : "—"}

@@ -191,7 +191,7 @@ export default function GovernPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-6 py-10 space-y-8">
+      <div className="mx-auto max-w-4xl space-y-8">
         {/* Governor Info */}
         <div>
           <div
@@ -283,7 +283,7 @@ export default function GovernPage() {
             View Timelock on Hyperliquid Explorer →
           </a>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
