@@ -88,24 +88,24 @@ function MetricCard({
         border: "1px solid #2a2f3a",
       }}
     >
-      <span className="text-xs uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)", fontFamily: "'Montserrat', sans-serif" }}>
+      <span className="text-xs uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {label}
       </span>
       <div className="flex items-end gap-2 flex-wrap">
-        <span className="text-2xl font-bold" style={{ color: accent ?? "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+        <span className="text-2xl font-bold" style={{ color: accent ?? "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
           {value}
         </span>
         {pill && (
           <span
             className="text-xs px-2 py-0.5 rounded-full font-semibold"
-            style={{ background: pill.startsWith("+") ? "rgba(52,211,153,0.15)" : "rgba(194,53,63,0.15)", color: pill.startsWith("+") ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: pill.startsWith("+") ? "rgba(52,211,153,0.15)" : "rgba(194,53,63,0.15)", color: pill.startsWith("+") ? "#34d399" : "#c2353f", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {pill}
           </span>
         )}
       </div>
       {sub && (
-        <span className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+        <span className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           {sub}
         </span>
       )}
@@ -149,11 +149,11 @@ function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
   }, [vaultSymbol, demoMode, meta.asset]);
 
   if (!loaded) {
-    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading NAV history…</div>;
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#bfc3c7" }}>Loading NAV history…</div>;
   }
   if (!nav.length) {
     return (
-      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#9ca3af" }}>
+      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#bfc3c7" }}>
         NAV history populates once the off-chain indexer is live (post-mainnet).
       </div>
     );
@@ -240,11 +240,11 @@ function FlowChart({ vault }: { vault: (typeof VAULTS)[number] }) {
   }, [vaultSymbol, demoMode, meta.asset]);
 
   if (!loaded) {
-    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#9ca3af" }}>Loading flow data…</div>;
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: "#bfc3c7" }}>Loading flow data…</div>;
   }
   if (!flow.length) {
     return (
-      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#9ca3af" }}>
+      <div className="h-48 flex items-center justify-center text-center text-sm px-6" style={{ color: "#bfc3c7" }}>
         Deposit/withdrawal flow populates once the indexer is live.
       </div>
     );
@@ -314,23 +314,23 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-3 h-3 rounded-full" style={{ background: color }} />
-            <h3 className="text-white font-bold text-lg" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <h3 className="text-white font-bold text-lg" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
               {meta.name}
             </h3>
           </div>
-          <p className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             {meta.asset} vault
           </p>
         </div>
         <div className="text-right">
-          <div className="text-xl font-bold" style={{ color, fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xl font-bold" style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}>
             {demoMode
               ? `$${(tvl / 1e6).toFixed(2)}M`
               : totalAssets.isLoading
               ? "—"
               : fmt(tvl, 0)}
           </div>
-          <div className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             TVL
           </div>
         </div>
@@ -344,15 +344,15 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
           { label: "Symbol", value: meta.symbol },
         ].map(({ label, value }) => (
           <div key={label} className="rounded-xl p-3 text-center" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
-            <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>
-            <div className="text-sm font-bold text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
+            <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>{label}</div>
+            <div className="text-sm font-bold text-white" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>{value}</div>
           </div>
         ))}
       </div>
 
       {/* NAV vs HODL chart */}
       <div className="mb-4">
-        <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           NAV vs HODL (14d)
         </p>
         <NAVChart vault={vault} />
@@ -360,7 +360,7 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
 
       {/* Flow chart */}
       <div>
-        <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Deposit / Withdrawal Flow (14d)
         </p>
         <FlowChart vault={vault} />
@@ -382,11 +382,11 @@ function ZENTTokenMetrics() {
     >
       <div className="flex items-center gap-2 mb-2">
         <div className="w-3 h-3 rounded-full" style={{ background: "#b08d57" }} />
-        <h3 className="text-white font-bold text-lg" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <h3 className="text-white font-bold text-lg" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           ZENT Token
         </h3>
       </div>
-      <p className="text-sm" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "'Montserrat', sans-serif" }}>
+      <p className="text-sm" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         ZENT is not yet listed — token metrics appear at TGE.
       </p>
     </div>
@@ -422,7 +422,7 @@ function ProtocolTVLOverview() {
   if (!loaded) {
     return (
       <div className="rounded-2xl p-6 flex items-center justify-center h-48" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-        <span className="text-sm" style={{ color: "#9ca3af" }}>Loading protocol stats…</span>
+        <span className="text-sm" style={{ color: "#bfc3c7" }}>Loading protocol stats…</span>
       </div>
     );
   }
@@ -435,10 +435,10 @@ function ProtocolTVLOverview() {
     return (
       <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <div className="text-center py-12">
-          <div className="text-sm font-semibold mb-2" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-sm font-semibold mb-2" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Off-chain analytics offline
           </div>
-          <p className="text-xs max-w-md mx-auto" style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs max-w-md mx-auto" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Aggregate TVL, deposits, withdrawals and historical alpha come from the
             indexer, which goes live alongside mainnet (Q4 2026). Live on-chain vault
             state is shown in the cards below.
@@ -492,17 +492,17 @@ function ProtocolTVLOverview() {
           },
         ].map(({ label, value, accent, sub, small }: { label: string; value: string; accent: string; sub?: string; small?: boolean }) => (
           <div key={label} className="rounded-xl p-4 text-center" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
-            <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>
-            <div className={small ? "text-xs font-medium leading-snug" : "text-xl font-bold"} style={{ color: accent, fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
+            <div className="text-xs mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>{label}</div>
+            <div className={small ? "text-xs font-medium leading-snug" : "text-xl font-bold"} style={{ color: accent, fontFamily: "var(--font-montserrat), sans-serif" }}>{value}</div>
             {sub && (
-              <div className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>{sub}</div>
+              <div className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>{sub}</div>
             )}
           </div>
         ))}
       </div>
 
       {/* Stacked TVL by vault */}
-      <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+      <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         TVL by Vault
       </p>
       <ResponsiveContainer width="100%" height={180}>
@@ -562,16 +562,16 @@ function ExecutionTraceSection() {
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
         <div>
-          <h2 className="text-xl font-bold text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
             Execution trace
           </h2>
-          <p className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.85)", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.85)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             On-chain <code className="text-[11px] px-1 rounded" style={{ background: "rgba(0,0,0,0.35)" }}>TradeSignalExecuted</code> rows and Hyperliquid{" "}
             <code className="text-[11px] px-1 rounded" style={{ background: "rgba(0,0,0,0.35)" }}>userFills</code> (when ingested).
           </p>
         </div>
         {!hasTraceData && (
-          <span className="text-xs px-3 py-1 rounded-full border" style={{ borderColor: "#2a2f3a", color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}>
+          <span className="text-xs px-3 py-1 rounded-full border" style={{ borderColor: "#2a2f3a", color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Indexer ingestion goes live with mainnet
           </span>
         )}
@@ -579,12 +579,12 @@ function ExecutionTraceSection() {
 
       {accounts.length > 0 && (
         <div className="mb-6 overflow-x-auto">
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Vault → Hyperliquid mapping
           </p>
-          <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          <table className="w-full text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
             <thead>
-              <tr style={{ color: "#9ca3af", textAlign: "left" }}>
+              <tr style={{ color: "#bfc3c7", textAlign: "left" }}>
                 <th className="pb-2 pr-4">Vault</th>
                 <th className="pb-2 pr-4">HL user</th>
                 <th className="pb-2">Asset</th>
@@ -605,15 +605,15 @@ function ExecutionTraceSection() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="overflow-x-auto">
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Recent on-chain attempts
           </p>
           {attempts.length === 0 ? (
-            <p className="text-sm" style={{ color: "#9ca3af" }}>No on-chain executions to display yet.</p>
+            <p className="text-sm" style={{ color: "#bfc3c7" }}>No on-chain executions to display yet.</p>
           ) : (
-            <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <table className="w-full text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
               <thead>
-                <tr style={{ color: "#9ca3af", textAlign: "left" }}>
+                <tr style={{ color: "#bfc3c7", textAlign: "left" }}>
                   <th className="pb-2 pr-3">Vault</th>
                   <th className="pb-2 pr-3">Dir</th>
                   <th className="pb-2 pr-3">Nonce</th>
@@ -645,17 +645,17 @@ function ExecutionTraceSection() {
         </div>
 
         <div className="overflow-x-auto">
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Recent venue fills (Hyperliquid)
           </p>
           {fills.length === 0 ? (
-            <p className="text-sm" style={{ color: "#9ca3af" }}>
+            <p className="text-sm" style={{ color: "#bfc3c7" }}>
               No venue fills to display yet.
             </p>
           ) : (
-            <table className="w-full text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <table className="w-full text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
               <thead>
-                <tr style={{ color: "#9ca3af", textAlign: "left" }}>
+                <tr style={{ color: "#bfc3c7", textAlign: "left" }}>
                   <th className="pb-2 pr-3">Coin</th>
                   <th className="pb-2 pr-3">Px</th>
                   <th className="pb-2 pr-3">Sz</th>
@@ -670,7 +670,7 @@ function ExecutionTraceSection() {
                     <td className="py-2 pr-3 font-mono text-[11px]">{f.px ?? "—"}</td>
                     <td className="py-2 pr-3 font-mono text-[11px]">{f.sz ?? "—"}</td>
                     <td className="py-2 pr-3 font-mono text-[11px]">{f.closed_pnl ?? "—"}</td>
-                    <td className="py-2 text-[11px]" style={{ color: "#9ca3af" }}>
+                    <td className="py-2 text-[11px]" style={{ color: "#bfc3c7" }}>
                       {f.time_ms ? new Date(f.time_ms).toISOString().slice(0, 16).replace("T", " ") : "—"}
                     </td>
                   </tr>
@@ -694,15 +694,15 @@ export default function DashboardPage() {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-2 h-2 rounded-full" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
-          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#34d399", fontFamily: "'Montserrat', sans-serif" }}>
+          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#34d399", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Live Protocol Analytics
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-white inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <h1 className="text-3xl font-bold text-white inline-flex items-center gap-3" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           Protocol Dashboard
           {demoMode && <DemoBadge />}
         </h1>
-        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Real-time performance, TVL, vs-holding comparison, and capital flow metrics
         </p>
       </div>
@@ -719,7 +719,7 @@ export default function DashboardPage() {
 
       {/* Per-vault analytics */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-white mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <h2 className="text-xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           Vault Analytics
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -732,7 +732,7 @@ export default function DashboardPage() {
       <ExecutionTraceSection />
 
       {/* Disclaimer */}
-      <div className="text-center text-xs py-8" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
+      <div className="text-center text-xs py-8" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Testnet only · Chain 998 · Charts populate once the indexer has run against the active Supabase project. Past performance does not guarantee future results.
       </div>
     </div>

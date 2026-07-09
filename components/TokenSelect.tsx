@@ -43,7 +43,7 @@ export function TokenSelect({ value, onChange, excludeSymbol }: TokenSelectProps
           background: "rgba(42,47,58,0.8)",
           borderColor: "#2a2f3a",
           color: "#eaeaea",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
         }}
       >
         <span>{value}</span>
@@ -77,7 +77,7 @@ export function TokenSelect({ value, onChange, excludeSymbol }: TokenSelectProps
               className="w-full text-left px-3 py-2.5 text-sm flex items-center gap-2 transition-colors"
               style={{
                 color: symbol === value ? "#b08d57" : "#eaeaea",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
                 background: "transparent",
               }}
               onMouseEnter={(e) => {

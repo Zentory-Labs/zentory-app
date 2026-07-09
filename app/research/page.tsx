@@ -27,16 +27,16 @@ function ResearchPerformanceBar({ research }: { research: Research[] }) {
   // not synthesize numbers — an empty state is more honest than a 0% win rate.
   return (
     <div className="glass-card p-6">
-      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Performance Summary
       </p>
       <div className="flex flex-col items-center justify-center py-8 gap-2">
-        <p className="text-sm text-white/60" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-sm text-white/60" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           {executedCount > 0
             ? `${executedCount} executed signal${executedCount === 1 ? "" : "s"} — awaiting epoch settlement.`
             : "No executed signals yet."}
         </p>
-        <p className="text-xs text-white/35 italic max-w-md text-center" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-xs text-white/35 italic max-w-md text-center" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           Live P&amp;L populates once on-chain fill prices are indexed and the first 4-hour epoch settles via EpochScoring.
         </p>
       </div>
@@ -68,27 +68,32 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
     manual: "#b08d57",
   };
 
+  // Bars reflect each contributor's share of recorded research volume (real data).
+  const maxCount = Math.max(1, ...contributorDefs.map((d) => d.count));
+
   return (
     <div className="glass-card p-6">
-      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
+      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Research Contributors
       </p>
       {DEMO_BANNER}
       <div className="space-y-3">
-        {contributorDefs.map(({ name, label, count, winRate }) => (
+        {contributorDefs.map(({ name, label, count }) => (
           <div key={name} className="flex items-center gap-3">
-            <div className="w-20 text-xs" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>{label}</div>
+            <div className="w-20 text-xs" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>{label}</div>
             <div className="flex-1 rounded-full h-2 overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
               <div
                 className="h-full rounded-full transition-all duration-700"
-                style={{ width: `${Math.min(winRate, 100)}%`, background: contributorColors[name] ?? "#b08d57" }}
+                style={{ width: `${(count / maxCount) * 100}%`, background: contributorColors[name] ?? "#b08d57" }}
               />
             </div>
-            <div className="w-16 text-right text-xs font-mono" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>
+            <div className="w-16 text-right text-xs font-mono" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
               {count} trades
             </div>
-            <div className="w-12 text-right text-xs font-bold" style={{ color: winRate >= 55 ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}>
-              {winRate.toFixed(0)}%
+            {/* Win rate intentionally not shown until it can be computed from
+                settled P&L (keeper_audit) — never a fabricated 0%. */}
+            <div className="w-24 text-right text-[11px]" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+              win rate pending
             </div>
           </div>
         ))}
@@ -176,13 +181,13 @@ export default function ResearchPage() {
                 background: "rgba(176, 141, 87, 0.12)",
                 borderColor: "rgba(176, 141, 87, 0.3)",
                 color: "#b08d57",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               <div className="h-1.5 w-1.5 rounded-full" style={{ background: "#b08d57" }} />
               Testnet
             </div>
-            <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <h1 className="text-3xl font-bold tracking-tight inline-flex items-center gap-3" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
               <span className="gradient-text-gold">Research Dashboard</span>
               {demoMode && <DemoBadge />}
             </h1>

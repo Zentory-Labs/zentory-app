@@ -48,7 +48,7 @@ export default function FoundingProviderCard({ house, loading = false }: { house
         <div className="flex items-center gap-4 min-w-0">
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl font-black text-white"
-            style={{ background: `linear-gradient(135deg, #8B1E2D, ${GOLD})`, fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: `linear-gradient(135deg, #8B1E2D, ${GOLD})`, fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             Z
           </div>
@@ -67,7 +67,7 @@ export default function FoundingProviderCard({ house, loading = false }: { house
                 {liveLabel}
               </span>
             </div>
-            <h3 className="text-xl font-bold truncate" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+            <h3 className="text-xl font-bold truncate" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
               Zentory Core
             </h3>
             <p className="text-xs" style={{ color: "rgba(234,234,234,0.55)" }}>

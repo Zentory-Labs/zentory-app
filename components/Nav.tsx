@@ -320,7 +320,7 @@ export default function Nav() {
                 background: "rgba(139,30,45,0.12)",
                 borderColor: "rgba(139,30,45,0.35)",
                 color: "#c2353f",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               Join Waitlist
@@ -333,7 +333,7 @@ export default function Nav() {
                 background: demoMode ? "rgba(176,141,87,0.18)" : "rgba(176,141,87,0.05)",
                 borderColor: demoMode ? "rgba(176,141,87,0.6)" : "rgba(176,141,87,0.25)",
                 color: demoMode ? "#e6d3a0" : "#b08d57",
-                fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif",
               }}
               title={demoMode ? "Demo mode is ON — sample data shown on empty pages. Click to switch back to live data." : "Turn on demo mode to see what the protocol looks like with active signals, leaderboard, and indexed history."}
             >

@@ -106,7 +106,7 @@ function TokenLogo({ symbol }: { symbol: string }) {
   return (
     <div
       className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0 border"
-      style={{ background: "#2a2f3a", color: "#eaeaea", borderColor: "#2a2f3a", fontFamily: "'Montserrat', sans-serif" }}
+      style={{ background: "#2a2f3a", color: "#eaeaea", borderColor: "#2a2f3a", fontFamily: "var(--font-montserrat), sans-serif" }}
     >
       {symbol}
     </div>
@@ -215,7 +215,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
       <div className="flex items-center gap-3 mb-4">
         <TokenLogo symbol={meta.asset} />
         <div>
-          <div className="font-semibold text-white text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="font-semibold text-white text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
             {meta.name}
           </div>
           <div className="text-xs" style={{ color: "#bfc3c7" }}>{meta.symbol}</div>
@@ -233,7 +233,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
           },
         ].map(({ label, value }) => (
           <div key={label} className="flex justify-between items-center">
-            <span className="text-xs" style={{ color: "#9ca3af" }}>{label}</span>
+            <span className="text-xs" style={{ color: "#bfc3c7" }}>{label}</span>
             <span className="text-sm font-mono font-medium text-white">{value}</span>
           </div>
         ))}
@@ -248,7 +248,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
             background: "rgba(139, 30, 45, 0.15)",
             color: "#c2353f",
             borderColor: "rgba(139, 30, 45, 0.3)",
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           Live
@@ -258,9 +258,9 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 text-xs transition-colors"
-          style={{ color: "#9ca3af" }}
+          style={{ color: "#bfc3c7" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#b08d57")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#9ca3af")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#bfc3c7")}
         >
           View
           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -351,7 +351,7 @@ function ChainStats() {
             background: "rgba(194,53,63,0.08)",
             borderColor: "rgba(194,53,63,0.25)",
             color: "rgba(234,234,234,0.8)",
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           Chain read failed. If this persists, the backend RPC proxy may be misconfigured.
@@ -362,13 +362,13 @@ function ChainStats() {
         <div key={label} className="text-center">
           <div
             className="text-2xl md:text-3xl font-bold"
-            style={{ color: accent, fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: accent, fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {value}
           </div>
           <div
             className="text-xs md:text-sm uppercase tracking-wider mt-1"
-            style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {label}
           </div>
@@ -403,7 +403,7 @@ export default function Home() {
                 background: "rgba(139, 30, 45, 0.15)",
                 borderColor: "rgba(139, 30, 45, 0.4)",
                 color: "#c2353f",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
                 letterSpacing: "0.05em",
               }}
             >
@@ -416,8 +416,8 @@ export default function Home() {
 
             {/* Main headline */}
             <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-6xl xl:text-8xl font-bold mb-6 tracking-tight leading-none"
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
+              className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 tracking-tight leading-none"
+              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               <span className="gradient-text-gold">Grow your crypto. Defend the drawdowns.</span>
             </h1>
@@ -441,7 +441,7 @@ export default function Home() {
                 style={{
                   background: "#8b1e2d",
                   color: "#eaeaea",
-                  fontFamily: "'Montserrat', sans-serif",
+                  fontFamily: "var(--font-montserrat), sans-serif",
                   boxShadow: "0 0 40px rgba(139, 30, 45, 0.35)",
                 }}
                 onMouseEnter={(e) => {
@@ -463,7 +463,7 @@ export default function Home() {
                   background: "transparent",
                   color: "#b08d57",
                   borderColor: "rgba(176, 141, 87, 0.4)",
-                  fontFamily: "'Montserrat', sans-serif",
+                  fontFamily: "var(--font-montserrat), sans-serif",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLAnchorElement).style.background = "rgba(176, 141, 87, 0.08)";
@@ -484,7 +484,7 @@ export default function Home() {
                   background: "rgba(139, 30, 45, 0.2)",
                   color: "#c2353f",
                   border: "1px solid rgba(139, 30, 45, 0.4)",
-                  fontFamily: "'Montserrat', sans-serif",
+                  fontFamily: "var(--font-montserrat), sans-serif",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLAnchorElement).style.background = "rgba(139, 30, 45, 0.35)";
@@ -512,7 +512,7 @@ export default function Home() {
                 borderColor: "rgba(139,30,45,0.3)",
               }}
             >
-              <div className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+              <div className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 Vault Stats
               </div>
               <div className="space-y-4">
@@ -524,7 +524,7 @@ export default function Home() {
                 ].map(({ label, value, sub }) => (
                   <div key={label} className="flex flex-col gap-0.5">
                     <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>{label}</span>
-                    <span className="text-sm font-semibold" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>{value}</span>
+                    <span className="text-sm font-semibold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>{value}</span>
                     <span className="text-xs" style={{ color: "rgba(234,234,234,0.25)" }}>{sub}</span>
                   </div>
                 ))}
@@ -536,7 +536,7 @@ export default function Home() {
                   style={{
                     background: "#8b1e2d",
                     color: "#eaeaea",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   Enter Vault
@@ -548,7 +548,7 @@ export default function Home() {
                     background: "transparent",
                     color: "#b08d57",
                     borderColor: "rgba(176,141,87,0.3)",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   View Research
@@ -566,7 +566,7 @@ export default function Home() {
         >
           <span
             className="text-xs uppercase tracking-widest mb-1"
-            style={{ fontFamily: "'Montserrat', sans-serif", color: "#9ca3af" }}
+            style={{ fontFamily: "var(--font-montserrat), sans-serif", color: "#bfc3c7" }}
           >
             Scroll
           </span>
@@ -585,7 +585,7 @@ export default function Home() {
           <div className="h-px flex-1" style={{ background: "linear-gradient(to right, transparent, #2a2f3a, transparent)" }} />
           <div
             className="flex items-center gap-2 text-sm font-semibold"
-            style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             <span>⬡</span> Vaults
           </div>

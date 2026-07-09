@@ -422,7 +422,7 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
               <th
                 key={h}
                 className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}
+                style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}
               >
                 {h}
               </th>
@@ -442,10 +442,10 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
                 key={s.id}
                 style={{ borderBottom: i < signals.length - 1 ? "1px solid #2a2f3a" : undefined }}
               >
-                <td className="px-4 py-3 font-mono text-xs" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+                <td className="px-4 py-3 font-mono text-xs" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {s.provider ?? "—"}
                 </td>
-                <td className="px-4 py-3 font-mono text-xs" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+                <td className="px-4 py-3 font-mono text-xs" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {s.asset ?? "—"}
                 </td>
                 <td className="px-4 py-3">
@@ -455,16 +455,16 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
                       background: isBuy ? "rgba(52,211,153,0.12)" : "rgba(194,53,63,0.12)",
                       border: `1px solid ${isBuy ? "rgba(52,211,153,0.3)" : "rgba(194,53,63,0.3)"}`,
                       color: isBuy ? "#34d399" : "#c2353f",
-                      fontFamily: "'Montserrat', sans-serif",
+                      fontFamily: "var(--font-montserrat), sans-serif",
                     }}
                   >
                     {isBuy ? "BUY" : "SELL"}
                   </span>
                 </td>
-                <td className="px-4 py-3 font-mono text-xs" style={{ color: accColor, fontFamily: "'Montserrat', sans-serif" }}>
+                <td className="px-4 py-3 font-mono text-xs" style={{ color: accColor, fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {((s.accuracy_bps ?? 0) / 100).toFixed(1)}%
                 </td>
-                <td className="px-4 py-3 font-mono text-xs font-semibold" style={{ color: payoutColor, fontFamily: "'Montserrat', sans-serif" }}>
+                <td className="px-4 py-3 font-mono text-xs font-semibold" style={{ color: payoutColor, fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {(s.payout_zent ?? 0) >= 0 ? "+" : ""}{(s.payout_zent ?? 0).toFixed(4)}
                 </td>
               </tr>
@@ -485,10 +485,10 @@ function WinRateBar({ winRate }: { winRate: number }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-xs" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
+        <span className="text-xs" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Win Rate
         </span>
-        <span className="text-sm font-bold" style={{ color, fontFamily: "'Montserrat', sans-serif" }}>
+        <span className="text-sm font-bold" style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}>
           {pct.toFixed(1)}%
         </span>
       </div>
@@ -522,7 +522,7 @@ function SectionCard({
       className={`rounded-2xl p-6 ${className}`}
       style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
     >
-      <h2 className="text-base font-semibold mb-4" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+      <h2 className="text-base font-semibold mb-4" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {title}
       </h2>
       {children}
@@ -602,7 +602,7 @@ export default function AnalyticsPage() {
   }, [providers]);
 
   return (
-    <div className="w-full overflow-x-hidden" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+    <div className="w-full overflow-x-hidden" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
       {/* Ambient glow — gold accent on analytics */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -641,7 +641,7 @@ export default function AnalyticsPage() {
                   style={{
                     background: timeRange === r ? "rgba(176,141,87,0.2)" : "transparent",
                     color: timeRange === r ? "#b08d57" : "rgba(234,234,234,0.5)",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {r === "all" ? "All Time" : r}
@@ -784,7 +784,7 @@ export default function AnalyticsPage() {
                     background: assetFilter === f ? "rgba(176,141,87,0.15)" : "transparent",
                     border: `1px solid ${assetFilter === f ? "rgba(176,141,87,0.4)" : "#2a2f3a"}`,
                     color: assetFilter === f ? "#b08d57" : "rgba(234,234,234,0.4)",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {f}

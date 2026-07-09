@@ -115,7 +115,7 @@ function AccuracyBadge({ value, grade }: { value: number; grade: string }) {
   const color = value >= 65 ? "#34d399" : value >= 55 ? "#b08d57" : "#c2353f";
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-xs font-bold font-mono" style={{ color, fontFamily: "'Montserrat', sans-serif" }}>
+      <span className="text-xs font-bold font-mono" style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}>
         {value.toFixed(1)}%
       </span>
       <span
@@ -123,7 +123,7 @@ function AccuracyBadge({ value, grade }: { value: number; grade: string }) {
         style={{
           background: GRADE_COLORS[grade] + "20",
           color: GRADE_COLORS[grade],
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
         }}
       >
         {grade}
@@ -140,7 +140,7 @@ function RankChange({ change }: { change: number }) {
   return (
     <span
       className="text-xs font-mono font-bold ml-1"
-      style={{ color: up ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
+      style={{ color: up ? "#34d399" : "#c2353f", fontFamily: "var(--font-montserrat), sans-serif" }}
     >
       {up ? "↑" : "↓"}{Math.abs(change)}
     </span>
@@ -172,7 +172,7 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
           <span className="text-xs font-bold uppercase tracking-wider" style={{ color }}>{trophyLabels[index]}</span>
           <span
             className="text-2xl font-black"
-            style={{ color, fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             #{provider.rank}
           </span>
@@ -182,7 +182,7 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
           style={{
             background: color + "20",
             color,
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           {provider.accuracyGrade}
@@ -190,36 +190,36 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
       </div>
 
       <div>
-        <div className="font-mono text-sm font-semibold mb-1" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+        <div className="font-mono text-sm font-semibold mb-1" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
           {provider.providerShort}
         </div>
-        <div className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+        <div className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
           {provider.provider.slice(0, 10)}...{provider.provider.slice(-6)}
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
         <div className="text-center">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Accuracy
           </div>
-          <div className="font-bold text-sm font-mono" style={{ color, fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="font-bold text-sm font-mono" style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}>
             {provider.accuracyPercent.toFixed(1)}%
           </div>
         </div>
         <div className="text-center">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Signals
           </div>
-          <div className="font-bold text-sm font-mono" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="font-bold text-sm font-mono" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
             {provider.totalSignals}
           </div>
         </div>
         <div className="text-center">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             ZENT Earned
           </div>
-          <div className="font-bold text-sm font-mono" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="font-bold text-sm font-mono" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
             {(Number(provider.zentEarned)).toLocaleString("en", { maximumFractionDigits: 0 })}
           </div>
         </div>
@@ -252,7 +252,7 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
             style={{
               background: rowAccent ? rowAccent + "18" : "rgba(255,255,255,0.06)",
               color: rowAccent ?? "rgba(234,234,234,0.5)",
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "var(--font-montserrat), sans-serif",
             }}
           >
             {provider.rank}
@@ -267,7 +267,7 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
             <Link
               href={`/providers/${provider.provider}`}
               className="font-mono text-xs font-semibold hover:underline"
-              style={{ color: rowAccent ?? "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+              style={{ color: rowAccent ?? "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
               title="View this provider's track record"
             >
               {provider.providerShort}
@@ -280,7 +280,7 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
                   style={{
                     background: (ASSET_CLASS_COLORS[ac] ?? "#b08d57") + "18",
                     color: ASSET_CLASS_COLORS[ac] ?? "#b08d57",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {ac.replace("CRYPTO_", "").replace("_", " ")}
@@ -295,23 +295,23 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
         <AccuracyBadge value={provider.accuracyPercent} grade={provider.accuracyGrade} />
       </td>
 
-      <td className="px-4 py-3.5 text-sm font-mono text-center" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+      <td className="px-4 py-3.5 text-sm font-mono text-center" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {provider.totalSignals}
       </td>
 
-      <td className="px-4 py-3.5 text-sm font-mono text-center" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
+      <td className="px-4 py-3.5 text-sm font-mono text-center" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {provider.resolvedSignals}
       </td>
 
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-mono font-semibold" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+          <span className="text-sm font-mono font-semibold" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
             {Number(provider.zentEarned).toLocaleString("en", { maximumFractionDigits: 0 })}
           </span>
         </div>
       </td>
 
-      <td className="px-4 py-3.5 text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+      <td className="px-4 py-3.5 text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {provider.lastSignal}
       </td>
 
@@ -336,10 +336,10 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
         style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
       >
         <div>
-          <div className="text-sm font-bold mb-1" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-sm font-bold mb-1" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Your Position
           </div>
-          <div className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Not ranked yet — stake ZENT and publish research to appear here
           </div>
         </div>
@@ -349,7 +349,7 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
             background: "rgba(139,30,45,0.15)",
             border: "1px solid rgba(139,30,45,0.3)",
             color: "#c2353f",
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
           Not Ranked
@@ -364,11 +364,11 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
       style={{ background: "#1c1c21", border: "1px solid #b08d5740" }}
     >
       <div>
-        <div className="text-sm font-bold mb-1" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+        <div className="text-sm font-bold mb-1" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Your Position
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-2xl font-black" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+          <span className="text-2xl font-black" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
             #{myProvider.rank}
           </span>
           <AccuracyBadge value={myProvider.accuracyPercent} grade={myProvider.accuracyGrade} />
@@ -376,18 +376,18 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
       </div>
       <div className="flex items-center gap-6">
         <div className="text-right">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Total Signals
           </div>
-          <div className="font-bold font-mono" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="font-bold font-mono" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
             {myProvider.totalSignals}
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             ZENT Earned
           </div>
-          <div className="font-bold font-mono" style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="font-bold font-mono" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
             {Number(myProvider.zentEarned).toLocaleString("en", { maximumFractionDigits: 0 })}
           </div>
         </div>
@@ -553,7 +553,7 @@ export default function LeaderboardPage() {
   }, [lastUpdated]);
 
   return (
-    <div className="w-full overflow-x-hidden" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+    <div className="w-full overflow-x-hidden" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
       {/* Ambient glows */}
       <div className="absolute top-0 left-1/3 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -612,7 +612,7 @@ export default function LeaderboardPage() {
                 background: activeFilter === f ? "#8b1e2d" : "rgba(255,255,255,0.04)",
                 border: `1px solid ${activeFilter === f ? "rgba(139,30,45,0.5)" : "#2a2f3a"}`,
                 color: activeFilter === f ? "#eaeaea" : "rgba(234,234,234,0.5)",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               {f}
@@ -657,12 +657,12 @@ export default function LeaderboardPage() {
         {top3.length > 0 && (
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-lg font-bold" style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}>
+              <h2 className="text-lg font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 Top Providers
               </h2>
               <span
                 className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                style={{ background: "rgba(176,141,87,0.12)", color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+                style={{ background: "rgba(176,141,87,0.12)", color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
               >
                 Podium
               </span>
@@ -686,7 +686,7 @@ export default function LeaderboardPage() {
                 <thead>
                   <tr style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid #2a2f3a" }}>
                     {["Rank", "Provider", "Accuracy", "Total", "Resolved", "ZENT Earned", "Last Signal", "Trend"].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                         {h}
                       </th>
                     ))}
@@ -737,7 +737,7 @@ function EpochTimerPill({ hours, minutes, secs }: { hours: number; minutes: numb
         background: "rgba(139,30,45,0.1)",
         borderColor: "rgba(139,30,45,0.3)",
         color: "#c2353f",
-        fontFamily: "'Montserrat', sans-serif",
+        fontFamily: "var(--font-montserrat), sans-serif",
       }}
     >
       <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#c2353f" }} />
@@ -757,10 +757,10 @@ function StatCard({ label, value, accent = "#eaeaea" }: { label: string; value: 
       className="rounded-2xl p-4 flex-1 min-w-[140px]"
       style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
     >
-      <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+      <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {label}
       </div>
-      <div className="text-2xl font-bold" style={{ color: accent, fontFamily: "'Montserrat', sans-serif" }}>
+      <div className="text-2xl font-bold" style={{ color: accent, fontFamily: "var(--font-montserrat), sans-serif" }}>
         {value}
       </div>
     </div>

@@ -83,7 +83,7 @@ export default function WhitelistPopup() {
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-white/10"
-          style={{ color: "#9ca3af" }}
+          style={{ color: "#bfc3c7" }}
           aria-label="Close"
         >
           <CloseIcon />
@@ -101,7 +101,7 @@ export default function WhitelistPopup() {
             <h3
               id="waitlist-title"
               className="text-xl font-bold text-white mb-2"
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
+              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               You&apos;re on the list.
             </h3>
@@ -114,7 +114,7 @@ export default function WhitelistPopup() {
               style={{
                 background: "#8b1e2d",
                 color: "#eaeaea",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               Got it
@@ -130,7 +130,7 @@ export default function WhitelistPopup() {
                 background: "rgba(139,30,45,0.15)",
                 border: "1px solid rgba(139,30,45,0.3)",
                 color: "#c2353f",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               <span
@@ -143,7 +143,7 @@ export default function WhitelistPopup() {
             <h3
               id="waitlist-title"
               className="text-2xl font-bold text-white mb-2"
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
+              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               Join the Zentory Waitlist
             </h3>
@@ -165,7 +165,7 @@ export default function WhitelistPopup() {
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setErrorMsg(""); }}
                   className="flex-1 bg-transparent text-white text-sm outline-none placeholder-white/30"
-                  style={{ fontFamily: "'Montserrat', sans-serif" }}
+                  style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
                   disabled={status === "loading"}
                   required
                 />
@@ -184,7 +184,7 @@ export default function WhitelistPopup() {
                 style={{
                   background: status === "loading" ? "rgba(139,30,45,0.5)" : "#8b1e2d",
                   color: "#eaeaea",
-                  fontFamily: "'Montserrat', sans-serif",
+                  fontFamily: "var(--font-montserrat), sans-serif",
                   boxShadow: "0 0 30px rgba(139,30,45,0.3)",
                 }}
                 onMouseEnter={(e) => { if (status !== "loading" && email) (e.currentTarget as HTMLButtonElement).style.background = "#c2353f"; }}

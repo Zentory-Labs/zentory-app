@@ -68,7 +68,7 @@ export default function RecentActivityTicker({ limit = 8, title = "Recent Activi
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
-          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
         >
           {title}
           {demoMode && <DemoBadge />}
@@ -104,12 +104,12 @@ export default function RecentActivityTicker({ limit = 8, title = "Recent Activi
               >
                 {ICONS[row.kind]}
               </span>
-              <span className="flex-1 text-sm" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}>
+              <span className="flex-1 text-sm" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}>
                 {row.text}
               </span>
               <span
                 className="text-xs flex-shrink-0"
-                style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+                style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
               >
                 {fmtTimeAgo(row.ts)}
               </span>

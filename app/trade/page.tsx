@@ -128,7 +128,7 @@ export default function TradePage() {
       <div className="flex flex-wrap items-center gap-4 rounded-2xl p-4" style={{ background: PANEL, border: BORDER }}>
         <select value={coin} onChange={(e) => setCoin(e.target.value)}
           className="bg-transparent text-white text-lg font-semibold outline-none cursor-pointer"
-          style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           {perps.map((p) => <option key={p.name} value={p.name} style={{ background: "#15171c" }}>{p.name}-PERP</option>)}
         </select>
         <div className="text-2xl font-bold tabular-nums text-white">

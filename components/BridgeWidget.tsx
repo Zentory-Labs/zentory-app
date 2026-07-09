@@ -103,7 +103,7 @@ export default function BridgeWidget() {
           },
         },
         shape: { borderRadius: 16 },
-        typography: { fontFamily: "'Montserrat', sans-serif" },
+        typography: { fontFamily: "var(--font-montserrat), sans-serif" },
       },
     }),
     [fee]

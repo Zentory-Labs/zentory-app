@@ -78,7 +78,7 @@ const STATUS_STYLE: Record<StatusColor, { bg: string; text: string; border: stri
   green:  { bg: "rgba(52,211,153,0.12)",   text: "#34d399", border: "rgba(52,211,153,0.3)" },
   amber:  { bg: "rgba(176,141,87,0.12)",  text: "#b08d57", border: "rgba(176,141,87,0.3)" },
   red:    { bg: "rgba(194,53,63,0.12)",   text: "#c2353f", border: "rgba(194,53,63,0.3)" },
-  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#9ca3af", border: "rgba(42,47,58,0.6)" },
+  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#bfc3c7", border: "rgba(42,47,58,0.6)" },
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -87,7 +87,7 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className="px-2.5 py-0.5 rounded-full text-xs font-semibold border"
-      style={{ background: s.bg, color: s.text, borderColor: s.border, fontFamily: "'Montserrat', sans-serif" }}
+      style={{ background: s.bg, color: s.text, borderColor: s.border, fontFamily: "var(--font-montserrat), sans-serif" }}
     >
       {status}
     </span>
@@ -104,7 +104,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
     >
       <div
         className="text-xs font-semibold uppercase tracking-widest mb-5"
-        style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         {title}
       </div>
@@ -134,7 +134,7 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className="text-sm font-semibold"
-            style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {contract.name}
           </span>
@@ -145,7 +145,7 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
                 background: "rgba(52,211,153,0.1)",
                 color: "#34d399",
                 borderColor: "rgba(52,211,153,0.25)",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
@@ -160,7 +160,7 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
                 background: "rgba(176,141,87,0.1)",
                 color: "#b08d57",
                 borderColor: "rgba(176,141,87,0.25)",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
@@ -173,16 +173,16 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
         <div className="flex items-center gap-2">
           <code
             className="text-xs font-mono"
-            style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {truncateAddress(contract.address)}
           </code>
           <button
             onClick={handleCopy}
             className="text-xs transition-colors"
-            style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#b08d57")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#9ca3af")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#bfc3c7")}
           >
             {copied ? "Copied!" : "Copy"}
           </button>
@@ -195,7 +195,7 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
         className="inline-flex items-center gap-1.5 text-xs font-semibold transition-all hover:scale-[1.02] w-fit"
         style={{
           color: "#b08d57",
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: "var(--font-montserrat), sans-serif",
           background: "rgba(176,141,87,0.08)",
           border: "1px solid rgba(176,141,87,0.25)",
           padding: "6px 12px",
@@ -267,13 +267,13 @@ export default function StateOfProtocolPage() {
           </div>
           <h1
             className="text-4xl sm:text-5xl font-bold tracking-tight mb-4"
-            style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             State of the Protocol
           </h1>
           <p
             className="text-base max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             Real-time transparency into ZENTORY Labs smart contracts, security posture, and economic design.
             All data is pulled directly from on-chain sources.
@@ -291,17 +291,17 @@ export default function StateOfProtocolPage() {
               >
                 <span
                   className="text-xs uppercase tracking-wider"
-                  style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
+                  style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
                   {stat.label}
                 </span>
                 <span
                   className="text-lg font-bold"
-                  style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+                  style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
                   {stat.value}
                 </span>
-                <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
+                <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {stat.sub}
                 </span>
               </div>
@@ -323,10 +323,10 @@ export default function StateOfProtocolPage() {
             className="mt-4 pt-4 flex items-center gap-2"
             style={{ borderTop: "1px solid #2a2f3a" }}
           >
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth={1.5}>
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#bfc3c7" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
+            <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "var(--font-montserrat), sans-serif" }}>
               All {CONTRACTS.length} core contracts are deployed on HyperEVM Testnet (Chain 998). Mainnet deployment targeted for Q1 2027 after external audit.
             </span>
           </div>
@@ -348,18 +348,18 @@ export default function StateOfProtocolPage() {
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                       <span
                         className="text-sm font-semibold"
-                        style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+                        style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
                       >
                         {s.item}
                       </span>
                       <span
                         className="px-2 py-0.5 rounded-full text-xs font-semibold border flex-shrink-0"
-                        style={{ background: sc.bg, color: sc.text, borderColor: sc.border, fontFamily: "'Montserrat', sans-serif" }}
+                        style={{ background: sc.bg, color: sc.text, borderColor: sc.border, fontFamily: "var(--font-montserrat), sans-serif" }}
                       >
                         {s.status}
                       </span>
                     </div>
-                    <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+                    <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                       {s.detail}
                     </span>
                   </div>
@@ -379,7 +379,7 @@ export default function StateOfProtocolPage() {
                     <th
                       key={h}
                       className="pb-3 text-xs uppercase tracking-wider font-semibold"
-                      style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
+                      style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
                     >
                       {h}
                     </th>
@@ -395,7 +395,7 @@ export default function StateOfProtocolPage() {
                       <td className="py-3">
                         <span
                           className="text-sm font-bold"
-                          style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+                          style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
                         >
                           {row.asset}
                         </span>
@@ -403,18 +403,18 @@ export default function StateOfProtocolPage() {
                       <td className="py-3">
                         <span
                           className="px-2.5 py-0.5 rounded-full text-xs font-semibold border"
-                          style={{ background: sc.bg, color: sc.text, borderColor: sc.border, fontFamily: "'Montserrat', sans-serif" }}
+                          style={{ background: sc.bg, color: sc.text, borderColor: sc.border, fontFamily: "var(--font-montserrat), sans-serif" }}
                         >
                           {row.status}
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className="text-sm font-mono" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+                        <span className="text-sm font-mono" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                           {row.tvl}
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className="text-sm font-mono" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+                        <span className="text-sm font-mono" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                           {row.apy}
                         </span>
                       </td>
@@ -438,18 +438,18 @@ export default function StateOfProtocolPage() {
                 <div className="flex flex-col gap-1">
                   <span
                     className="text-sm font-semibold"
-                    style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+                    style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
                   >
                     {r.stream}
                   </span>
-                  <span className="text-xs" style={{ color: "rgba(234,234,234,0.35)", fontFamily: "'Montserrat', sans-serif" }}>
+                  <span className="text-xs" style={{ color: "rgba(234,234,234,0.35)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                     {r.detail}
                   </span>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span
                     className="text-sm font-bold font-mono"
-                    style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+                    style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
                   >
                     {r.rate}
                   </span>
@@ -477,7 +477,7 @@ export default function StateOfProtocolPage() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
+            <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
               <strong style={{ color: "rgba(234,234,234,0.7)" }}>Testnet Disclaimer:</strong> All data shown reflects HyperEVM
               testnet state. No mainnet data is live. TVL, APY, and revenue figures will be populated upon mainnet launch.
               This page is updated in real-time from on-chain data. Nothing on this page constitutes financial advice.

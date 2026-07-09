@@ -17,13 +17,13 @@ function RiskCard({ title, children }: { title: string; children: React.ReactNod
     <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
       <div
         className="text-xs font-semibold uppercase tracking-widest mb-4"
-        style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         {title}
       </div>
       <div
         className="space-y-3 text-sm leading-relaxed"
-        style={{ color: "rgba(234,234,234,0.6)", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "rgba(234,234,234,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         {children}
       </div>

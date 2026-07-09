@@ -160,7 +160,7 @@ export default function AdminPage() {
       <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}><span className="gradient-text-gold">Admin Panel</span></h1>
+            <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}><span className="gradient-text-gold">Admin Panel</span></h1>
             <span className="text-xs bg-red-500/10 border border-red-500/20 text-red-400 rounded-full px-3 py-1">
               Role-gated
             </span>
@@ -281,7 +281,7 @@ export default function AdminPage() {
                   onClick={handleSetMaxPos}
                   disabled={!maxPosSize}
                   className="rounded-xl font-semibold px-6 py-3 transition-all duration-300 hover:scale-[1.01] disabled:opacity-50"
-                  style={{ background: "#8b1e2d", color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+                  style={{ background: "#8b1e2d", color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
                   Set
                 </button>
@@ -306,7 +306,7 @@ export default function AdminPage() {
                   onClick={handleSetMaxLev}
                   disabled={!maxLevBPS}
                   className="rounded-xl font-semibold px-6 py-3 transition-all duration-300 hover:scale-[1.01] disabled:opacity-50"
-                  style={{ background: "#8b1e2d", color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+                  style={{ background: "#8b1e2d", color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
                   Set
                 </button>

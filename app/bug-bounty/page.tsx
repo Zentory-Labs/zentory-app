@@ -44,7 +44,7 @@ const BADGE_STYLE: Record<BadgeColor, { bg: string; text: string; border: string
   red:    { bg: "rgba(194,53,63,0.12)",   text: "#c2353f", border: "rgba(194,53,63,0.3)" },
   orange: { bg: "rgba(255,140,0,0.10)",   text: "#ff8c00", border: "rgba(255,140,0,0.25)" },
   amber:  { bg: "rgba(176,141,87,0.12)",  text: "#b08d57", border: "rgba(176,141,87,0.3)" },
-  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#9ca3af", border: "rgba(42,47,58,0.6)" },
+  muted:  { bg: "rgba(42,47,58,0.4)",     text: "#bfc3c7", border: "rgba(42,47,58,0.6)" },
 };
 
 function SeverityBadge({ color, children }: { color: BadgeColor; children: React.ReactNode }) {
@@ -52,7 +52,7 @@ function SeverityBadge({ color, children }: { color: BadgeColor; children: React
   return (
     <span
       className="px-2.5 py-0.5 rounded-full text-xs font-semibold border"
-      style={{ background: s.bg, color: s.text, borderColor: s.border, fontFamily: "'Montserrat', sans-serif" }}
+      style={{ background: s.bg, color: s.text, borderColor: s.border, fontFamily: "var(--font-montserrat), sans-serif" }}
     >
       {children}
     </span>
@@ -67,7 +67,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
     >
       <div
         className="text-xs font-semibold uppercase tracking-widest mb-5"
-        style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+        style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         {title}
       </div>
@@ -84,7 +84,7 @@ function ContractPill({ name }: { name: string }) {
         background: "rgba(42,47,58,0.3)",
         color: "#eaeaea",
         borderColor: "#2a2f3a",
-        fontFamily: "'Montserrat', sans-serif",
+        fontFamily: "var(--font-montserrat), sans-serif",
       }}
     >
       {name}
@@ -118,13 +118,13 @@ export default function BugBountyPage() {
           </div>
           <h1
             className="text-4xl sm:text-5xl font-bold tracking-tight mb-4"
-            style={{ color: "#eaeaea", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             ZENTORY Labs Security
           </h1>
           <p
             className="text-base max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             Responsible disclosure for the ZENTORY Protocol. Help us keep users safe — report vulnerabilities through the channels below.
           </p>
@@ -133,7 +133,7 @@ export default function BugBountyPage() {
         {/* ── 1. Bug Bounty Program ── */}
         <SectionCard title="Bug Bounty Program">
           <div className="space-y-4">
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.6)", fontFamily: "'Montserrat', sans-serif" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>
               ZENTORY Labs will list a bug bounty program on Immunefi when the protocol launches on mainnet. Until then, vulnerability reports go directly to the team via email. Rewards are paid in USDC and scaled by severity and impact.
             </p>
             <a
@@ -143,7 +143,7 @@ export default function BugBountyPage() {
                 color: "#eaeaea",
                 background: "rgba(139,30,45,0.15)",
                 border: "1px solid rgba(139,30,45,0.4)",
-                fontFamily: "'Montserrat', sans-serif",
+                fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c2353f" strokeWidth={1.8}>
@@ -151,7 +151,7 @@ export default function BugBountyPage() {
               </svg>
               Report via Email
             </a>
-            <p className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
+            <p className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "var(--font-montserrat), sans-serif" }}>
               <span style={{ color: "#b08d57" }}>security@zentorylabs.com</span>
               {" "}· Immunefi listing follows at mainnet launch
             </p>
@@ -168,7 +168,7 @@ export default function BugBountyPage() {
                     <th
                       key={h}
                       className="pb-3 text-xs uppercase tracking-wider font-semibold"
-                      style={{ color: "#9ca3af", fontFamily: "'Montserrat', sans-serif" }}
+                      style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
                     >
                       {h}
                     </th>
@@ -184,7 +184,7 @@ export default function BugBountyPage() {
                     <td className="py-4">
                       <span
                         className="text-sm font-bold font-mono"
-                        style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
+                        style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}
                       >
                         {row.reward}
                       </span>
@@ -202,7 +202,7 @@ export default function BugBountyPage() {
               <svg width="14" height="14" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#b08d57" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
+              <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 First Critical finding receives the full <strong style={{ color: "#b08d57" }}>$25,000</strong>. Rewards are scaled based on likelihood and impact. Most projects start at the lower end of the range.
               </p>
             </div>
@@ -212,7 +212,7 @@ export default function BugBountyPage() {
         {/* ── 3. In-Scope Contracts ── */}
         <SectionCard title="In-Scope Contracts">
           <div className="space-y-3">
-            <p className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "'Montserrat', sans-serif" }}>
+            <p className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
               Only vulnerabilities in these contracts are eligible for rewards:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -224,10 +224,10 @@ export default function BugBountyPage() {
               className="mt-4 pt-4 flex items-center gap-2"
               style={{ borderTop: "1px solid #2a2f3a" }}
             >
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth={1.5}>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#bfc3c7" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "'Montserrat', sans-serif" }}>
+              <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                 Source:{" "}
                 <a
                   href="https://github.com/Zentory-Labs/zentory-protocol"
@@ -249,10 +249,10 @@ export default function BugBountyPage() {
           <ul className="space-y-3">
             {OUT_OF_SCOPE.map((item) => (
               <li key={item} className="flex items-start gap-3">
-                <svg width="14" height="14" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" strokeWidth={1.5}>
+                <svg width="14" height="14" className="flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#bfc3c7" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
                 </svg>
-                <span className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "'Montserrat', sans-serif" }}>
+                <span className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {item}
                 </span>
               </li>
@@ -271,12 +271,12 @@ export default function BugBountyPage() {
                     background: "rgba(139,30,45,0.15)",
                     color: "#c2353f",
                     border: "1px solid rgba(139,30,45,0.3)",
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
                   {i + 1}
                 </span>
-                <span className="text-sm leading-relaxed pt-0.5" style={{ color: "rgba(234,234,234,0.6)", fontFamily: "'Montserrat', sans-serif" }}>
+                <span className="text-sm leading-relaxed pt-0.5" style={{ color: "rgba(234,234,234,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {rule}
                 </span>
               </li>
@@ -295,10 +295,10 @@ export default function BugBountyPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <div>
-                <p className="text-sm font-semibold mb-1" style={{ color: "#34d399", fontFamily: "'Montserrat', sans-serif" }}>
+                <p className="text-sm font-semibold mb-1" style={{ color: "#34d399", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   Safe Harbor Commitment
                 </p>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "'Montserrat', sans-serif" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   ZENTORY Labs commits to not pursuing legal action against researchers who act in good faith under this program. We aim to triage reports within 24 hours, assess severity within 7 days, and deploy fixes within 30 days for critical vulnerabilities.
                 </p>
               </div>
@@ -315,7 +315,7 @@ export default function BugBountyPage() {
               color: "#eaeaea",
               background: "linear-gradient(135deg, #8b1e2d 0%, #c2353f 100%)",
               boxShadow: "0 0 40px rgba(139,30,45,0.35)",
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "var(--font-montserrat), sans-serif",
             }}
           >
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -323,7 +323,7 @@ export default function BugBountyPage() {
             </svg>
             Report a Vulnerability via Email
           </a>
-          <p className="mt-3 text-xs" style={{ color: "rgba(234,234,234,0.25)", fontFamily: "'Montserrat', sans-serif" }}>
+          <p className="mt-3 text-xs" style={{ color: "rgba(234,234,234,0.25)", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Confidential — do NOT discuss vulnerabilities publicly until patched
           </p>
         </div>
