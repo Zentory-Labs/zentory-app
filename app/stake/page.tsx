@@ -68,7 +68,7 @@ function LockBar({ lockEnd, lockStart }: { lockEnd: bigint; lockStart: bigint })
         <span>{pct}%</span>
       </div>
       <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-[#f59e0b] to-[#fbbf24] rounded-full transition-all" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-gradient-to-r from-[#b08d57] to-[#e8c88a] rounded-full transition-all" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -153,10 +153,10 @@ export default function StakePage() {
     // Visitors got a viewport of black with one line of text — explain what
     // staking actually does before asking for a wallet.
     return (
-      <div className="min-h-screen relative" style={{ background: "#05070c" }}>
+      <div className="min-h-screen relative" style={{ background: "#0b0b0d" }}>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
-        <main className="mx-auto max-w-3xl px-6 py-16">
+        <div className="mx-auto max-w-3xl">
           <h1 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>ZENT Staking</h1>
           <p className="text-white/60 mb-10 max-w-xl">
             Lock ZENT for 1–730 days to receive <span className="text-white/90">veZENT</span> — time-decaying
@@ -183,7 +183,7 @@ export default function StakePage() {
               it is not yet publicly distributed, so staking is currently for contributors.
             </p>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
@@ -191,14 +191,11 @@ export default function StakePage() {
   return (
     <div className="min-h-screen relative">
 
-      <header className="border-b sticky top-0 z-10" style={{ background: "rgba(20, 20, 23, 0.9)", backdropFilter: "blur(20px)", borderColor: "#2a2f3a" }}>
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <h1 className="text-2xl font-bold text-white">ZENT Staking</h1>
-          <p className="text-xs text-white/40 mt-0.5">Lock ZENT to receive veZENT governance power and protocol access</p>
+      <div className="mx-auto max-w-4xl space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-white">ZENT Staking</h1>
+          <p className="text-sm text-white/60 mt-1">Lock ZENT to receive veZENT governance power and protocol access</p>
         </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-6 py-10 space-y-8">
         {/* Protocol Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
@@ -251,7 +248,7 @@ export default function StakePage() {
 
         {/* Stake Form */}
         <div className="glass-card p-8 glass-hover">
-          <h2 className="text-sm font-semibold text-[#f59e0b] uppercase tracking-wider mb-1">Stake ZENT</h2>
+          <h2 className="text-sm font-semibold text-[#b08d57] uppercase tracking-wider mb-1">Stake ZENT</h2>
           <p className="text-xs text-white/40 mb-6">Lock ZENT for up to 730 days. Longer locks = more veZENT = more governance power.</p>
 
           <form onSubmit={handleStake} className="space-y-5">
@@ -346,7 +343,7 @@ export default function StakePage() {
             View ZENTStaking on Hyperliquid Explorer →
           </a>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
@@ -388,15 +385,15 @@ function TopStakersBlock() {
             <span
               className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold flex-shrink-0"
               style={{
-                background: s.rank <= 3 ? "rgba(240,192,64,0.15)" : "rgba(255,255,255,0.04)",
-                color: s.rank <= 3 ? "#f0c040" : "rgba(255,255,255,0.6)",
+                background: s.rank <= 3 ? "rgba(176,141,87,0.15)" : "rgba(255,255,255,0.04)",
+                color: s.rank <= 3 ? "#b08d57" : "rgba(255,255,255,0.6)",
               }}
             >
               #{s.rank}
             </span>
             <span
               className="flex-1 text-sm font-mono truncate"
-              style={{ color: s.ens ? "#7c5cff" : "#bfc3c7", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
+              style={{ color: s.ens ? "#c2353f" : "#bfc3c7", fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif" }}
               title={s.address}
             >
               {s.ens ?? `${s.address.slice(0, 6)}…${s.address.slice(-4)}`}

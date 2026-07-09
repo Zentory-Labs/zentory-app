@@ -63,8 +63,8 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
   }, [research]);
 
   const contributorColors: Record<string, string> = {
-    gp: "#0d80fa",
-    lumibot: "#9945FF",
+    gp: "#b08d57",
+    lumibot: "#c2353f",
     manual: "#b08d57",
   };
 
@@ -81,13 +81,13 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
             <div className="flex-1 rounded-full h-2 overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
               <div
                 className="h-full rounded-full transition-all duration-700"
-                style={{ width: `${Math.min(winRate, 100)}%`, background: contributorColors[name] ?? "#0d80fa" }}
+                style={{ width: `${Math.min(winRate, 100)}%`, background: contributorColors[name] ?? "#b08d57" }}
               />
             </div>
             <div className="w-16 text-right text-xs font-mono" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "'Montserrat', sans-serif" }}>
               {count} trades
             </div>
-            <div className="w-12 text-right text-xs font-bold" style={{ color: winRate >= 55 ? "#22c55e" : "#ef4444", fontFamily: "'Montserrat', sans-serif" }}>
+            <div className="w-12 text-right text-xs font-bold" style={{ color: winRate >= 55 ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}>
               {winRate.toFixed(0)}%
             </div>
           </div>
@@ -166,7 +166,7 @@ export default function ResearchPage() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <main className="mx-auto max-w-7xl px-6 py-10 space-y-8">
+      <div className="space-y-8">
         {/* Header */}
         <div className="glass-card p-6 flex items-center justify-between">
           <div>
@@ -250,7 +250,7 @@ export default function ResearchPage() {
             <a href="/state-of-protocol" className="underline" style={{ color: "#b08d57" }}>State of Protocol</a>.
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

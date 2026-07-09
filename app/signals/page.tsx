@@ -63,7 +63,7 @@ const ASSET_CLASS_COIN: Record<number, string> = {
 
 const CONVICTION_COLORS = [
   { min: 10000, label: "Diamond", color: "#78c8ff" },
-  { min: 1000, label: "Gold", color: "#f0c040" },
+  { min: 1000, label: "Gold", color: "#b08d57" },
   { min: 100, label: "Silver", color: "#c0c0c0" },
   { min: 0, label: "Bronze", color: "#cd7f32" },
 ];
@@ -106,9 +106,9 @@ function fmtTime(ts: number): string {
 }
 
 function directionLabel(dir: number): { label: string; color: string } {
-  if (dir > 2000) return { label: "STRONG BUY", color: "#4ade80" };
-  if (dir > 500) return { label: "BUY", color: "#86efac" };
-  if (dir < -2000) return { label: "STRONG SELL", color: "#f87171" };
+  if (dir > 2000) return { label: "STRONG BUY", color: "#34d399" };
+  if (dir > 500) return { label: "BUY", color: "#34d399" };
+  if (dir < -2000) return { label: "STRONG SELL", color: "#c2353f" };
   if (dir < -500) return { label: "SELL", color: "#fca5a5" };
   return { label: "NEUTRAL", color: "#9ca3af" };
 }
@@ -270,7 +270,7 @@ export default function SignalsPage() {
           onClick={fetchSignals}
           disabled={loading}
           className="px-4 py-2 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-50"
-          style={{ background: "rgba(240,192,64,0.1)", color: "#f0c040", border: "1px solid rgba(240,192,64,0.2)", fontFamily: "'Montserrat', sans-serif" }}
+          style={{ background: "rgba(176,141,87,0.1)", color: "#b08d57", border: "1px solid rgba(176,141,87,0.2)", fontFamily: "'Montserrat', sans-serif" }}
         >
           {loading ? "Loading..." : "Refresh"}
         </button>
@@ -306,9 +306,9 @@ export default function SignalsPage() {
             onClick={() => setTab(t)}
             className="px-5 py-2 rounded-lg text-sm font-semibold transition-all"
             style={{
-              background: tab === t ? "rgba(240,192,64,0.15)" : "transparent",
-              color: tab === t ? "#f0c040" : "rgba(255,255,255,0.4)",
-              border: tab === t ? "1px solid rgba(240,192,64,0.3)" : "1px solid transparent",
+              background: tab === t ? "rgba(176,141,87,0.15)" : "transparent",
+              color: tab === t ? "#b08d57" : "rgba(255,255,255,0.4)",
+              border: tab === t ? "1px solid rgba(176,141,87,0.3)" : "1px solid transparent",
               fontFamily: "'Montserrat', sans-serif",
             }}
           >
@@ -325,9 +325,9 @@ export default function SignalsPage() {
               onClick={() => setAssetFilter(ac)}
               className="px-3 py-1 rounded-full text-xs transition-all"
               style={{
-                background: assetFilter === ac ? "rgba(124,92,255,0.15)" : "transparent",
-                color: assetFilter === ac ? "#7c5cff" : "rgba(255,255,255,0.3)",
-                border: assetFilter === ac ? "1px solid rgba(124,92,255,0.3)" : "1px solid transparent",
+                background: assetFilter === ac ? "rgba(194,53,63,0.15)" : "transparent",
+                color: assetFilter === ac ? "#c2353f" : "rgba(255,255,255,0.3)",
+                border: assetFilter === ac ? "1px solid rgba(194,53,63,0.3)" : "1px solid transparent",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
@@ -377,9 +377,9 @@ export default function SignalsPage() {
                         if (demoLabel) {
                           return (
                             <div className="flex items-center gap-1.5" title={sig.provider}>
-                              <span className="text-xs font-semibold truncate" style={{ color: "#7c5cff" }}>{demoLabel}</span>
+                              <span className="text-xs font-semibold truncate" style={{ color: "#c2353f" }}>{demoLabel}</span>
                               <span className="text-[9px] px-1 py-0.5 rounded uppercase tracking-wide flex-shrink-0"
-                                style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff", border: "1px solid rgba(124,92,255,0.3)" }}>
+                                style={{ background: "rgba(194,53,63,0.15)", color: "#c2353f", border: "1px solid rgba(194,53,63,0.3)" }}>
                                 Demo
                               </span>
                             </div>
@@ -388,7 +388,7 @@ export default function SignalsPage() {
                         return (
                           <div
                             className={`text-xs truncate ${sig.provider.startsWith("0x") ? "font-mono" : "font-semibold"}`}
-                            style={{ color: "#7c5cff" }}
+                            style={{ color: "#c2353f" }}
                             title={sig.provider}
                           >
                             {sig.provider.startsWith("0x") && sig.provider.length === 42
@@ -425,7 +425,7 @@ export default function SignalsPage() {
                       <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
                         Conviction
                       </div>
-                      <div className="font-bold text-sm" style={{ color: tier.color, fontFamily: "'Space Mono', monospace" }}>
+                      <div className="font-bold text-sm" style={{ color: tier.color, fontFamily: "var(--font-space-mono), monospace" }}>
                         {sig.convictionStaked.toLocaleString()}
                       </div>
                       <div className="text-xs" style={{ color: tier.color, fontFamily: "'Montserrat', sans-serif" }}>
@@ -436,7 +436,7 @@ export default function SignalsPage() {
                     {/* Direction indicator */}
                     <div
                       className="w-1 h-10 rounded-full flex-shrink-0"
-                      style={{ background: sig.direction > 0 ? "#4ade80" : sig.direction < 0 ? "#f87171" : "#9ca3af" }}
+                      style={{ background: sig.direction > 0 ? "#34d399" : sig.direction < 0 ? "#c2353f" : "#9ca3af" }}
                     />
                   </div>
                 );
@@ -485,7 +485,7 @@ export default function SignalsPage() {
                     }}
                   >
                     {/* Rank */}
-                    <div className="font-bold text-sm" style={{ color: i === 0 ? "#f0c040" : i === 1 ? "#c0c0c0" : i === 2 ? "#cd7f32" : "rgba(106,111,117,0.5)", fontFamily: "'Space Mono', monospace" }}>
+                    <div className="font-bold text-sm" style={{ color: i === 0 ? "#b08d57" : i === 1 ? "#c0c0c0" : i === 2 ? "#cd7f32" : "rgba(106,111,117,0.5)", fontFamily: "var(--font-space-mono), monospace" }}>
                       {i + 1}
                     </div>
 
@@ -499,7 +499,7 @@ export default function SignalsPage() {
                           <div
                             key={si}
                             className="w-2 h-2 rounded-full"
-                            style={{ background: sig.direction > 0 ? "#4ade80" : sig.direction < 0 ? "#f87171" : "#9ca3af" }}
+                            style={{ background: sig.direction > 0 ? "#34d399" : sig.direction < 0 ? "#c2353f" : "#9ca3af" }}
                             title={`${directionLabel(sig.direction).label} ${ASSET_CLASS_COIN[sig.assetClass] ?? "?"}`}
                           />
                         ))}
@@ -507,18 +507,18 @@ export default function SignalsPage() {
                     </div>
 
                     {/* Signals count */}
-                    <div className="text-right text-sm" style={{ color: "#eaeaea", fontFamily: "'Space Mono', monospace" }}>
+                    <div className="text-right text-sm" style={{ color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}>
                       {p.totalSignals}
                     </div>
 
                     {/* Avg confidence */}
-                    <div className="text-right text-sm" style={{ color: "#eaeaea", fontFamily: "'Space Mono', monospace" }}>
+                    <div className="text-right text-sm" style={{ color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}>
                       {p.avgConfidence > 0 ? `${Math.round(p.avgConfidence / 100)}%` : "—"}
                     </div>
 
                     {/* Total conviction */}
                     <div className="text-right">
-                      <div className="text-sm font-bold" style={{ color: tier.color, fontFamily: "'Space Mono', monospace" }}>
+                      <div className="text-sm font-bold" style={{ color: tier.color, fontFamily: "var(--font-space-mono), monospace" }}>
                         {p.totalConviction.toLocaleString()}
                       </div>
                       <div className="text-xs" style={{ color: tier.color, fontFamily: "'Montserrat', sans-serif" }}>
@@ -540,12 +540,12 @@ export default function SignalsPage() {
       {/* Ghost Portfolio — coming Q3 2026, intentionally not linked yet */}
       <div
         className="mt-8 rounded-2xl p-6"
-        style={{ background: "rgba(124,92,255,0.04)", border: "1px solid rgba(124,92,255,0.18)" }}
+        style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.18)" }}
       >
         <div className="flex items-center gap-3 mb-2">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-            style={{ background: "rgba(124,92,255,0.2)", color: "#7c5cff", fontFamily: "'Space Mono', monospace" }}
+            style={{ background: "rgba(194,53,63,0.2)", color: "#c2353f", fontFamily: "var(--font-space-mono), monospace" }}
           >
             G
           </div>

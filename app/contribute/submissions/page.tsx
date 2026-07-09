@@ -78,9 +78,9 @@ function ResearchTable({ research }: { research: Research[] }) {
         <tbody>
           {research.map((s) => {
             const isLong = s.direction > 0;
-            const statusColor = s.status === "Active" ? "#22c55e" : s.status === "Resolved" ? "#b08d57" : "#6a6f75";
+            const statusColor = s.status === "Active" ? "#34d399" : s.status === "Resolved" ? "#b08d57" : "#6a6f75";
             const accuracyPct = s.accuracy != null ? `${(s.accuracy / 100).toFixed(1)}%` : "—";
-            const payoutColor = s.payout != null ? (s.payout >= 0 ? "#22c55e" : "#ef4444") : undefined;
+            const payoutColor = s.payout != null ? (s.payout >= 0 ? "#34d399" : "#c2353f") : undefined;
             return (
               <tr key={s.id} style={{ borderTop: "1px solid #2a2f3a", color: "#eaeaea" }}>
                 <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "rgba(106,111,117,0.7)" }}>
@@ -91,7 +91,7 @@ function ResearchTable({ research }: { research: Research[] }) {
                 </td>
                 <td className="py-3 pr-4 font-semibold whitespace-nowrap">{s.asset_id}</td>
                 <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "rgba(106,111,117,0.6)" }}>{s.asset_class}</td>
-                <td className="py-3 pr-4 font-semibold whitespace-nowrap" style={{ color: isLong ? "#22c55e" : "#ef4444" }}>
+                <td className="py-3 pr-4 font-semibold whitespace-nowrap" style={{ color: isLong ? "#34d399" : "#c2353f" }}>
                   {isLong ? "+ LONG" : "- SHORT"}
                 </td>
                 <td className="py-3 pr-4 text-xs whitespace-nowrap">{Math.round((s.confidence / 10000) * 100)}%</td>

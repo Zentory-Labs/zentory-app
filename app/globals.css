@@ -40,9 +40,12 @@
   --ring: #8b1e2d;
   --radius: 0.75rem;
 
-  /* Semantic */
-  --profit: #b08d57;
+  /* Semantic — one positive (green) + one negative (brand red), used everywhere
+     so gain/loss/live states read identically across every page. */
+  --profit: #34d399;
+  --positive: #34d399;
   --loss: #c2353f;
+  --negative: #c2353f;
 }
 
 /* Glass utility classes */

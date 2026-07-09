@@ -65,9 +65,9 @@ function CopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
       style={{
-        background: copied ? "rgba(34,197,94,0.12)" : "rgba(176,141,87,0.1)",
-        border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "rgba(176,141,87,0.3)"}`,
-        color: copied ? "#22c55e" : "#b08d57",
+        background: copied ? "rgba(52,211,153,0.12)" : "rgba(176,141,87,0.1)",
+        border: `1px solid ${copied ? "rgba(52,211,153,0.3)" : "rgba(176,141,87,0.3)"}`,
+        color: copied ? "#34d399" : "#b08d57",
         fontFamily: "'Montserrat', sans-serif",
       }}
     >
@@ -85,8 +85,8 @@ function RevokeModal({ keyId, keyLabel, onConfirm, onCancel }: { keyId: number; 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}>
       <div className="w-full max-w-md rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(194,53,63,0.12)", border: "1px solid rgba(194,53,63,0.25)" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c2353f" strokeWidth="1.5">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
               <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
@@ -110,7 +110,7 @@ function RevokeModal({ keyId, keyLabel, onConfirm, onCancel }: { keyId: number; 
           <button
             onClick={onConfirm}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01]"
-            style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.4)", color: "#ef4444", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: "rgba(194,53,63,0.15)", border: "1px solid rgba(194,53,63,0.4)", color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
           >
             Revoke Key
           </button>
@@ -131,8 +131,8 @@ function ApiKeyCard({ k, onRevoke }: { k: ApiKeyInfo; onRevoke: (id: number, lab
               {k.prefix}****{/* *** */}
             </span>
             {k.isActive && (
-              <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "#22c55e" }}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e", boxShadow: "0 0 6px #22c55e" }} />
+              <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "#34d399" }}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#34d399", boxShadow: "0 0 6px #34d399" }} />
                 Active
               </span>
             )}
@@ -146,7 +146,7 @@ function ApiKeyCard({ k, onRevoke }: { k: ApiKeyInfo; onRevoke: (id: number, lab
         <button
           onClick={() => onRevoke(k.id, k.label)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:scale-[1.03]"
-          style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", fontFamily: "'Montserrat', sans-serif" }}
+          style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.2)", color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           Revoke

@@ -45,11 +45,11 @@ const ASSET_CLASS_COLORS: Record<string, string> = {
 };
 
 const GRADE_COLORS: Record<string, string> = {
-  "A+": "#22c55e",
-  "A": "#4ade80",
-  "B": "#facc15",
+  "A+": "#34d399",
+  "A": "#34d399",
+  "B": "#b08d57",
   "C": "#f97316",
-  "D": "#ef4444",
+  "D": "#c2353f",
 };
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
@@ -112,7 +112,7 @@ function useEpochTimer() {
 // ─── AccuracyBadge ───────────────────────────────────────────────────────────
 
 function AccuracyBadge({ value, grade }: { value: number; grade: string }) {
-  const color = value >= 65 ? "#22c55e" : value >= 55 ? "#facc15" : "#ef4444";
+  const color = value >= 65 ? "#34d399" : value >= 55 ? "#b08d57" : "#c2353f";
   return (
     <div className="flex items-center gap-1.5">
       <span className="text-xs font-bold font-mono" style={{ color, fontFamily: "'Montserrat', sans-serif" }}>
@@ -140,7 +140,7 @@ function RankChange({ change }: { change: number }) {
   return (
     <span
       className="text-xs font-mono font-bold ml-1"
-      style={{ color: up ? "#22c55e" : "#ef4444", fontFamily: "'Montserrat', sans-serif" }}
+      style={{ color: up ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
     >
       {up ? "↑" : "↓"}{Math.abs(change)}
     </span>
@@ -571,7 +571,7 @@ export default function LeaderboardPage() {
                 color: "#b08d57",
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
               Live Leaderboard
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight flex flex-wrap items-center gap-3 mt-1" style={{ color: "#eaeaea" }}>
@@ -593,7 +593,7 @@ export default function LeaderboardPage() {
         {/* ── Stat cards (live; led by the founding provider) ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Live Providers" value={houseLoading && !house ? "—" : (house ? 1 : 0) + providers.length} accent="#b08d57" />
-          <StatCard label="Days Recording" value={house ? house.daysLive : "—"} accent="#22c55e" />
+          <StatCard label="Days Recording" value={house ? house.daysLive : "—"} accent="#34d399" />
           <StatCard label="Assets Tracked" value={house ? house.assets : "—"} accent="#eaeaea" />
           <StatCard label="Avg Ahead of Holding" value={house ? `${house.avgAhead >= 0 ? "+" : ""}${(house.avgAhead * 100).toFixed(1)}%` : "—"} accent="#b08d57" />
         </div>

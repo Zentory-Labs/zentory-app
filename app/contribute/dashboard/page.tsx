@@ -169,9 +169,9 @@ function CopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-[1.03]"
       style={{
-        background: copied ? "rgba(34,197,94,0.12)" : "rgba(176,141,87,0.1)",
-        border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "rgba(176,141,87,0.3)"}`,
-        color: copied ? "#22c55e" : "#b08d57",
+        background: copied ? "rgba(52,211,153,0.12)" : "rgba(176,141,87,0.1)",
+        border: `1px solid ${copied ? "rgba(52,211,153,0.3)" : "rgba(176,141,87,0.3)"}`,
+        color: copied ? "#34d399" : "#b08d57",
         fontFamily: "'Montserrat', sans-serif",
       }}
     >
@@ -205,7 +205,7 @@ function MetricCard({ label, value, accent, pill }: { label: string; value: stri
         {pill && (
           <span
             className="text-xs px-2 py-0.5 rounded-full font-semibold"
-            style={{ background: pill.startsWith("+") ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: pill.startsWith("+") ? "#22c55e" : "#ef4444", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: pill.startsWith("+") ? "rgba(52,211,153,0.15)" : "rgba(194,53,63,0.15)", color: pill.startsWith("+") ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
           >
             {pill}
           </span>
@@ -301,9 +301,9 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
             onClick={() => setDirection(10000)}
             className="py-3 rounded-xl text-sm font-bold transition-all duration-200"
             style={{
-              background: dirLong ? "rgba(34,197,94,0.15)" : "rgba(0,0,0,0.3)",
-              border: `1px solid ${dirLong ? "rgba(34,197,94,0.4)" : "#2a2f3a"}`,
-              color: dirLong ? "#22c55e" : "rgba(234,234,234,0.4)",
+              background: dirLong ? "rgba(52,211,153,0.15)" : "rgba(0,0,0,0.3)",
+              border: `1px solid ${dirLong ? "rgba(52,211,153,0.4)" : "#2a2f3a"}`,
+              color: dirLong ? "#34d399" : "rgba(234,234,234,0.4)",
               fontFamily: "'Montserrat', sans-serif",
             }}
           >
@@ -314,9 +314,9 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
             onClick={() => setDirection(-10000)}
             className="py-3 rounded-xl text-sm font-bold transition-all duration-200"
             style={{
-              background: !dirLong ? "rgba(239,68,68,0.15)" : "rgba(0,0,0,0.3)",
-              border: `1px solid ${!dirLong ? "rgba(239,68,68,0.4)" : "#2a2f3a"}`,
-              color: !dirLong ? "#ef4444" : "rgba(234,234,234,0.4)",
+              background: !dirLong ? "rgba(194,53,63,0.15)" : "rgba(0,0,0,0.3)",
+              border: `1px solid ${!dirLong ? "rgba(194,53,63,0.4)" : "#2a2f3a"}`,
+              color: !dirLong ? "#c2353f" : "rgba(234,234,234,0.4)",
               fontFamily: "'Montserrat', sans-serif",
             }}
           >
@@ -370,12 +370,12 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
       </div>
 
       {error && (
-        <p className="text-xs rounded-lg px-3 py-2" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-xs rounded-lg px-3 py-2" style={{ background: "rgba(194,53,63,0.1)", border: "1px solid rgba(194,53,63,0.3)", color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}>
           {error}
         </p>
       )}
       {success && (
-        <p className="text-xs rounded-lg px-3 py-2" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#22c55e", fontFamily: "'Montserrat', sans-serif" }}>
+        <p className="text-xs rounded-lg px-3 py-2" style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "#34d399", fontFamily: "'Montserrat', sans-serif" }}>
           Research published successfully
         </p>
       )}
@@ -423,7 +423,7 @@ function ResearchTable({ research }: { research: Research[] }) {
         <tbody>
           {research.map((s) => {
             const isLong = s.direction > 0;
-            const statusColor = s.status === "Active" ? "#22c55e" : s.status === "Resolved" ? "#b08d57" : "#6a6f75";
+            const statusColor = s.status === "Active" ? "#34d399" : s.status === "Resolved" ? "#b08d57" : "#6a6f75";
             return (
               <tr key={s.id} style={{ borderTop: "1px solid #2a2f3a", color: "#eaeaea" }}>
                 <td className="py-3 pr-4 text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
@@ -431,7 +431,7 @@ function ResearchTable({ research }: { research: Research[] }) {
                 </td>
                 <td className="py-3 pr-4 font-semibold">{s.asset_id}</td>
                 <td className="py-3 pr-4 text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>{s.asset_class}</td>
-                <td className="py-3 pr-4 font-semibold" style={{ color: isLong ? "#22c55e" : "#ef4444" }}>
+                <td className="py-3 pr-4 font-semibold" style={{ color: isLong ? "#34d399" : "#c2353f" }}>
                   {isLong ? "+ LONG" : "- SHORT"}
                 </td>
                 <td className="py-3 pr-4 text-xs">{Math.round((s.confidence / 10000) * 100)}%</td>
@@ -536,10 +536,10 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
 
         {/* New key display */}
         {generatedKey && (
-          <div className="mb-4 rounded-xl p-4" style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)" }}>
+          <div className="mb-4 rounded-xl p-4" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.25)" }}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
-                <p className="text-xs font-bold mb-1" style={{ color: "#22c55e", fontFamily: "'Montserrat', sans-serif" }}>
+                <p className="text-xs font-bold mb-1" style={{ color: "#34d399", fontFamily: "'Montserrat', sans-serif" }}>
                   API Key Generated
                 </p>
                 <p className="text-[11px] mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "'Montserrat', sans-serif" }}>
@@ -632,7 +632,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard label="Total Research" value={loadingAnalytics ? "—" : String(analytics?.totalResearch ?? 0)} accent="#eaeaea" />
         <MetricCard label="Avg Accuracy" value={loadingAnalytics ? "—" : `${(analytics?.avgAccuracy ?? 0).toFixed(1)}%`} accent="#b08d57" />
-        <MetricCard label="ZENT Earned" value={loadingAnalytics ? "—" : String(analytics?.totalPayout ?? 0)} accent={(analytics?.totalPayout ?? 0) >= 0 ? "#22c55e" : "#ef4444"} pill={loadingAnalytics ? undefined : `${(analytics?.totalPayout ?? 0) >= 0 ? "+" : ""}${analytics?.totalPayout ?? 0}`} />
+        <MetricCard label="ZENT Earned" value={loadingAnalytics ? "—" : String(analytics?.totalPayout ?? 0)} accent={(analytics?.totalPayout ?? 0) >= 0 ? "#34d399" : "#c2353f"} pill={loadingAnalytics ? undefined : `${(analytics?.totalPayout ?? 0) >= 0 ? "+" : ""}${analytics?.totalPayout ?? 0}`} />
         <MetricCard label="Rank" value={loadingAnalytics ? "—" : `#${analytics?.currentRank ?? "—"}`} accent="#b08d57" />
       </div>
 

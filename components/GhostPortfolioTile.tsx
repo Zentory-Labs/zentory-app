@@ -53,8 +53,8 @@ type Point = {
 
 const COLOR = {
   hold:   "rgba(255,255,255,0.45)",
-  ghost:  "#7c5cff",
-  actual: "#27d182",
+  ghost:  "#c2353f",
+  actual: "#34d399",
   grid:   "rgba(255,255,255,0.06)",
   text:   "rgba(255,255,255,0.5)",
 };
@@ -113,7 +113,7 @@ export default function GhostPortfolioTile({ asset }: { asset: string }) {
         </h3>
         <span
           className="text-xs px-2 py-0.5 rounded-full"
-          style={{ background: "rgba(124,92,255,0.15)", color: COLOR.ghost, fontWeight: 600 }}
+          style={{ background: "rgba(194,53,63,0.15)", color: COLOR.ghost, fontWeight: 600 }}
         >
           forward-only, hash-chained
         </span>
@@ -186,7 +186,7 @@ function Stat({ label, value, hint, tone }: { label: string; value: string; hint
   return (
     <div
       className="p-3 rounded-lg"
-      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(42,47,58,0.6)", fontFamily: "'Space Mono', monospace" }}
+      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(42,47,58,0.6)", fontFamily: "var(--font-space-mono), monospace" }}
     >
       <div className="uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)", fontSize: 10 }}>
         {label}

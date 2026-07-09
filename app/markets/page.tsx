@@ -43,7 +43,7 @@ const PLANNED_SIGNAL_MARKETS: PlannedSignalMarket[] = [
 ];
 
 const ASSET_CLASS_COLORS: Record<AssetClass, string> = {
-  CRYPTO_SPOT: "#22c55e",
+  CRYPTO_SPOT: "#34d399",
   CRYPTO_PERP: "#B08D57",
   EQUITY: "#627EEA",
   FOREX: "#14F195",
@@ -75,7 +75,7 @@ export default function MarketsPage() {
           className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold mb-3"
           style={{ background: "rgba(176,141,87,0.12)", borderColor: "rgba(176,141,87,0.3)", color: "#b08d57" }}
         >
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
+          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
           Testnet · HyperEVM 998
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: "#eaeaea" }}>
@@ -132,7 +132,7 @@ export default function MarketsPage() {
                   ZENTORY SpotVault · HyperEVM testnet
                 </td>
                 <td className="px-5 py-4">
-                  <span className="text-xs font-semibold" style={{ color: "#22c55e" }}>
+                  <span className="text-xs font-semibold" style={{ color: "#34d399" }}>
                     Live (testnet)
                   </span>
                 </td>
@@ -194,14 +194,14 @@ export default function MarketsPage() {
 
       <div
         className="rounded-2xl p-6 mt-10 text-xs"
-        style={{ background: "rgba(124,92,255,0.04)", border: "1px solid rgba(124,92,255,0.2)", color: "rgba(234,234,234,0.7)" }}
+        style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "rgba(234,234,234,0.7)" }}
       >
-        <div className="font-semibold mb-2" style={{ color: "#7c5cff" }}>What&rsquo;s coming</div>
+        <div className="font-semibold mb-2" style={{ color: "#c2353f" }}>What&rsquo;s coming</div>
         Conviction-Score leaderboard and per-market provider stats land alongside the
         EpochScoring settlement pipeline (Q3 2026). Track progress in{" "}
-        <Link href="/state-of-protocol" className="underline" style={{ color: "#7c5cff" }}>State of Protocol</Link>.
+        <Link href="/state-of-protocol" className="underline" style={{ color: "#c2353f" }}>State of Protocol</Link>.
         To try the live BTC/ETH/SOL/XRP vaults today, start at{" "}
-        <Link href="/faucet" className="underline" style={{ color: "#7c5cff" }}>/faucet</Link>.
+        <Link href="/faucet" className="underline" style={{ color: "#c2353f" }}>/faucet</Link>.
       </div>
     </div>
   );

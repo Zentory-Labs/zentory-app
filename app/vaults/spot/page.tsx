@@ -48,7 +48,7 @@ function num(value: unknown, decimals: number): number {
 
 const CARD = { background: "#1c1c21", border: "1px solid #2a2f3a" } as const;
 const DIM = "rgba(106,111,117,0.9)";
-const NAV_CHART = { actual: "#f0c040", hold: "#5a5a6a", grid: "rgba(255,255,255,0.06)", text: "rgba(255,255,255,0.4)" } as const;
+const NAV_CHART = { actual: "#b08d57", hold: "#5a5a6a", grid: "rgba(255,255,255,0.06)", text: "rgba(255,255,255,0.4)" } as const;
 
 export default function SpotVaultPage() {
   const { address: user, isConnected } = useAccount();
@@ -215,12 +215,12 @@ export default function SpotVaultPage() {
           </p>
         </div>
         <span className="ml-auto px-3 py-1 rounded-full text-xs font-bold"
-          style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff", border: "1px solid rgba(124,92,255,0.3)" }}>
+          style={{ background: "rgba(194,53,63,0.15)", color: "#c2353f", border: "1px solid rgba(194,53,63,0.3)" }}>
           Research · Testnet
         </span>
         {!!isCircuitBreaker.data && (
           <span className="px-3 py-1 rounded-full text-xs font-bold"
-            style={{ background: "rgba(248,113,113,0.15)", color: "#f87171", border: "1px solid rgba(248,113,113,0.3)" }}>
+            style={{ background: "rgba(194,53,63,0.15)", color: "#c2353f", border: "1px solid rgba(194,53,63,0.3)" }}>
             Circuit Breaker Active
           </span>
         )}
@@ -256,7 +256,7 @@ export default function SpotVaultPage() {
             ].map((m) => (
               <div key={m.label}>
                 <div className="text-xs uppercase tracking-widest mb-1" style={{ color: DIM }}>{m.label}</div>
-                <div className="text-lg font-bold" style={{ color: m.value >= 0 ? "#4ade80" : "#f87171" }}>
+                <div className="text-lg font-bold" style={{ color: m.value >= 0 ? "#34d399" : "#c2353f" }}>
                   {signedPct(m.value)}
                 </div>
               </div>
@@ -291,9 +291,9 @@ export default function SpotVaultPage() {
                   onClick={() => setActiveTab(tab)}
                   className="flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
                   style={{
-                    background: activeTab === tab ? (tab === "deposit" ? "rgba(240,192,64,0.15)" : "rgba(124,92,255,0.15)") : "transparent",
-                    color: activeTab === tab ? (tab === "deposit" ? "#f0c040" : "#7c5cff") : "rgba(255,255,255,0.4)",
-                    border: activeTab === tab ? `1px solid ${tab === "deposit" ? "rgba(240,192,64,0.3)" : "rgba(124,92,255,0.3)"}` : "1px solid transparent",
+                    background: activeTab === tab ? (tab === "deposit" ? "rgba(176,141,87,0.15)" : "rgba(194,53,63,0.15)") : "transparent",
+                    color: activeTab === tab ? (tab === "deposit" ? "#b08d57" : "#c2353f") : "rgba(255,255,255,0.4)",
+                    border: activeTab === tab ? `1px solid ${tab === "deposit" ? "rgba(176,141,87,0.3)" : "rgba(194,53,63,0.3)"}` : "1px solid transparent",
                   }}
                 >
                   {tab}
@@ -308,7 +308,7 @@ export default function SpotVaultPage() {
                   <input
                     type="number" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} placeholder="0.0000"
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
-                    style={{ background: "#12121f", border: "1px solid #2a2f3a", color: "#eaeaea" }}
+                    style={{ background: "#141417", border: "1px solid #2a2f3a", color: "#eaeaea" }}
                   />
                   <div className="flex justify-between text-xs mt-1" style={{ color: DIM }}>
                     <span>Balance: {userAssetRaw.toFixed(6)}</span>
@@ -319,25 +319,25 @@ export default function SpotVaultPage() {
                 {needsApproval ? (
                   <button onClick={handleApprove} disabled={isApproveLoading}
                     className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
-                    style={{ background: "rgba(240,192,64,0.15)", color: "#f0c040", border: "1px solid rgba(240,192,64,0.3)" }}>
+                    style={{ background: "rgba(176,141,87,0.15)", color: "#b08d57", border: "1px solid rgba(176,141,87,0.3)" }}>
                     {isApproveLoading ? "Approving..." : "Approve WBTC"}
                   </button>
                 ) : (
                   <button onClick={handleDeposit} disabled={isDepositLoading || !!isCircuitBreaker.data}
                     className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
-                    style={{ background: "#f0c040", color: "#050507" }}>
+                    style={{ background: "#b08d57", color: "#050507" }}>
                     {isDepositLoading ? "Depositing..." : "Deposit"}
                   </button>
                 )}
 
                 {(approveError || depositError) && (
-                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "monospace" }}>
+                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "#c2353f", fontFamily: "monospace" }}>
                     {(approveError || depositError)?.message?.split("\n")[0] ?? String(approveError ?? depositError)}
                   </div>
                 )}
-                {isDepositSuccess && <div className="text-center text-sm" style={{ color: "#4ade80" }}>Deposit successful!</div>}
+                {isDepositSuccess && <div className="text-center text-sm" style={{ color: "#34d399" }}>Deposit successful!</div>}
                 <p className="text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
-                  Need testnet BTC? <Link href="/faucet" className="underline" style={{ color: "#7c5cff" }}>Mint from the faucet →</Link>
+                  Need testnet BTC? <Link href="/faucet" className="underline" style={{ color: "#c2353f" }}>Mint from the faucet →</Link>
                 </p>
               </div>
             ) : (
@@ -347,7 +347,7 @@ export default function SpotVaultPage() {
                   <input
                     type="number" value={withdrawShares} onChange={(e) => setWithdrawShares(e.target.value)} placeholder="0.0000"
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
-                    style={{ background: "#12121f", border: "1px solid #2a2f3a", color: "#eaeaea" }}
+                    style={{ background: "#141417", border: "1px solid #2a2f3a", color: "#eaeaea" }}
                   />
                   <div className="flex justify-between text-xs mt-1" style={{ color: DIM }}>
                     <span>Your shares: {userSharesRaw.toFixed(6)}</span>
@@ -356,15 +356,15 @@ export default function SpotVaultPage() {
                 </div>
                 <button onClick={handleWithdraw} disabled={isWithdrawLoading || !!isCircuitBreaker.data}
                   className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 transition-opacity"
-                  style={{ background: "#7c5cff", color: "#fff" }}>
+                  style={{ background: "#c2353f", color: "#fff" }}>
                   {isWithdrawLoading ? "Withdrawing..." : "Withdraw"}
                 </button>
                 {withdrawError && (
-                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontFamily: "monospace" }}>
+                  <div className="text-xs p-3 rounded-lg" style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "#c2353f", fontFamily: "monospace" }}>
                     {withdrawError?.message?.split("\n")[0] ?? String(withdrawError)}
                   </div>
                 )}
-                {isWithdrawSuccess && <div className="text-center text-sm" style={{ color: "#4ade80" }}>Withdrawal successful!</div>}
+                {isWithdrawSuccess && <div className="text-center text-sm" style={{ color: "#34d399" }}>Withdrawal successful!</div>}
               </div>
             )}
           </div>
@@ -383,7 +383,7 @@ export default function SpotVaultPage() {
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between items-center text-sm border-b border-[#2a2f3a] pb-3 last:border-0">
                 <span style={{ color: DIM }}>{label}</span>
-                <span style={{ color: "#eaeaea", fontSize: 13, fontFamily: "'Space Mono', monospace" }}>{value}</span>
+                <span style={{ color: "#eaeaea", fontSize: 13, fontFamily: "var(--font-space-mono), monospace" }}>{value}</span>
               </div>
             ))}
             <a href={`https://app.hyperliquid-testnet.xyz/explorer/address/${VAULT}`} target="_blank" rel="noopener noreferrer"
@@ -407,7 +407,7 @@ export default function SpotVaultPage() {
       <div className="rounded-2xl p-6 mb-6" style={CARD}>
         <div className="flex items-center gap-3 mb-1">
           <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: DIM }}>NAV vs Holding</h3>
-          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(124,92,255,0.15)", color: "#7c5cff", border: "1px solid rgba(124,92,255,0.3)" }}>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(194,53,63,0.15)", color: "#c2353f", border: "1px solid rgba(194,53,63,0.3)" }}>
             On-chain
           </span>
         </div>
@@ -459,7 +459,7 @@ export default function SpotVaultPage() {
             {liveNav !== null ? (
               <>
                 Current on-chain NAV / share:{" "}
-                <span style={{ color: "#eaeaea", fontFamily: "'Space Mono', monospace" }}>{liveNav.toFixed(6)} BTC</span>.
+                <span style={{ color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}>{liveNav.toFixed(6)} BTC</span>.
                 <br />
                 The time-series fills in as the indexer records 4-hourly on-chain snapshots.
               </>

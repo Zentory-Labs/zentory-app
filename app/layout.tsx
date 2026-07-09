@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Space_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,17 @@ const montserrat = Montserrat({
   weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
   variable: "--font-montserrat",
+});
+
+// Space Mono is part of the design system (numeric/address/terminal data) but was
+// never actually loaded — 16+ inline `var(--font-space-mono), monospace` declarations silently
+// fell back to the OS mono font. Self-host it and expose it as --font-space-mono
+// (the color/font sweep points those declarations at this variable).
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  variable: "--font-space-mono",
 });
 
 export const metadata: Metadata = {
@@ -74,7 +85,7 @@ export default function RootLayout({
   const currentYear = new Date().getFullYear();
 
   return (
-    <html lang="en" className={montserrat.variable}>
+    <html lang="en" className={`${montserrat.variable} ${spaceMono.variable}`}>
       <body className="min-h-screen text-white antialiased" suppressHydrationWarning>
         <Providers>
           <DemoBanner />

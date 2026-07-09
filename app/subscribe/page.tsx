@@ -13,6 +13,7 @@ import { addresses, SUBSCRIPTION_VAULT_ABI } from "@/lib/contracts";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoSubscribers } from "@/lib/demo/data";
 import { reportError } from "@/lib/reportError";
+import { Link2, Gem, LineChart } from "lucide-react";
 
 // ─── Tier definitions ─────────────────────────────────────────────────────────
 
@@ -205,21 +206,21 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
           <div
             className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg"
             style={{
-              background: "rgba(239,68,68,0.1)",
-              border: "1px solid rgba(239,68,68,0.3)",
+              background: "rgba(194,53,63,0.1)",
+              border: "1px solid rgba(194,53,63,0.3)",
             }}
           >
             <div
               className="h-2 w-2 rounded-full"
               style={{
-                background: "#ef4444",
-                boxShadow: "0 0 6px #ef4444",
+                background: "#c2353f",
+                boxShadow: "0 0 6px #c2353f",
               }}
             />
             <span
               className="text-xs"
               style={{
-                color: "#ef4444",
+                color: "#c2353f",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
@@ -229,7 +230,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
               onClick={() => switchChain?.({ chainId: HYPER_EVM_CHAIN_ID })}
               className="text-xs font-semibold underline"
               style={{
-                color: "#ef4444",
+                color: "#c2353f",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
@@ -258,9 +259,9 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       <div
         className="w-full py-3 px-6 rounded-xl font-semibold text-sm text-center"
         style={{
-          background: "rgba(34,197,94,0.12)",
-          border: "1px solid rgba(34,197,94,0.3)",
-          color: "#22c55e",
+          background: "rgba(52,211,153,0.12)",
+          border: "1px solid rgba(52,211,153,0.3)",
+          color: "#34d399",
           fontFamily: "'Montserrat', sans-serif",
         }}
       >
@@ -306,7 +307,7 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       {state === "error" && error && (
         <p
           className="text-xs text-center"
-          style={{ color: "#ef4444", fontFamily: "'Montserrat', sans-serif" }}
+          style={{ color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
         >
           {error}
         </p>
@@ -335,19 +336,19 @@ function HowItWorks() {
       num: "01",
       title: "Choose & Connect",
       desc: "Select your subscription tier and connect your wallet.",
-      icon: "Link",
+      icon: Link2,
     },
     {
       num: "02",
       title: "Pay with ZENT",
       desc: "Subscribe in ZENT tokens. Your payment goes directly to research contributors and stakers.",
-      icon: "Diamond",
+      icon: Gem,
     },
     {
       num: "03",
       title: "Follow Research",
       desc: "Access research in your dashboard and execute trades on your own wallet.",
-      icon: "Research",
+      icon: LineChart,
     },
   ];
 
@@ -380,7 +381,7 @@ function HowItWorks() {
             className="p-6 rounded-2xl text-center"
             style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
           >
-            <div className="text-4xl mb-4">{s.icon}</div>
+            <s.icon className="mx-auto mb-4 h-8 w-8" strokeWidth={1.5} style={{ color: "#b08d57" }} />
             <div
               className="text-xs font-bold mb-2 uppercase tracking-widest"
               style={{ color: "#b08d57", fontFamily: "'Montserrat', sans-serif" }}
@@ -563,7 +564,7 @@ function AssetClassTable() {
                 {[row.basic, row.pro, row.elite].map((val, j) => (
                   <td key={j} className="px-6 py-4 text-center text-lg">
                     {val ? (
-                      <span style={{ color: "#22c55e" }}>Yes</span>
+                      <span style={{ color: "#34d399" }}>Yes</span>
                     ) : (
                       <span style={{ color: "rgba(234,234,234,0.2)" }}>—</span>
                     )}
@@ -590,7 +591,7 @@ export default function SubscriptionVaultPage() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8b1e2d]/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <main className="mx-auto max-w-7xl px-6 py-28 space-y-24">
+      <div className="space-y-24">
         {/* ── Hero ── */}
         <section className="text-center max-w-3xl mx-auto space-y-4">
           <div
@@ -787,7 +788,7 @@ export default function SubscriptionVaultPage() {
 
         {/* ── FAQ ── */}
         <FAQ />
-      </main>
+      </div>
     </div>
   );
 }
@@ -799,7 +800,7 @@ function SubscriberStatsBlock() {
   if (!demoMode) return null;
   const s = demoSubscribers();
   const cards = [
-    { tier: "BASIC", count: s.basic, price: 100, color: "#7c5cff" },
+    { tier: "BASIC", count: s.basic, price: 100, color: "#c2353f" },
     { tier: "PRO", count: s.pro, price: 500, color: "#b08d57" },
     { tier: "ELITE", count: s.elite, price: 2000, color: "#c2353f" },
   ];
@@ -847,7 +848,7 @@ function SubscriberStatsBlock() {
               className="rounded-md px-2 py-1.5 flex items-center justify-between"
               style={{ background: "rgba(255,255,255,0.03)", color: "rgba(234,234,234,0.85)" }}
             >
-              <span style={{ color: r.tier === "ELITE" ? "#c2353f" : r.tier === "PRO" ? "#b08d57" : "#7c5cff", fontWeight: 600 }}>
+              <span style={{ color: r.tier === "ELITE" ? "#c2353f" : r.tier === "PRO" ? "#b08d57" : "#c2353f", fontWeight: 600 }}>
                 {r.tier}
               </span>
               <span style={{ color: "rgba(106,111,117,0.8)" }}>{r.ago}</span>

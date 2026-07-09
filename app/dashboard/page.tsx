@@ -43,11 +43,11 @@ function getAssetDecimals(asset: string): number {
 const CHART_COLORS = {
   zBTC: "#F7931A",
   zETH: "#627EEA",
-  zSOL: "#9945FF",
+  zSOL: "#c2353f",
   zXRP: "#00AAE4",
   alpha: "#b08d57",
-  positive: "#22c55e",
-  negative: "#ef4444",
+  positive: "#34d399",
+  negative: "#c2353f",
   grid: "rgba(255,255,255,0.06)",
   text: "rgba(255,255,255,0.5)",
 };
@@ -98,7 +98,7 @@ function MetricCard({
         {pill && (
           <span
             className="text-xs px-2 py-0.5 rounded-full font-semibold"
-            style={{ background: pill.startsWith("+") ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: pill.startsWith("+") ? "#22c55e" : "#ef4444", fontFamily: "'Montserrat', sans-serif" }}
+            style={{ background: pill.startsWith("+") ? "rgba(52,211,153,0.15)" : "rgba(194,53,63,0.15)", color: pill.startsWith("+") ? "#34d399" : "#c2353f", fontFamily: "'Montserrat', sans-serif" }}
           >
             {pill}
           </span>
@@ -182,7 +182,7 @@ function NAVChart({ vault }: { vault: (typeof VAULTS)[number] }) {
               labelStyle={{ color: "rgba(255,255,255,0.7)" }}
             />
             <Legend wrapperStyle={{ fontSize: 12, color: CHART_COLORS.text }} />
-            <Line type="monotone" dataKey="NAV" stroke={CHART_COLORS[vaultSymbol as keyof typeof CHART_COLORS] ?? "#0d80fa"} strokeWidth={2} dot={false} name="NAV/Share" />
+            <Line type="monotone" dataKey="NAV" stroke={CHART_COLORS[vaultSymbol as keyof typeof CHART_COLORS] ?? "#b08d57"} strokeWidth={2} dot={false} name="NAV/Share" />
             <Line type="monotone" dataKey="HODL" stroke="rgba(106,111,117,0.5)" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="HODL Baseline" />
           </LineChart>
         </ResponsiveContainer>
@@ -286,7 +286,7 @@ function VaultSection({ vault }: { vault: (typeof VAULTS)[number] }) {
   const totalAssets = useReadContract({ address: vault, abi: VAULT_ABI, functionName: "totalAssets" } as any);
   const navPerShare = useReadContract({ address: vault, abi: VAULT_ABI, functionName: "getNavPerShare" } as any);
 
-  const color = CHART_COLORS[meta.symbol as keyof typeof CHART_COLORS] ?? "#0d80fa";
+  const color = CHART_COLORS[meta.symbol as keyof typeof CHART_COLORS] ?? "#b08d57";
   const dec = getAssetDecimals(meta.asset);
   const unit = 10 ** dec;
 
@@ -453,7 +453,7 @@ function ProtocolTVLOverview() {
     zBTC: CHART_COLORS.zBTC,
     zSOL: CHART_COLORS.zSOL,
     zXRP: CHART_COLORS.zXRP,
-    SPOT: "#f0c040",
+    SPOT: "#b08d57",
   };
 
   // USD per vault (live: ledger-priced; demo: already USD). Vaults without a
@@ -518,7 +518,7 @@ function ProtocolTVLOverview() {
           <Legend wrapperStyle={{ fontSize: 12, color: CHART_COLORS.text }} />
           <Bar dataKey="TVL" name="TVL" radius={[4, 4, 0, 0]}>
             {chartData.map((entry) => (
-              <rect key={entry.name} fill={vaultColors[entry.name] ?? "#0d80fa"} />
+              <rect key={entry.name} fill={vaultColors[entry.name] ?? "#b08d57"} />
             ))}
           </Bar>
         </BarChart>
@@ -693,8 +693,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
-          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#22c55e", fontFamily: "'Montserrat', sans-serif" }}>
+          <div className="w-2 h-2 rounded-full" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
+          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#34d399", fontFamily: "'Montserrat', sans-serif" }}>
             Live Protocol Analytics
           </span>
         </div>

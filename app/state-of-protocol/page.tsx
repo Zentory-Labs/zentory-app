@@ -75,7 +75,7 @@ function getStatusColor(status: string): StatusColor {
 }
 
 const STATUS_STYLE: Record<StatusColor, { bg: string; text: string; border: string }> = {
-  green:  { bg: "rgba(39,174,96,0.12)",   text: "#27ae60", border: "rgba(39,174,96,0.3)" },
+  green:  { bg: "rgba(52,211,153,0.12)",   text: "#34d399", border: "rgba(52,211,153,0.3)" },
   amber:  { bg: "rgba(176,141,87,0.12)",  text: "#b08d57", border: "rgba(176,141,87,0.3)" },
   red:    { bg: "rgba(194,53,63,0.12)",   text: "#c2353f", border: "rgba(194,53,63,0.3)" },
   muted:  { bg: "rgba(42,47,58,0.4)",     text: "#9ca3af", border: "rgba(42,47,58,0.6)" },
@@ -142,14 +142,14 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
             <span
               className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border"
               style={{
-                background: "rgba(39,174,96,0.1)",
-                color: "#27ae60",
-                borderColor: "rgba(39,174,96,0.25)",
+                background: "rgba(52,211,153,0.1)",
+                color: "#34d399",
+                borderColor: "rgba(52,211,153,0.25)",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
               <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                <circle cx="4" cy="4" r="4" fill="#27ae60" />
+                <circle cx="4" cy="4" r="4" fill="#34d399" />
               </svg>
               Verified
             </span>

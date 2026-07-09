@@ -37,7 +37,7 @@ function StatusBadge({ status }: { status: Research["status"] }) {
       ? "bg-emerald-500/10 text-emerald-400"
       : status === "failed"
       ? "bg-red-500/10 text-red-400"
-      : "bg-[#f59e0b]/10 text-[#f59e0b]";
+      : "bg-[#b08d57]/10 text-[#b08d57]";
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold capitalize ${classes}`}

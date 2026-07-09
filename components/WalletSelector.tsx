@@ -193,10 +193,10 @@ export function WalletButton() {
         {/* Network indicator dot */}
         <div
           className="h-8 w-8 rounded-lg flex items-center justify-center border"
-          style={{ background: wrongNetwork ? "rgba(239,68,68,0.15)" : "rgba(139,30,45,0.2)", borderColor: wrongNetwork ? "rgba(239,68,68,0.4)" : "rgba(139,30,45,0.4)" }}
+          style={{ background: wrongNetwork ? "rgba(194,53,63,0.15)" : "rgba(139,30,45,0.2)", borderColor: wrongNetwork ? "rgba(194,53,63,0.4)" : "rgba(139,30,45,0.4)" }}
           title={wrongNetwork ? "Wrong network — switch to HyperEVM Testnet" : "HyperEVM Testnet"}
         >
-          <div className="h-2 w-2 rounded-full" style={{ background: wrongNetwork ? "#ef4444" : "#b08d57", boxShadow: wrongNetwork ? "0 0 8px #ef4444" : "0 0 8px #b08d57" }} />
+          <div className="h-2 w-2 rounded-full" style={{ background: wrongNetwork ? "#c2353f" : "#b08d57", boxShadow: wrongNetwork ? "0 0 8px #c2353f" : "0 0 8px #b08d57" }} />
         </div>
 
         <span className="hidden sm:block font-mono text-xs" style={{ color: "#bfc3c7" }}>{shorten(address)}</span>
@@ -206,18 +206,18 @@ export function WalletButton() {
             onClick={handleSwitchNetwork}
             className="rounded-lg border px-3 py-1.5 text-xs transition-all duration-300"
             style={{
-              background: "rgba(239,68,68,0.1)",
-              borderColor: "rgba(239,68,68,0.4)",
-              color: "#ef4444",
+              background: "rgba(194,53,63,0.1)",
+              borderColor: "rgba(194,53,63,0.4)",
+              color: "#c2353f",
               fontFamily: "'Montserrat', sans-serif",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "#ef4444";
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(239,68,68,0.2)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "#c2353f";
+              (e.currentTarget as HTMLButtonElement).style.background = "rgba(194,53,63,0.2)";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(239,68,68,0.4)";
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(239,68,68,0.1)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(194,53,63,0.4)";
+              (e.currentTarget as HTMLButtonElement).style.background = "rgba(194,53,63,0.1)";
             }}
           >
             Switch Network
@@ -313,7 +313,7 @@ export function WalletButton() {
 
           {connectionError && (
             <div className="px-4 py-2" style={{ borderBottom: "1px solid #2a2f3a" }}>
-              <p className="text-xs" style={{ color: "#ef4444", fontFamily: "'Montserrat', sans-serif" }}>
+              <p className="text-xs" style={{ color: "#c2353f", fontFamily: "'Montserrat', sans-serif" }}>
                 {connectionError}
               </p>
             </div>

@@ -23,12 +23,12 @@ const ICONS: Record<DemoActivityItem["kind"], string> = {
 };
 
 const ICON_COLOR: Record<DemoActivityItem["kind"], string> = {
-  deposit: "#22c55e",
-  withdrawal: "#ef4444",
-  signal: "#7c5cff",
+  deposit: "#34d399",
+  withdrawal: "#c2353f",
+  signal: "#c2353f",
   subscribe: "#b08d57",
-  stake: "#0d80fa",
-  epoch: "#f0c040",
+  stake: "#b08d57",
+  epoch: "#b08d57",
 };
 
 interface Props {

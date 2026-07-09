@@ -329,7 +329,7 @@ function AccuracyHistogram({ signals }: { signals: RecentSignal[] }) {
   }, [signals]);
 
   const BUCKET_LABELS = ["<2k", "2-4k", "4-6k", "6-8k", ">8k"];
-  const BUCKET_COLORS = ["#ef4444", "#f59e0b", "#6b7280", "#86efac", "#22c55e"];
+  const BUCKET_COLORS = ["#c2353f", "#b08d57", "#6b7280", "#34d399", "#34d399"];
   const maxVal = Math.max(...buckets, 1);
 
   const W = 500, H = 180, PAD = { top: 20, right: 20, bottom: 40, left: 40 };
@@ -432,10 +432,10 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
         <tbody>
           {signals.map((s, i) => {
             const isBuy = s.direction === "LONG" || s.direction === "BUY";
-            const payoutColor = (s.payout_zent ?? 0) >= 0 ? "#22c55e" : "#ef4444";
+            const payoutColor = (s.payout_zent ?? 0) >= 0 ? "#34d399" : "#c2353f";
             // accuracy_bps is basis points (0–10000); display divides by 100, so
             // the color thresholds must be in bps too (65% = 6500, 50% = 5000).
-            const accColor = (s.accuracy_bps ?? 0) >= 6500 ? "#22c55e" : (s.accuracy_bps ?? 0) >= 5000 ? "#f59e0b" : "#ef4444";
+            const accColor = (s.accuracy_bps ?? 0) >= 6500 ? "#34d399" : (s.accuracy_bps ?? 0) >= 5000 ? "#b08d57" : "#c2353f";
 
             return (
               <tr
@@ -452,9 +452,9 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
                   <span
                     className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold"
                     style={{
-                      background: isBuy ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
-                      border: `1px solid ${isBuy ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
-                      color: isBuy ? "#22c55e" : "#ef4444",
+                      background: isBuy ? "rgba(52,211,153,0.12)" : "rgba(194,53,63,0.12)",
+                      border: `1px solid ${isBuy ? "rgba(52,211,153,0.3)" : "rgba(194,53,63,0.3)"}`,
+                      color: isBuy ? "#34d399" : "#c2353f",
                       fontFamily: "'Montserrat', sans-serif",
                     }}
                   >
@@ -480,7 +480,7 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
 
 function WinRateBar({ winRate }: { winRate: number }) {
   const pct = Math.min(100, Math.max(0, winRate));
-  const color = pct >= 65 ? "#22c55e" : pct >= 50 ? "#f59e0b" : "#ef4444";
+  const color = pct >= 65 ? "#34d399" : pct >= 50 ? "#b08d57" : "#c2353f";
 
   return (
     <div>
@@ -606,7 +606,7 @@ export default function AnalyticsPage() {
       {/* Ambient glow — gold accent on analytics */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#b08d57]/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <main className="mx-auto max-w-7xl px-6 py-28 space-y-8">
+      <div className="space-y-8">
 
         {/* ── Header ── */}
         <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -735,7 +735,7 @@ export default function AnalyticsPage() {
                 <div
                   className="text-3xl font-bold"
                   style={{
-                    color: overview.overallAccuracy >= 65 ? "#22c55e" : overview.overallAccuracy >= 50 ? "#f59e0b" : "#ef4444",
+                    color: overview.overallAccuracy >= 65 ? "#34d399" : overview.overallAccuracy >= 50 ? "#b08d57" : "#c2353f",
                   }}
                 >
                   {overview.overallAccuracy.toFixed(1)}%
@@ -750,7 +750,7 @@ export default function AnalyticsPage() {
                 <div className="text-3xl font-bold" style={{ color: "#b08d57" }}>
                   {parseFloat(overview.totalRewardsZent).toFixed(0)}
                 </div>
-                <div className="text-xs mt-1" style={{ color: "#ef4444" }}>
+                <div className="text-xs mt-1" style={{ color: "#c2353f" }}>
                   −{parseFloat(overview.totalSlashesZent).toFixed(0)} slashed
                 </div>
               </div>
@@ -829,7 +829,7 @@ export default function AnalyticsPage() {
               <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
                 Best Asset Class
               </div>
-              <div className="text-2xl font-bold" style={{ color: "#22c55e" }}>
+              <div className="text-2xl font-bold" style={{ color: "#34d399" }}>
                 {overview.bestAssetClass}
               </div>
             </div>
@@ -837,7 +837,7 @@ export default function AnalyticsPage() {
               <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
                 Worst Asset Class
               </div>
-              <div className="text-2xl font-bold" style={{ color: "#ef4444" }}>
+              <div className="text-2xl font-bold" style={{ color: "#c2353f" }}>
                 {overview.worstAssetClass}
               </div>
             </div>
@@ -850,8 +850,8 @@ export default function AnalyticsPage() {
                 style={{
                   color:
                     parseFloat(overview.totalRewardsZent) - parseFloat(overview.totalSlashesZent) >= 0
-                      ? "#22c55e"
-                      : "#ef4444",
+                      ? "#34d399"
+                      : "#c2353f",
                 }}
               >
                 {(parseFloat(overview.totalRewardsZent) - parseFloat(overview.totalSlashesZent)).toFixed(0)}
@@ -859,7 +859,7 @@ export default function AnalyticsPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }
