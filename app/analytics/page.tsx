@@ -123,7 +123,7 @@ function AccuracyOverTimeChart({ epochs }: { epochs: EpochRow[] }) {
 
   if (displayEpochs.length < 2) {
     return (
-      <div className="flex items-center justify-center h-48 text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
+      <div className="flex items-center justify-center h-48 text-sm" style={{ color: "#6a6f75" }}>
         Not enough epoch data yet
       </div>
     );
@@ -241,7 +241,7 @@ const ASSET_COLORS: Record<string, string> = {
 function AssetClassChart({ data }: { data: AssetClassRow[] }) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
+      <div className="flex items-center justify-center h-48 text-sm" style={{ color: "#6a6f75" }}>
         No asset class data yet
       </div>
     );
@@ -407,7 +407,7 @@ function AccuracyHistogram({ signals }: { signals: RecentSignal[] }) {
 function SignalsTable({ signals }: { signals: RecentSignal[] }) {
   if (signals.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12 text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
+      <div className="flex items-center justify-center py-12 text-sm" style={{ color: "#6a6f75" }}>
         No scored research yet — rows appear once epoch scoring settles signal accuracy on-chain
       </div>
     );
@@ -422,7 +422,7 @@ function SignalsTable({ signals }: { signals: RecentSignal[] }) {
               <th
                 key={h}
                 className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}
+                style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
               >
                 {h}
               </th>
@@ -485,7 +485,7 @@ function WinRateBar({ winRate }: { winRate: number }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-xs" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <span className="text-xs" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Win Rate
         </span>
         <span className="text-sm font-bold" style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}>
@@ -625,7 +625,7 @@ export default function AnalyticsPage() {
             <h1 className="text-4xl font-bold tracking-tight" style={{ color: "#eaeaea" }}>
               Research Analytics
             </h1>
-            <p className="text-sm mt-1" style={{ color: "rgba(234,234,234,0.5)" }}>
+            <p className="text-sm mt-1" style={{ color: "#bfc3c7" }}>
               Comprehensive performance metrics and research distribution across all epochs
             </p>
           </div>
@@ -655,7 +655,7 @@ export default function AnalyticsPage() {
         {!loading && !scoringLive && (
           <div
             className="rounded-2xl px-5 py-4 text-sm"
-            style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)", color: "rgba(234,234,234,0.7)" }}
+            style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)", color: "#bfc3c7" }}
           >
             <span style={{ color: "#b08d57", fontWeight: 600 }}>Accuracy scoring not yet settled.</span>{" "}
             Signals are being submitted and resolved on-chain (live counts below), but per-epoch accuracy
@@ -676,25 +676,25 @@ export default function AnalyticsPage() {
           ) : !scoringLive && submission.submitted > 0 ? (
             <>
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   Signals Submitted
                 </div>
                 <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
                   {submission.submitted.toLocaleString()}
                 </div>
-                <div className="text-xs mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>on-chain, testnet</div>
+                <div className="text-xs mt-1" style={{ color: "#6a6f75" }}>on-chain, testnet</div>
               </div>
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   Resolved
                 </div>
                 <div className="text-3xl font-bold" style={{ color: "#b08d57" }}>
                   {submission.resolved.toLocaleString()}
                 </div>
-                <div className="text-xs mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>awaiting accuracy settlement</div>
+                <div className="text-xs mt-1" style={{ color: "#6a6f75" }}>awaiting accuracy settlement</div>
               </div>
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   Active Providers
                 </div>
                 <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
@@ -702,7 +702,7 @@ export default function AnalyticsPage() {
                 </div>
               </div>
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   Last Signal
                 </div>
                 <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
@@ -714,7 +714,7 @@ export default function AnalyticsPage() {
             <>
               {/* Total Signals */}
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   Total Signals
                 </div>
                 <div className="text-3xl font-bold" style={{ color: "#eaeaea" }}>
@@ -729,7 +729,7 @@ export default function AnalyticsPage() {
 
               {/* Avg Accuracy */}
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   Avg Accuracy
                 </div>
                 <div
@@ -744,7 +744,7 @@ export default function AnalyticsPage() {
 
               {/* Total ZENT Distributed */}
               <div className="rounded-2xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+                <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                   ZENT Distributed
                 </div>
                 <div className="text-3xl font-bold" style={{ color: "#b08d57" }}>
@@ -756,7 +756,7 @@ export default function AnalyticsPage() {
               </div>
             </>
           ) : (
-            <div className="col-span-4 text-center py-8 text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
+            <div className="col-span-4 text-center py-8 text-sm" style={{ color: "#6a6f75" }}>
               No data yet — signals will appear after the first epoch settles
             </div>
           )}
@@ -818,7 +818,7 @@ export default function AnalyticsPage() {
         {overview && !loading && scoringLive && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-2xl p-4 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                 Unique Providers
               </div>
               <div className="text-2xl font-bold" style={{ color: "#b08d57" }}>
@@ -826,7 +826,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="rounded-2xl p-4 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                 Best Asset Class
               </div>
               <div className="text-2xl font-bold" style={{ color: "#34d399" }}>
@@ -834,7 +834,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="rounded-2xl p-4 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                 Worst Asset Class
               </div>
               <div className="text-2xl font-bold" style={{ color: "#c2353f" }}>
@@ -842,7 +842,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="rounded-2xl p-4 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>
+              <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>
                 Net ZENT P&L
               </div>
               <div

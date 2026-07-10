@@ -57,9 +57,9 @@ function demoEpochs(addr: string): Epoch[] {
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>{label}</div>
+      <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "#6a6f75" }}>{label}</div>
       <div className="text-2xl font-bold tabular-nums" style={{ color: accent ?? TEXT }}>{value}</div>
-      {sub && <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>{sub}</div>}
+      {sub && <div className="text-[10px] mt-1" style={{ color: "#6a6f75" }}>{sub}</div>}
     </div>
   );
 }
@@ -129,8 +129,8 @@ export default function ProviderPage() {
           )}
           {isDemoData && <DemoBadge />}
         </div>
-        <p className="font-mono text-xs break-all" style={{ color: "rgba(234,234,234,0.5)" }}>{provider}</p>
-        <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.6)" }}>
+        <p className="font-mono text-xs break-all" style={{ color: "#bfc3c7" }}>{provider}</p>
+        <p className="text-sm max-w-2xl" style={{ color: "#bfc3c7" }}>
           A provider&apos;s track record is built from signals scored on-chain in 4-hour epochs by the{" "}
           <a href={`${EXPLORER}/${addresses.EpochScoring}`} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: GOLD }}>EpochScoring</a>{" "}
           contract — append-only and independently verifiable. This is the reputation layer: performance is
@@ -138,12 +138,12 @@ export default function ProviderPage() {
         </p>
       </header>
 
-      {loading && <div className="text-sm" style={{ color: "rgba(234,234,234,0.5)" }}>Loading track record…</div>}
+      {loading && <div className="text-sm" style={{ color: "#bfc3c7" }}>Loading track record…</div>}
 
       {!loading && (!epochs || epochs.length === 0) && (
         <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 space-y-3">
           <h2 className="text-lg font-semibold" style={{ color: TEXT }}>No scored epochs yet</h2>
-          <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.6)" }}>
+          <p className="text-sm max-w-2xl" style={{ color: "#bfc3c7" }}>
             A signal goes through two stages: it <em>resolves</em> when its horizon expires (the outcome is
             known), then its accuracy is <em>scored</em> in a settled epoch by EpochScoring. We don&apos;t show
             projected or sample numbers on a real profile — the moment this provider has a scored epoch, the
@@ -154,7 +154,7 @@ export default function ProviderPage() {
               settlement.</>
             )}
           </p>
-          <p className="text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+          <p className="text-sm" style={{ color: "#bfc3c7" }}>
             Want to see a record that <em>is</em> running? The house systematic strategy publishes a live,
             hash-chained track record every 4 hours —{" "}
             <Link href="/track-record" className="underline" style={{ color: GOLD }}>see it here</Link> and the{" "}
@@ -166,7 +166,7 @@ export default function ProviderPage() {
       {!loading && epochs && epochs.length > 0 && (
         <>
           {isDemoData && (
-            <p className="text-xs" style={{ color: "rgba(234,234,234,0.5)" }}>
+            <p className="text-xs" style={{ color: "#bfc3c7" }}>
               Demo mode: sample epoch history shown for walkthrough. Real profiles render only on-chain-settled data.
             </p>
           )}
@@ -220,13 +220,13 @@ export default function ProviderPage() {
             <div className="overflow-x-auto rounded-2xl border border-white/10">
               <table className="w-full min-w-[480px] text-xs tabular-nums">
                 <thead>
-                  <tr className="border-b border-white/10 text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
+                  <tr className="border-b border-white/10 text-left" style={{ color: "#bfc3c7" }}>
                     {["Epoch", "Accuracy", "Settled signals", "ZENT payout"].map((h) => (
                       <th key={h} className="px-4 py-3 font-medium uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody style={{ color: "rgba(234,234,234,0.75)" }}>
+                <tbody style={{ color: "#eaeaea" }}>
                   {chartData.slice().reverse().map((e) => (
                     <tr key={e.epoch} className="border-b border-white/5">
                       <td className="px-4 py-2.5 font-semibold">{e.epoch}</td>
@@ -243,7 +243,7 @@ export default function ProviderPage() {
       )}
 
       {/* Persistent reference: how this record is verified + the house benchmark. */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-2 text-sm" style={{ color: "#bfc3c7" }}>
         <h3 className="text-base font-semibold" style={{ color: TEXT }}>The verification standard</h3>
         <p>
           Every provider is scored the same way the house strategy is: append-only, hash-chained, and reproducible.

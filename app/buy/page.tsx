@@ -31,7 +31,7 @@ export default function BuyPage() {
       <header className="space-y-3 max-w-2xl">
         <p className="text-[11px] uppercase tracking-[0.2em]" style={{ color: GOLD }}>Buy Crypto</p>
         <h1 className="text-4xl font-bold tracking-tight text-white">Card to crypto, in one step</h1>
-        <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.65)" }}>
+        <p className="text-sm leading-relaxed" style={{ color: "#bfc3c7" }}>
           Buy USDC with a card, Apple Pay, or bank transfer through a licensed provider — then bridge it
           onto HyperEVM and into a Zentory vault. Zentory never holds your funds or your card details;
           the regulated ramp handles payments and compliance.
@@ -67,7 +67,7 @@ export default function BuyPage() {
         <div className="space-y-4">
           <div className="rounded-2xl p-6" style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}>
             <h2 className="text-lg font-semibold text-white mb-4">Three steps onto HyperEVM</h2>
-            <ol className="space-y-3 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+            <ol className="space-y-3 text-sm" style={{ color: "#bfc3c7" }}>
               <li><span className="font-mono" style={{ color: GOLD }}>1.</span> Buy USDC here with fiat.</li>
               <li><span className="font-mono" style={{ color: GOLD }}>2.</span> <Link href="/bridge" className="underline hover:text-[#b08d57]">Bridge it onto HyperEVM</Link> in seconds.</li>
               <li><span className="font-mono" style={{ color: GOLD }}>3.</span> <Link href="/" className="underline hover:text-[#b08d57]">Deposit in a vault</Link> and track NAV on-chain.</li>

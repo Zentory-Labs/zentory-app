@@ -12,7 +12,7 @@ import { demoResearch } from "@/lib/demo/data";
 const DEMO_BANNER = (
   <div style={{ background: "rgba(176,141,87,0.12)", border: "1px solid rgba(176,141,87,0.35)", borderRadius: 12, padding: "12px 16px", marginBottom: 16 }}>
     <span style={{ color: "#b08d57", fontWeight: 700, fontSize: 12 }}>IMPORTANT:</span>
-    <span style={{ color: "rgba(234,234,234,0.7)", fontSize: 12, marginLeft: 8 }}>All performance data shown is for illustrative purposes only. No guarantees are made. Results may vary. This is not financial advice.</span>
+    <span style={{ color: "#bfc3c7", fontSize: 12, marginLeft: 8 }}>All performance data shown is for illustrative purposes only. No guarantees are made. Results may vary. This is not financial advice.</span>
   </div>
 );
 
@@ -27,7 +27,7 @@ function ResearchPerformanceBar({ research }: { research: Research[] }) {
   // not synthesize numbers — an empty state is more honest than a 0% win rate.
   return (
     <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6">
-      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Performance Summary
       </p>
       <div className="flex flex-col items-center justify-center py-8 gap-2">
@@ -73,26 +73,26 @@ function ContributorBreakdown({ research }: { research: Research[] }) {
 
   return (
     <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6">
-      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+      <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
         Research Contributors
       </p>
       {DEMO_BANNER}
       <div className="space-y-3">
         {contributorDefs.map(({ name, label, count }) => (
           <div key={name} className="flex items-center gap-3">
-            <div className="w-20 text-xs" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>{label}</div>
+            <div className="w-20 text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>{label}</div>
             <div className="flex-1 rounded-full h-2 overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{ width: `${(count / maxCount) * 100}%`, background: contributorColors[name] ?? "#b08d57" }}
               />
             </div>
-            <div className="w-16 text-right text-xs font-mono" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+            <div className="w-16 text-right text-xs font-mono" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
               {count} trades
             </div>
             {/* Win rate intentionally not shown until it can be computed from
                 settled P&L (keeper_audit) — never a fabricated 0%. */}
-            <div className="w-24 text-right text-[11px]" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+            <div className="w-24 text-right text-[11px]" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
               win rate pending
             </div>
           </div>
@@ -238,19 +238,19 @@ export default function ResearchPage() {
           <h3 className="text-xl font-bold mb-3" style={{ color: "#eaeaea" }}>
             Public signal submission via SignalRegistry
           </h3>
-          <p className="text-sm mb-4 max-w-2xl" style={{ color: "rgba(234,234,234,0.65)" }}>
+          <p className="text-sm mb-4 max-w-2xl" style={{ color: "#bfc3c7" }}>
             Quants will submit signals directly to the on-chain
             {" "}<code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>SignalRegistry</code>{" "}
             contract via EIP-712 signature: <strong className="text-white/80">asset, direction, confidence</strong>, and a ZENT conviction stake.
             Accuracy is settled every 4 hours by <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code> using Chainlink price feeds.
           </p>
-          <p className="text-sm max-w-2xl" style={{ color: "rgba(234,234,234,0.55)" }}>
+          <p className="text-sm max-w-2xl" style={{ color: "#bfc3c7" }}>
             <strong className="text-white/80">Why no &ldquo;size&rdquo; field?</strong> Signal authors don&rsquo;t pick the trade
             size — the vault does, scaled by the author&rsquo;s conviction (ZENT staked) and the vault&rsquo;s own
             risk mandate (see <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>StrategyExecutor.maxPositionSize</code>).
             That keeps signal submission cheap, signer-agnostic, and free from front-running on size disclosure.
           </p>
-          <div className="mt-6 text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>
+          <div className="mt-6 text-xs" style={{ color: "#6a6f75" }}>
             Until then, signals come from the ZENTORY engine. Track build progress on{" "}
             <a href="/state-of-protocol" className="underline" style={{ color: "#b08d57" }}>State of Protocol</a>.
           </div>

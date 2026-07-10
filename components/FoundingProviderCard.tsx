@@ -79,15 +79,15 @@ export default function FoundingProviderCard({ house, loading = false }: { house
         {/* Metrics */}
         <div className="flex-1 grid grid-cols-3 gap-4 lg:border-l lg:pl-6" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
           <div>
-            <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>Days live</div>
+            <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>Days live</div>
             <div className="text-2xl font-bold tabular-nums" style={{ color: "#eaeaea" }}>{house ? house.daysLive : "—"}</div>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>Assets tracked</div>
+            <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>Assets tracked</div>
             <div className="text-2xl font-bold tabular-nums" style={{ color: "#eaeaea" }}>{house ? house.assets : "—"}</div>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)" }}>Avg ahead of holding</div>
+            <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "#6a6f75" }}>Avg ahead of holding</div>
             <div className="text-2xl font-bold tabular-nums" style={{ color: GOLD }}>{house ? pct(house.avgAhead) : "—"}</div>
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function FoundingProviderCard({ house, loading = false }: { house
             >
               <span className="font-bold" style={{ color: "#eaeaea" }}>{p.asset}</span>
               <span className="font-mono font-semibold" style={{ color: GOLD }}>{pct(p.ahead)}</span>
-              <span className="text-[10px]" style={{ color: "rgba(234,234,234,0.4)" }}>vs holding</span>
+              <span className="text-[10px]" style={{ color: "#6a6f75" }}>vs holding</span>
             </div>
           ))}
         </div>
@@ -117,7 +117,7 @@ export default function FoundingProviderCard({ house, loading = false }: { house
         <Link href="/backtest" className="text-xs font-semibold uppercase tracking-wider hover:underline" style={{ color: GOLD }}>
           6-year backtest →
         </Link>
-        <span className="text-[11px]" style={{ color: "rgba(234,234,234,0.4)" }}>
+        <span className="text-[11px]" style={{ color: "#6a6f75" }}>
           The lead is loss avoided (strategy in cash through the downturn), not trading profit — hash-chained &amp; verifiable.
         </span>
       </div>

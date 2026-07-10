@@ -119,12 +119,12 @@ function AssetCard({
           <span className="text-base font-semibold mt-1" style={{ color: "#eaeaea" }}>
             {asset.label}
           </span>
-          <span className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.8)" }}>
+          <span className="text-xs mt-1" style={{ color: "#6a6f75" }}>
             {asset.description}
           </span>
         </div>
         <div className="text-right">
-          <div className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.7)" }}>
+          <div className="text-[10px] uppercase tracking-widest" style={{ color: "#6a6f75" }}>
             Your balance
           </div>
           <div className="text-sm font-semibold mt-1" style={{ color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}>
@@ -148,7 +148,7 @@ function AssetCard({
         {isMinting ? "Minting…" : `Mint ${asset.amountLabel}`}
       </button>
 
-      <div className="text-[10px] font-mono" style={{ color: "rgba(106,111,117,0.6)" }}>
+      <div className="text-[10px] font-mono" style={{ color: "#6a6f75" }}>
         Contract: <span className="select-all">{asset.address}</span>
       </div>
     </div>
@@ -200,7 +200,7 @@ export default function FaucetPage() {
         <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: "#eaeaea" }}>
           Testnet Faucet
         </h1>
-        <p className="text-sm max-w-2xl" style={{ color: "rgba(106,111,117,0.9)" }}>
+        <p className="text-sm max-w-2xl" style={{ color: "#6a6f75" }}>
           Mint mock vault assets to your wallet so you can try the ZENTORY vaults on HyperEVM testnet.
           These are unbacked test tokens — no real value. The underlying mock contract exposes a
           permissionless <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>mint(address,uint256)</code> for testnet only.
@@ -210,7 +210,7 @@ export default function FaucetPage() {
       {!isConnected && (
         <div
           className="rounded-2xl p-6 mb-8 text-sm"
-          style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)", color: "rgba(234,234,234,0.85)" }}
+          style={{ background: "rgba(176,141,87,0.08)", border: "1px solid rgba(176,141,87,0.25)", color: "#eaeaea" }}
         >
           Connect your wallet to mint testnet assets. Use the Connect button in the top-right nav.
         </div>
@@ -219,7 +219,7 @@ export default function FaucetPage() {
       {isConnected && !onCorrectChain && (
         <div
           className="rounded-2xl p-6 mb-8 text-sm"
-          style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "rgba(234,234,234,0.85)" }}
+          style={{ background: "rgba(194,53,63,0.08)", border: "1px solid rgba(194,53,63,0.3)", color: "#eaeaea" }}
         >
           You are connected to chain <span className="font-mono">{chainId}</span>. Switch your wallet to <span className="font-semibold">HyperEVM Testnet ({HYPEREVM_TESTNET.id})</span> to use the faucet.
         </div>
@@ -228,7 +228,7 @@ export default function FaucetPage() {
       {txHash && (
         <div
           className="rounded-2xl p-4 mb-6 text-xs"
-          style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(234,234,234,0.85)", fontFamily: "var(--font-space-mono), monospace" }}
+          style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)", color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}
         >
           <div className="font-semibold mb-1" style={{ color: "#34d399" }}>
             {isTxPending ? "Transaction pending" : isTxSuccess ? "Mint confirmed" : "Transaction submitted"}
@@ -251,7 +251,7 @@ export default function FaucetPage() {
 
       <div
         className="rounded-2xl p-6 mt-10 text-xs"
-        style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "rgba(234,234,234,0.7)" }}
+        style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "#bfc3c7" }}
       >
         <div className="font-semibold mb-2" style={{ color: "#c2353f" }}>What next?</div>
         Once you have testnet assets, head to a vault page and deposit. You will receive vault
@@ -271,7 +271,7 @@ export default function FaucetPage() {
         </div>
       </div>
 
-      <div className="text-[10px] text-center mt-10" style={{ color: "rgba(106,111,117,0.5)" }}>
+      <div className="text-[10px] text-center mt-10" style={{ color: "#6a6f75" }}>
         Testnet only · No real value · Subject to reset
       </div>
     </div>

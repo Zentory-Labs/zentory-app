@@ -26,7 +26,7 @@ export default function BridgePage() {
       <header className="space-y-3 max-w-2xl">
         <p className="text-[11px] uppercase tracking-[0.2em]" style={{ color: GOLD }}>Zentory Bridge</p>
         <h1 className="text-4xl font-bold tracking-tight text-white">Bridge any asset, any chain</h1>
-        <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.65)" }}>
+        <p className="text-sm leading-relaxed" style={{ color: "#bfc3c7" }}>
           Swap and bridge across 70+ chains — Ethereum, Arbitrum, Base, Solana, Bitcoin, HyperEVM and
           more — in seconds. Best-price routes are aggregated across every major bridge and DEX, and
           it&apos;s <strong className="text-white">fully non-custodial</strong>: your funds never touch Zentory.
@@ -42,7 +42,7 @@ export default function BridgePage() {
         <div className="space-y-4">
           <div className="rounded-2xl p-6" style={{ background: "#111114", border: "1px solid rgba(42,47,58,0.6)" }}>
             <h2 className="text-lg font-semibold text-white mb-2">Looking for yield?</h2>
-            <p className="text-sm mb-4" style={{ color: "rgba(234,234,234,0.6)" }}>
+            <p className="text-sm mb-4" style={{ color: "#bfc3c7" }}>
               Bridge into HyperEVM and put your assets to work in Zentory&apos;s non-custodial vaults —
               a transparent, risk-managed strategy built to defend the drawdowns. Track NAV on-chain.
             </p>

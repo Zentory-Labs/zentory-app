@@ -63,16 +63,16 @@ function MetricCard({ label, strat, hold, fmt, betterHigh = true, sub }: {
   const stratWins = betterHigh ? strat >= hold : strat <= hold;
   return (
     <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
-      <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>{label}</div>
+      <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "#6a6f75" }}>{label}</div>
       <div className="flex items-baseline gap-2">
         <span className="text-2xl font-bold tabular-nums" style={{ color: stratWins ? "#34d399" : RED }}>{fmt(strat)}</span>
-        <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>strategy</span>
+        <span className="text-xs" style={{ color: "#6a6f75" }}>strategy</span>
       </div>
       <div className="flex items-baseline gap-2 mt-1">
-        <span className="text-base font-medium tabular-nums" style={{ color: "rgba(234,234,234,0.6)" }}>{fmt(hold)}</span>
-        <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>holding</span>
+        <span className="text-base font-medium tabular-nums" style={{ color: "#bfc3c7" }}>{fmt(hold)}</span>
+        <span className="text-xs" style={{ color: "#6a6f75" }}>holding</span>
       </div>
-      {sub && <div className="text-[10px] mt-2" style={{ color: "rgba(234,234,234,0.4)" }}>{sub}</div>}
+      {sub && <div className="text-[10px] mt-2" style={{ color: "#6a6f75" }}>{sub}</div>}
     </div>
   );
 }
@@ -124,7 +124,7 @@ export default function BacktestPage() {
     <div className="space-y-10 pb-16">
       <header className="space-y-3">
         <h1 className="text-4xl font-bold tracking-tight" style={{ color: TEXT }}>Backtest & Historical Performance</h1>
-        <p className="text-sm max-w-3xl" style={{ color: "rgba(234,234,234,0.6)" }}>
+        <p className="text-sm max-w-3xl" style={{ color: "#bfc3c7" }}>
           A <strong style={{ color: TEXT }}>walk-forward out-of-sample</strong> backtest across ~6 years of 4-hour data.
           Each fold trades only on data <em>after</em> its training window — there is no peeking at the future.
           And there are <strong style={{ color: TEXT }}>no fitted parameters</strong>: the target exposure is the
@@ -135,7 +135,7 @@ export default function BacktestPage() {
       </header>
 
       {error && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-sm" style={{ color: "rgba(234,234,234,0.8)" }}>
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-sm" style={{ color: "#eaeaea" }}>
           Couldn&apos;t load <code className="text-xs">/backtest.json</code> — retry shortly.
         </div>
       )}
@@ -143,14 +143,14 @@ export default function BacktestPage() {
       {/* Honest decomposition — the most important section */}
       <section className="rounded-2xl border p-6 space-y-3" style={{ borderColor: `${GOLD}55`, background: `${GOLD}0d` }}>
         <h2 className="text-lg font-semibold" style={{ color: GOLD }}>Where the edge comes from — read this first</h2>
-        <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.75)" }}>
+        <p className="text-sm leading-relaxed" style={{ color: "#eaeaea" }}>
           The strategy&apos;s advantage is <strong style={{ color: TEXT }}>drawdown reduction</strong>, not a magic return.
           It stays invested in uptrends and rotates to cash in downtrends, so it sidesteps the worst of each crash —
           across every asset it cut the maximum loss roughly in half. That is the &ldquo;profit&rdquo; you see in the
           live tracker: when the asset falls and the strategy is in cash, it is <em>ahead by the loss it avoided</em>,
           not by trading gains.
         </p>
-        <p className="text-sm leading-relaxed" style={{ color: "rgba(234,234,234,0.75)" }}>
+        <p className="text-sm leading-relaxed" style={{ color: "#eaeaea" }}>
           On <strong style={{ color: TEXT }}>absolute return</strong> the picture is honest and mixed: out-of-sample,
           BTC, ETH and SOL also <em>beat</em> holding, while <strong style={{ color: TEXT }}>XRP underperformed holding
           on return</strong> and won only on drawdown. No leverage, no shorts — so in a straight parabolic bull run,
@@ -167,7 +167,7 @@ export default function BacktestPage() {
             className="px-5 py-2 rounded-xl text-sm font-semibold uppercase tracking-wider transition-all"
             style={asset === x
               ? { background: GOLD, color: "#0b0b0d" }
-              : { background: "rgba(255,255,255,0.04)", color: "rgba(234,234,234,0.7)", border: "1px solid rgba(255,255,255,0.1)" }}
+              : { background: "rgba(255,255,255,0.04)", color: "#bfc3c7", border: "1px solid rgba(255,255,255,0.1)" }}
           >
             {x}
           </button>
@@ -176,7 +176,7 @@ export default function BacktestPage() {
 
       {a && (
         <>
-          <div className="text-xs" style={{ color: "rgba(234,234,234,0.5)" }}>
+          <div className="text-xs" style={{ color: "#bfc3c7" }}>
             Out-of-sample {a.oosStart} → {a.oosEnd} · {a.nFolds} folds · avg exposure {(a.avgExposure * 100).toFixed(0)}%
             (in market) · spec <code>{a.frozenSpec}</code> · {data?.costBpsPerSide} bps/side costs
           </div>
@@ -194,7 +194,7 @@ export default function BacktestPage() {
               not a USD return. sats = strategy ÷ holding (flat 1.0 = simply holding). */}
           <section className="space-y-3">
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>In {asset} terms — did a share end with more {asset}?</h3>
-            <p className="text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+            <p className="text-sm" style={{ color: "#bfc3c7" }}>
               The vault is denominated in {asset}, so the honest benchmark is units of the coin, not dollars.
               A flat line at 1.0 is simply holding {asset}; above 1.0 means a share ended the out-of-sample
               window worth <em>more</em> {asset} than buy-and-hold — by stepping to cash in downturns and
@@ -202,19 +202,19 @@ export default function BacktestPage() {
             </p>
             <div className="grid grid-cols-3 gap-4">
               <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
-                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>{asset} vs holding</div>
+                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "#6a6f75" }}>{asset} vs holding</div>
                 <div className="text-2xl font-bold tabular-nums" style={{ color: a.sats.satsVsHold >= 0 ? "#34d399" : RED }}>{fmtPct(a.sats.satsVsHold, 1)}</div>
-                <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>a share ended worth {a.sats.endSats.toFixed(2)}× the coin</div>
+                <div className="text-[10px] mt-1" style={{ color: "#6a6f75" }}>a share ended worth {a.sats.endSats.toFixed(2)}× the coin</div>
               </div>
               <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
-                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>Worst drawdown in {asset}</div>
+                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "#6a6f75" }}>Worst drawdown in {asset}</div>
                 <div className="text-2xl font-bold tabular-nums" style={{ color: TEXT }}>{fmtPct(a.sats.maxDdSats, 0)}</div>
-                <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>deepest dip in coin-per-share vs its own peak</div>
+                <div className="text-[10px] mt-1" style={{ color: "#6a6f75" }}>deepest dip in coin-per-share vs its own peak</div>
               </div>
               <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-5">
-                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "rgba(234,234,234,0.45)" }}>Time ahead of holding</div>
+                <div className="text-[11px] uppercase tracking-wider mb-2" style={{ color: "#6a6f75" }}>Time ahead of holding</div>
                 <div className="text-2xl font-bold tabular-nums" style={{ color: TEXT }}>{fmtPct(a.sats.pctTimeAhead, 0)}</div>
-                <div className="text-[10px] mt-1" style={{ color: "rgba(234,234,234,0.4)" }}>share of the OOS window with more coin than holding</div>
+                <div className="text-[10px] mt-1" style={{ color: "#6a6f75" }}>share of the OOS window with more coin than holding</div>
               </div>
             </div>
             <div className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-4">
@@ -305,20 +305,20 @@ export default function BacktestPage() {
           {a.costSensitivity.length > 0 && (
             <section className="space-y-2">
               <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Cost sensitivity — does the edge survive fees?</h3>
-              <p className="text-xs max-w-3xl" style={{ color: "rgba(234,234,234,0.55)" }}>
+              <p className="text-xs max-w-3xl" style={{ color: "#bfc3c7" }}>
                 We model {data?.costBpsPerSide} bps per side. The downside-risk edge (strategy Sortino minus holding)
                 is real at realistic costs but erodes as fees climb — shown honestly so you can judge the margin.
               </p>
               <div className="overflow-x-auto rounded-2xl border border-[#2a2f3a]">
                 <table className="w-full min-w-[560px] text-xs tabular-nums">
                   <thead>
-                    <tr className="border-b border-[#2a2f3a] text-left" style={{ color: "rgba(234,234,234,0.5)" }}>
+                    <tr className="border-b border-[#2a2f3a] text-left" style={{ color: "#bfc3c7" }}>
                       {["Cost (bps/side)", "Strategy Sortino", "Holding Sortino", "Strategy CAGR", "Strategy max DD"].map((h) => (
                         <th key={h} className="px-4 py-3 font-medium uppercase tracking-wider">{h}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody style={{ color: "rgba(234,234,234,0.75)" }}>
+                  <tbody style={{ color: "#eaeaea" }}>
                     {a.costSensitivity.map((r) => {
                       const live = r.bps === (data?.costBpsPerSide ?? 5);
                       return (
@@ -338,7 +338,7 @@ export default function BacktestPage() {
           )}
 
           {/* Methodology */}
-          <section className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6 space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.7)" }}>
+          <section className="rounded-2xl border border-[#2a2f3a] bg-[#1c1c21] p-6 space-y-2 text-sm" style={{ color: "#bfc3c7" }}>
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Methodology & honest disclaimers</h3>
             <ul className="list-disc list-inside space-y-1.5">
               <li><strong style={{ color: TEXT }}>Walk-forward OOS:</strong> {a.nFolds} folds; every trade is on out-of-sample data after its training window.</li>
@@ -359,7 +359,7 @@ export default function BacktestPage() {
         <h2 className="text-xl font-semibold" style={{ color: TEXT }}>
           This isn&apos;t just history
         </h2>
-        <p className="text-sm max-w-2xl mx-auto leading-relaxed" style={{ color: "rgba(234,234,234,0.7)" }}>
+        <p className="text-sm max-w-2xl mx-auto leading-relaxed" style={{ color: "#bfc3c7" }}>
           This exact strategy family is running live right now — a hash-chained paper record
           {ledgerDays !== null ? ` (day ${ledgerDays})` : ""} and an autonomous on-chain vault on testnet.
         </p>

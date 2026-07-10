@@ -415,7 +415,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           { label: "Your Assets", value: `${userAssetRaw.toFixed(4)} ${config.symbol.replace("z","")}` },
         ].map((m) => (
           <div key={m.label} className="rounded-xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: "rgba(106,111,117,0.9)" }}>
+            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: "#6a6f75" }}>
               {m.label}
             </div>
             {statsLoading ? (
@@ -476,7 +476,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   </Link>
                 )}
                 <div>
-                  <label className="block text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.9)" }}>
+                  <label className="block text-xs uppercase tracking-widest mb-2" style={{ color: "#6a6f75" }}>
                     Amount ({config.symbol.replace("z", "")})
                   </label>
                   <input
@@ -489,7 +489,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
                     style={{ background: "#141417", border: `1px solid ${depositInvalid ? "rgba(194,53,63,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
                   />
-                  <div className="flex justify-between text-xs mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
+                  <div className="flex justify-between text-xs mt-1" style={{ color: "#6a6f75" }}>
                     <span>Balance: {userAssetRaw.toFixed(4)}</span>
                     <button onClick={() => setDepositAmount(userAssetRaw.toString())} className="underline hover:opacity-70">
                       Max
@@ -535,7 +535,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.9)" }}>
+                  <label className="block text-xs uppercase tracking-widest mb-2" style={{ color: "#6a6f75" }}>
                     Shares to Redeem
                   </label>
                   <input
@@ -548,7 +548,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                     className="w-full rounded-lg px-4 py-3 text-lg outline-none"
                     style={{ background: "#141417", border: `1px solid ${withdrawInvalid ? "rgba(194,53,63,0.5)" : "#2a2f3a"}`, color: "#eaeaea" }}
                   />
-                  <div className="flex justify-between text-xs mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
+                  <div className="flex justify-between text-xs mt-1" style={{ color: "#6a6f75" }}>
                     <span>Your shares: {userSharesRaw.toFixed(6)}</span>
                     <button onClick={() => setWithdrawShares(userSharesRaw.toString())} className="underline hover:opacity-70">
                       Max
@@ -585,7 +585,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
 
           {/* Vault info */}
           <div className="rounded-2xl p-6 space-y-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-            <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>
+            <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "#6a6f75" }}>
               Vault Details
             </h3>
             {[
@@ -596,7 +596,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
               ["Circuit Breaker", isCircuitBreaker.data ? "Active" : "Inactive"],
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between items-center text-sm border-b border-[#2a2f3a] pb-3 last:border-0">
-                <span style={{ color: "rgba(106,111,117,0.9)" }}>{label}</span>
+                <span style={{ color: "#6a6f75" }}>{label}</span>
                 <span style={{ color: "#eaeaea", fontSize: 12, fontFamily: "var(--font-space-mono), monospace" }}>
                   {String(value).slice(0, 42)}
                 </span>
@@ -616,7 +616,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       ) : (
         <div className="rounded-2xl p-8 text-center mb-8" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
           <div className="text-lg font-semibold mb-2" style={{ color: "#eaeaea" }}>Connect your wallet</div>
-          <div className="text-sm" style={{ color: "rgba(106,111,117,0.9)" }}>
+          <div className="text-sm" style={{ color: "#6a6f75" }}>
             Connect to deposit or withdraw from the {config.name}.
           </div>
         </div>
@@ -630,7 +630,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           testnet; the base vaults hold the asset 1:1 until mainnet. */}
       <div
         className="rounded-2xl p-5 mb-8 text-sm"
-        style={{ background: "rgba(176,141,87,0.07)", border: "1px solid rgba(176,141,87,0.22)", color: "rgba(234,234,234,0.7)" }}
+        style={{ background: "rgba(176,141,87,0.07)", border: "1px solid rgba(176,141,87,0.22)", color: "#bfc3c7" }}
       >
         <span style={{ color: "#b08d57", fontWeight: 600 }}>Testnet: this vault holds {config.symbol.slice(1)} 1:1 (NAV 1.0).</span>{" "}
         The autonomous long/flat rebalancing strategy currently runs on the{" "}
@@ -647,7 +647,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       {/* NAV Chart */}
       {chartData.length > 0 && (
         <div className="rounded-2xl p-6 mb-8" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-          <h3 className="text-sm font-semibold uppercase tracking-widest mb-6" style={{ color: "rgba(106,111,117,0.9)" }}>
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-6" style={{ color: "#6a6f75" }}>
             NAV History — {config.symbol} vs HOLD
           </h3>
           <ResponsiveContainer width="100%" height={220}>
@@ -683,7 +683,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
       {/* Fills */}
       <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <div className="flex items-center gap-3 mb-6">
-          <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>
+          <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "#6a6f75" }}>
             Strategy Execution — Recent Fills
           </h3>
           {/* Only badge it "Live from Hyperliquid" when there are actually live
@@ -692,13 +692,13 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           <span className="text-xs px-2 py-0.5 rounded-full"
             style={fills.length > 0
               ? { background: "rgba(176,141,87,0.15)", color: "#b08d57" }
-              : { background: "rgba(234,234,234,0.06)", color: "rgba(234,234,234,0.45)" }}>
+              : { background: "rgba(234,234,234,0.06)", color: "#6a6f75" }}>
             {fills.length > 0 ? "Live from Hyperliquid" : "Pending · mainnet"}
           </span>
         </div>
 
         {fills.length === 0 ? (
-          <div className="text-center py-8 text-sm" style={{ color: "rgba(106,111,117,0.7)" }}>
+          <div className="text-center py-8 text-sm" style={{ color: "#6a6f75" }}>
             No fills to display yet — venue ingestion goes live with mainnet (Q4 2026).
           </div>
         ) : (
@@ -707,7 +707,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
               <thead>
                 <tr style={{ borderBottom: "1px solid #2a2f3a" }}>
                   {["Time", "Coin", "Side", "Size", "Price", "Fee", "P&L", "HL User"].map((h) => (
-                    <th key={h} className="text-left pb-3 pr-4 font-normal uppercase tracking-wider" style={{ color: "rgba(106,111,117,0.7)" }}>{h}</th>
+                    <th key={h} className="text-left pb-3 pr-4 font-normal uppercase tracking-wider" style={{ color: "#6a6f75" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -743,7 +743,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
           </div>
         )}
 
-        <div className="mt-4 flex gap-4 text-xs" style={{ color: "rgba(106,111,117,0.6)" }}>
+        <div className="mt-4 flex gap-4 text-xs" style={{ color: "#6a6f75" }}>
           <span>Venue fills sourced from Hyperliquid testnet</span>
           <Link href="/signals" className="underline" style={{ color: "#b08d57" }}>View signal feed →</Link>
         </div>

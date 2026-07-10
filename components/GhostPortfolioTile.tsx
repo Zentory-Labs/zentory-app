@@ -107,7 +107,7 @@ export default function GhostPortfolioTile({ asset }: { asset: string }) {
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest"
-          style={{ color: "rgba(106,111,117,0.9)" }}
+          style={{ color: "#6a6f75" }}
         >
           Strategy attribution — HOLD / GHOST / ACTUAL (in {asset})
         </h3>
@@ -126,7 +126,7 @@ export default function GhostPortfolioTile({ asset }: { asset: string }) {
       )}
 
       {!err && (!entries || entries.length === 0) && (
-        <div className="text-xs py-6 text-center" style={{ color: "rgba(106,111,117,0.8)" }}>
+        <div className="text-xs py-6 text-center" style={{ color: "#6a6f75" }}>
           Track record starts when the first signal posts. The forward
           recorder runs hourly; once it has data for {asset}, this tile lights up.
         </div>
@@ -188,14 +188,14 @@ function Stat({ label, value, hint, tone }: { label: string; value: string; hint
       className="p-3 rounded-lg"
       style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(42,47,58,0.6)", fontFamily: "var(--font-space-mono), monospace" }}
     >
-      <div className="uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)", fontSize: 10 }}>
+      <div className="uppercase tracking-widest" style={{ color: "#6a6f75", fontSize: 10 }}>
         {label}
       </div>
       <div className="mt-1" style={{ color: accent, fontSize: 14, fontWeight: 600 }}>
         {value}
       </div>
       {hint && (
-        <div className="mt-0.5" style={{ color: "rgba(106,111,117,0.7)", fontSize: 10 }}>
+        <div className="mt-0.5" style={{ color: "#6a6f75", fontSize: 10 }}>
           {hint}
         </div>
       )}

@@ -114,7 +114,7 @@ export default function TradePage() {
       <header className="space-y-2 max-w-2xl">
         <p className="text-[11px] uppercase tracking-[0.2em]" style={{ color: GOLD }}>Zentory Terminal</p>
         <h1 className="text-3xl font-bold tracking-tight text-white">Trade Hyperliquid</h1>
-        <p className="text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+        <p className="text-sm" style={{ color: "#bfc3c7" }}>
           Live perps on Hyperliquid&apos;s on-chain orderbook. Hyperliquid provides the liquidity;
           Zentory routes your order and earns a small builder fee — non-custodial, you sign every trade.
         </p>
@@ -132,31 +132,31 @@ export default function TradePage() {
           {perps.map((p) => <option key={p.name} value={p.name} style={{ background: "#1c1c21" }}>{p.name}-PERP</option>)}
         </select>
         <div className="text-2xl font-bold tabular-nums text-white">
-          {mark !== null ? `$${fmtUsd(mark, mark < 10 ? 5 : 2)}` : <span style={{ color: "rgba(234,234,234,0.4)" }}>—</span>}
+          {mark !== null ? `$${fmtUsd(mark, mark < 10 ? 5 : 2)}` : <span style={{ color: "#6a6f75" }}>—</span>}
         </div>
         {meta && <div className="text-xs px-2 py-1 rounded" style={{ color: GOLD, border: `1px solid ${GOLD}55` }}>up to {meta.maxLeverage}× leverage</div>}
         {err && <div className="text-xs" style={{ color: RED }}>market data unavailable — retrying…</div>}
-        <div className="ml-auto text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>live · updates {POLL_MS / 1000}s</div>
+        <div className="ml-auto text-xs" style={{ color: "#6a6f75" }}>live · updates {POLL_MS / 1000}s</div>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
         {/* orderbook */}
         <div className="rounded-2xl p-5" style={{ background: PANEL, border: BORDER }}>
-          <div className="text-xs uppercase tracking-wider mb-3" style={{ color: "rgba(234,234,234,0.45)" }}>Order book · {coin}</div>
-          <div className="grid grid-cols-2 text-[11px] mb-2" style={{ color: "rgba(234,234,234,0.4)" }}>
+          <div className="text-xs uppercase tracking-wider mb-3" style={{ color: "#6a6f75" }}>Order book · {coin}</div>
+          <div className="grid grid-cols-2 text-[11px] mb-2" style={{ color: "#6a6f75" }}>
             <span>Price (USD)</span><span className="text-right">Size ({coin})</span>
           </div>
           <div className="space-y-0.5 text-sm tabular-nums">
             {asks.map((l, i) => (
-              <div key={`a${i}`} className="grid grid-cols-2"><span style={{ color: RED }}>{fmtUsd(Number(l.px), Number(l.px) < 10 ? 5 : 1)}</span><span className="text-right" style={{ color: "rgba(234,234,234,0.6)" }}>{l.sz}</span></div>
+              <div key={`a${i}`} className="grid grid-cols-2"><span style={{ color: RED }}>{fmtUsd(Number(l.px), Number(l.px) < 10 ? 5 : 1)}</span><span className="text-right" style={{ color: "#bfc3c7" }}>{l.sz}</span></div>
             ))}
             <div className="py-1.5 my-1 text-center text-base font-semibold tabular-nums border-y" style={{ color: GOLD, borderColor: "#2a2f3a" }}>
               {mark !== null ? `$${fmtUsd(mark, mark < 10 ? 5 : 2)}` : "—"}
             </div>
             {bids.map((l, i) => (
-              <div key={`b${i}`} className="grid grid-cols-2"><span style={{ color: GREEN }}>{fmtUsd(Number(l.px), Number(l.px) < 10 ? 5 : 1)}</span><span className="text-right" style={{ color: "rgba(234,234,234,0.6)" }}>{l.sz}</span></div>
+              <div key={`b${i}`} className="grid grid-cols-2"><span style={{ color: GREEN }}>{fmtUsd(Number(l.px), Number(l.px) < 10 ? 5 : 1)}</span><span className="text-right" style={{ color: "#bfc3c7" }}>{l.sz}</span></div>
             ))}
-            {!book && <div className="text-center py-8" style={{ color: "rgba(234,234,234,0.4)" }}>loading book…</div>}
+            {!book && <div className="text-center py-8" style={{ color: "#6a6f75" }}>loading book…</div>}
           </div>
         </div>
 
@@ -165,7 +165,7 @@ export default function TradePage() {
           {!HL_LIVE_ORDERS ? (
             <div className="space-y-2 py-1">
               <p className="text-sm font-semibold text-white">Trading launches soon</p>
-              <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.5)" }}>
+              <p className="text-[11px] leading-snug" style={{ color: "#bfc3c7" }}>
                 The live orderbook and your Hyperliquid positions are shown in real time below.
                 Order routing turns on once the Zentory builder wallet is funded and verified —
                 non-custodial, you sign every trade.
@@ -179,7 +179,7 @@ export default function TradePage() {
                 className="py-2 rounded-lg text-sm font-semibold capitalize transition-colors"
                 style={side === s
                   ? { background: s === "buy" ? GREEN : RED, color: "#0b0b0d" }
-                  : { background: "rgba(255,255,255,0.04)", color: "rgba(234,234,234,0.6)" }}>
+                  : { background: "rgba(255,255,255,0.04)", color: "#bfc3c7" }}>
                 {s === "buy" ? "Long / Buy" : "Short / Sell"}
               </button>
             ))}
@@ -188,25 +188,25 @@ export default function TradePage() {
           <div className="flex gap-2 text-xs">
             {(["market", "limit"] as const).map((t) => (
               <button key={t} onClick={() => setType(t)} className="px-3 py-1 rounded capitalize"
-                style={type === t ? { color: GOLD, border: `1px solid ${GOLD}55` } : { color: "rgba(234,234,234,0.5)", border: "1px solid transparent" }}>{t}</button>
+                style={type === t ? { color: GOLD, border: `1px solid ${GOLD}55` } : { color: "#bfc3c7", border: "1px solid transparent" }}>{t}</button>
             ))}
           </div>
 
           {type === "limit" && (
             <label className="block">
-              <span className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>Limit price</span>
+              <span className="text-[11px] uppercase tracking-wider" style={{ color: "#6a6f75" }}>Limit price</span>
               <input value={limitPx} onChange={(e) => setLimitPx(e.target.value)} inputMode="decimal" placeholder={mark ? String(mark) : "0.00"}
                 className="w-full mt-1 px-3 py-2 rounded-lg bg-transparent text-white outline-none tabular-nums" style={{ border: BORDER }} />
             </label>
           )}
 
           <label className="block">
-            <span className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>Size ({coin})</span>
+            <span className="text-[11px] uppercase tracking-wider" style={{ color: "#6a6f75" }}>Size ({coin})</span>
             <input value={size} onChange={(e) => setSize(e.target.value)} inputMode="decimal" placeholder="0.00"
               className="w-full mt-1 px-3 py-2 rounded-lg bg-transparent text-white outline-none tabular-nums" style={{ border: BORDER }} />
           </label>
 
-          <div className="text-xs space-y-1.5 pt-1" style={{ color: "rgba(234,234,234,0.55)" }}>
+          <div className="text-xs space-y-1.5 pt-1" style={{ color: "#bfc3c7" }}>
             <div className="flex justify-between"><span>Order value</span><span className="tabular-nums text-white">${fmtUsd(notional)}</span></div>
             <div className="flex justify-between"><span>Zentory builder fee ({(HL_BUILDER_FEE / 1000).toFixed(2)} bp)</span><span className="tabular-nums" style={{ color: GOLD }}>~${fmtUsd(builderFee, 4)}</span></div>
           </div>
@@ -225,7 +225,7 @@ export default function TradePage() {
             {!isConnected ? "Connect wallet to trade" : busy ? "Submitting…" : `${side === "buy" ? "Long" : "Short"} ${coin}`}
           </button>
 
-          {status && <p className="text-[11px] leading-snug" style={{ color: "rgba(234,234,234,0.7)" }}>{status}</p>}
+          {status && <p className="text-[11px] leading-snug" style={{ color: "#bfc3c7" }}>{status}</p>}
           </>
           )}
         </div>
@@ -234,22 +234,22 @@ export default function TradePage() {
       {/* positions */}
       <div className="rounded-2xl p-5" style={{ background: PANEL, border: BORDER }}>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.45)" }}>Your Hyperliquid positions</span>
-          {chState && <span className="text-xs tabular-nums" style={{ color: "rgba(234,234,234,0.6)" }}>
+          <span className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75" }}>Your Hyperliquid positions</span>
+          {chState && <span className="text-xs tabular-nums" style={{ color: "#bfc3c7" }}>
             Account ${fmtUsd(Number(chState.marginSummary.accountValue))} · Withdrawable ${fmtUsd(Number(chState.withdrawable))}
           </span>}
         </div>
         {!isConnected ? (
-          <p className="text-sm py-4 text-center" style={{ color: "rgba(234,234,234,0.4)" }}>Connect your wallet to see positions.</p>
+          <p className="text-sm py-4 text-center" style={{ color: "#6a6f75" }}>Connect your wallet to see positions.</p>
         ) : !chState || chState.assetPositions.length === 0 ? (
-          <p className="text-sm py-4 text-center" style={{ color: "rgba(234,234,234,0.4)" }}>No open positions.</p>
+          <p className="text-sm py-4 text-center" style={{ color: "#6a6f75" }}>No open positions.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm tabular-nums min-w-[480px]">
-              <thead><tr className="text-left text-[11px] uppercase" style={{ color: "rgba(234,234,234,0.4)" }}>
+              <thead><tr className="text-left text-[11px] uppercase" style={{ color: "#6a6f75" }}>
                 <th className="py-1.5">Market</th><th>Side</th><th>Size</th><th>Entry</th><th className="text-right">uPnL</th>
               </tr></thead>
-              <tbody style={{ color: "rgba(234,234,234,0.8)" }}>
+              <tbody style={{ color: "#eaeaea" }}>
                 {chState.assetPositions.map(({ position: p }) => {
                   const sz = Number(p.szi); const pnl = Number(p.unrealizedPnl);
                   return (

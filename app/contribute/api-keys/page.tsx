@@ -93,10 +93,10 @@ function RevokeModal({ keyId, keyLabel, onConfirm, onCancel }: { keyId: number; 
           </div>
           <div>
             <h3 className="text-base font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Revoke API Key</h3>
-            <p className="text-xs" style={{ color: "rgba(106,111,117,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>This action cannot be undone</p>
+            <p className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>This action cannot be undone</p>
           </div>
         </div>
-        <p className="text-sm mb-6" style={{ color: "rgba(234,234,234,0.65)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm mb-6" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Are you sure you want to revoke the API key <span className="font-semibold text-white">&quot;{keyLabel}&quot;</span>? Any bots or services using this key will immediately lose access.
         </p>
         <div className="flex gap-3">
@@ -137,7 +137,7 @@ function ApiKeyCard({ k, onRevoke }: { k: ApiKeyInfo; onRevoke: (id: number, lab
               </span>
             )}
           </div>
-          <div className="flex items-center gap-4 text-xs" style={{ color: "rgba(106,111,117,0.55)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="flex items-center gap-4 text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             <span>Created {fmtTs(k.createdAt)}</span>
             <span>·</span>
             <span>Last used {fmtRelative(k.lastUsedAt)}</span>
@@ -232,7 +232,7 @@ export default function ApiKeysPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
         <h1 className="text-2xl font-bold mb-3" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet</h1>
-        <p className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet to manage API keys.</p>
+        <p className="text-sm" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet to manage API keys.</p>
       </div>
     );
   }
@@ -246,7 +246,7 @@ export default function ApiKeysPage() {
           <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>Research Contributor</span>
         </div>
         <h1 className="text-3xl font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>API Keys</h1>
-        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm mt-1" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Manage API keys for authenticating research submissions from your trading bots
         </p>
       </div>
@@ -268,7 +268,7 @@ export default function ApiKeysPage() {
           </div>
         ) : keys.length === 0 ? (
           <div className="rounded-2xl p-10 text-center" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-            <p className="text-sm" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>No active API keys. Create one above to get started.</p>
+            <p className="text-sm" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>No active API keys. Create one above to get started.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -282,7 +282,7 @@ export default function ApiKeysPage() {
       {/* Usage guide */}
       <div className="rounded-2xl p-6" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <h2 className="text-base font-bold mb-4" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Usage Guide</h2>
-        <div className="space-y-3 text-sm" style={{ color: "rgba(234,234,234,0.55)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <div className="space-y-3 text-sm" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
           <p>Include your API key in the <code className="px-1.5 py-0.5 rounded text-xs font-mono" style={{ background: "rgba(0,0,0,0.4)", color: "#b08d57" }}>x-api-key</code> header when submitting research:</p>
           <pre className="rounded-xl p-4 overflow-x-auto text-xs font-mono" style={{ background: "#0b0b0d", border: "1px solid #2a2f3a", color: "#eaeaea" }}>
 {`curl -X POST https://your-app.vercel.app/api/contribute \\
@@ -296,7 +296,7 @@ export default function ApiKeysPage() {
     "expiresAt": $(( $(date +%s) + 86400 ))
   }'`}
           </pre>
-          <p className="text-xs" style={{ color: "rgba(106,111,117,0.5)" }}>
+          <p className="text-xs" style={{ color: "#6a6f75" }}>
             Never share your API key publicly or commit it to version control. Rotate keys immediately if compromised.
           </p>
         </div>
