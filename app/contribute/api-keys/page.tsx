@@ -165,7 +165,7 @@ function GenerateKeyForm({ onGenerated }: { onGenerated: () => void }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const apiKey = localStorage.getItem("zent_provider_api_key");
+    const apiKey = localStorage.getItem("zent_contributor_api_key");
     if (!apiKey) { setError("No API key found in storage"); setLoading(false); return; }
     const result = await createApiKey(apiKey, label);
     if (!result) setError("Failed to create key");
@@ -209,7 +209,7 @@ export default function ApiKeysPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const loadKeys = useCallback(async () => {
-    const apiKey = localStorage.getItem("zent_provider_api_key");
+    const apiKey = localStorage.getItem("zent_contributor_api_key");
     if (!apiKey) { setLoading(false); return; }
     const k = await fetchApiKeys(apiKey);
     setKeys(k);
@@ -221,7 +221,7 @@ export default function ApiKeysPage() {
   async function handleRevoke() {
     if (!revokeTarget) return;
     setRevoking(true);
-    const apiKey = localStorage.getItem("zent_provider_api_key");
+    const apiKey = localStorage.getItem("zent_contributor_api_key");
     if (apiKey) await revokeApiKey(apiKey, revokeTarget.id);
     setRevokeTarget(null);
     setRevoking(false);

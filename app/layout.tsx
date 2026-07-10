@@ -154,10 +154,11 @@ export default function RootLayout({
                     {
                       label: "Contribute",
                       items: [
+                        // Contributor onboarding (dashboard / API keys / submissions)
+                        // opens Q3 2026 — see /contribute. Those sub-pages are built but
+                        // have no key-issuance flow yet, so they're intentionally not
+                        // linked until the program is live (avoids dead-end links).
                         ["Become a Contributor", "/contribute"],
-                        ["Dashboard", "/contribute/dashboard"],
-                        ["API Keys", "/contribute/api-keys"],
-                        ["My Submissions", "/contribute/submissions"],
                       ],
                     },
                     {
