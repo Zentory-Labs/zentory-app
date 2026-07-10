@@ -129,7 +129,7 @@ export default function SubmissionsPage() {
   const PAGE_SIZE = 20;
 
   const loadResearch = useCallback(async () => {
-    const apiKey = localStorage.getItem("zent_provider_api_key");
+    const apiKey = localStorage.getItem("zent_contributor_api_key");
     if (!apiKey) { setLoading(false); return; }
     setLoading(true);
     const result = await fetchResearch(apiKey, {
