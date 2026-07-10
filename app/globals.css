@@ -138,6 +138,11 @@
 html {
   background-color: #0b0b0d;
   color-scheme: dark;
+  /* Decorative glows are position:absolute inside static containers, so their
+     containing block is <html> — clip here (not just body) so they can never
+     force a horizontal scrollbar on mobile. `clip` keeps vertical scroll and
+     fixed positioning intact. */
+  overflow-x: clip;
 }
 
 body {
@@ -146,6 +151,11 @@ body {
   font-family: var(--font-montserrat), 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Clip stray horizontal overflow from decorative absolute glows (w-96 blobs
+     positioned past the viewport edge) so mobile never scrolls sideways.
+     `clip` (not `hidden`) doesn't create a scroll container, so fixed/sticky
+     positioning is unaffected. */
+  overflow-x: clip;
   /* Dot grid — fine graph-paper pattern */
   background-image:
     radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),

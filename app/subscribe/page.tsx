@@ -507,10 +507,10 @@ function AssetClassTable() {
         </p>
       </div>
       <div
-        className="rounded-2xl overflow-hidden"
+        className="rounded-2xl overflow-x-auto"
         style={{ border: "1px solid #2a2f3a" }}
       >
-        <table className="w-full text-sm">
+        <table className="w-full min-w-[560px] text-sm">
           <thead>
             <tr
               style={{
