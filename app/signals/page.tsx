@@ -454,10 +454,10 @@ export default function SignalsPage() {
               No provider data yet. Signals from the feed will populate the leaderboard.
             </div>
           ) : (
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #2a2f3a" }}>
+            <div className="rounded-xl overflow-x-auto" style={{ border: "1px solid #2a2f3a" }}>
               {/* Header */}
               <div
-                className="grid gap-4 px-6 py-3 text-xs uppercase tracking-wider"
+                className="grid gap-4 px-6 py-3 text-xs uppercase tracking-wider min-w-[560px]"
                 style={{
                   gridTemplateColumns: "40px 1fr 100px 100px 120px",
                   background: "rgba(255,255,255,0.02)",
@@ -478,7 +478,7 @@ export default function SignalsPage() {
                 return (
                   <div
                     key={p.address}
-                    className="grid gap-4 px-6 py-4 items-center"
+                    className="grid gap-4 px-6 py-4 items-center min-w-[560px]"
                     style={{
                       gridTemplateColumns: "40px 1fr 100px 100px 120px",
                       borderBottom: "1px solid rgba(42,47,58,0.5)",

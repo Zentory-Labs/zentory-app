@@ -318,13 +318,13 @@ export default function SpotVaultPage() {
 
                 {needsApproval ? (
                   <button onClick={handleApprove} disabled={isApproveLoading}
-                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 transition-opacity"
+                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 transition-all duration-200 enabled:hover:scale-[1.02]"
                     style={{ background: "rgba(176,141,87,0.15)", color: "#b08d57", border: "1px solid rgba(176,141,87,0.3)" }}>
                     {isApproveLoading ? "Approving..." : "Approve WBTC"}
                   </button>
                 ) : (
                   <button onClick={handleDeposit} disabled={isDepositLoading || !!isCircuitBreaker.data}
-                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 transition-opacity"
+                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 transition-all duration-200 enabled:hover:scale-[1.02]"
                     style={{ background: "#b08d57", color: "#0b0b0d" }}>
                     {isDepositLoading ? "Depositing..." : "Deposit"}
                   </button>
@@ -355,7 +355,7 @@ export default function SpotVaultPage() {
                   </div>
                 </div>
                 <button onClick={handleWithdraw} disabled={isWithdrawLoading || !!isCircuitBreaker.data}
-                  className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 transition-opacity"
+                  className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 transition-all duration-200 enabled:hover:scale-[1.02]"
                   style={{ background: "#c2353f", color: "#fff" }}>
                   {isWithdrawLoading ? "Withdrawing..." : "Withdraw"}
                 </button>

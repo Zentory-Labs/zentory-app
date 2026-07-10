@@ -504,7 +504,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   <button
                     onClick={handleApprove}
                     disabled={isApproveLoading || depositInvalid}
-                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 enabled:hover:scale-[1.02]"
                     style={{ background: "rgba(176,141,87,0.15)", color: "#b08d57", border: "1px solid rgba(176,141,87,0.3)" }}
                   >
                     {isApproveLoading ? "Approving..." : isApproveSuccess ? "Approved ✓ — Deposit next" : "Approve Token"}
@@ -513,7 +513,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                   <button
                     onClick={handleDeposit}
                     disabled={isDepositLoading || depositInvalid || depositAmount === "" || !!isCircuitBreaker.data}
-                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                    className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 enabled:hover:scale-[1.02]"
                     style={{ background: "#b08d57", color: "#0b0b0d" }}
                   >
                     {isDepositLoading ? "Depositing..." : "Deposit"}
@@ -562,7 +562,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                 <button
                   onClick={handleWithdraw}
                   disabled={isWithdrawLoading || withdrawInvalid || withdrawShares === "" || !!isCircuitBreaker.data}
-                  className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                  className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 enabled:hover:scale-[1.02]"
                   style={{ background: "#c2353f", color: "#fff" }}
                 >
                   {isWithdrawLoading ? "Withdrawing..." : "Withdraw"}
