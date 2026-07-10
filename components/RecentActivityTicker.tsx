@@ -68,7 +68,7 @@ export default function RecentActivityTicker({ limit = 8, title = "Recent Activi
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
-          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
+          style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
         >
           {title}
           {demoMode && <DemoBadge />}
@@ -83,7 +83,7 @@ export default function RecentActivityTicker({ limit = 8, title = "Recent Activi
       </div>
 
       {rows.length === 0 ? (
-        <div className="text-center py-8 text-sm" style={{ color: "rgba(106,111,117,0.7)" }}>
+        <div className="text-center py-8 text-sm" style={{ color: "#6a6f75" }}>
           Activity ingestion goes live with mainnet (Q4 2026).
         </div>
       ) : (
@@ -109,7 +109,7 @@ export default function RecentActivityTicker({ limit = 8, title = "Recent Activi
               </span>
               <span
                 className="text-xs flex-shrink-0"
-                style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
+                style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
               >
                 {fmtTimeAgo(row.ts)}
               </span>

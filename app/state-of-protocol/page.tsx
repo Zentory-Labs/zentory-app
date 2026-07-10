@@ -173,7 +173,7 @@ function ContractRow({ contract }: { contract: (typeof CONTRACTS)[number] }) {
         <div className="flex items-center gap-2">
           <code
             className="text-xs font-mono"
-            style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}
+            style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {truncateAddress(contract.address)}
           </code>
@@ -273,7 +273,7 @@ export default function StateOfProtocolPage() {
           </h1>
           <p
             className="text-base max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}
+            style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             Real-time transparency into ZENTORY Labs smart contracts, security posture, and economic design.
             All data is pulled directly from on-chain sources.
@@ -301,7 +301,7 @@ export default function StateOfProtocolPage() {
                 >
                   {stat.value}
                 </span>
-                <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                <span className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   {stat.sub}
                 </span>
               </div>
@@ -326,7 +326,7 @@ export default function StateOfProtocolPage() {
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#bfc3c7" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+            <span className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
               All {CONTRACTS.length} core contracts are deployed on HyperEVM Testnet (Chain 998). Mainnet deployment targeted for Q1 2027 after external audit.
             </span>
           </div>
@@ -359,7 +359,7 @@ export default function StateOfProtocolPage() {
                         {s.status}
                       </span>
                     </div>
-                    <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                    <span className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                       {s.detail}
                     </span>
                   </div>
@@ -409,12 +409,12 @@ export default function StateOfProtocolPage() {
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className="text-sm font-mono" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                        <span className="text-sm font-mono" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                           {row.tvl}
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className="text-sm font-mono" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                        <span className="text-sm font-mono" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                           {row.apy}
                         </span>
                       </td>
@@ -442,7 +442,7 @@ export default function StateOfProtocolPage() {
                   >
                     {r.stream}
                   </span>
-                  <span className="text-xs" style={{ color: "rgba(234,234,234,0.35)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                  <span className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                     {r.detail}
                   </span>
                 </div>
@@ -477,8 +477,8 @@ export default function StateOfProtocolPage() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
-              <strong style={{ color: "rgba(234,234,234,0.7)" }}>Testnet Disclaimer:</strong> All data shown reflects HyperEVM
+            <p className="text-xs leading-relaxed" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
+              <strong style={{ color: "#bfc3c7" }}>Testnet Disclaimer:</strong> All data shown reflects HyperEVM
               testnet state. No mainnet data is live. TVL, APY, and revenue figures will be populated upon mainnet launch.
               This page is updated in real-time from on-chain data. Nothing on this page constitutes financial advice.
             </p>

@@ -36,7 +36,7 @@ function Panel({ tone, children }: { tone: "neutral" | "gold" | "green" | "red" 
     violet: { bg: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)" },
   };
   return (
-    <div className="rounded-2xl p-6 mb-6 text-sm" style={{ background: tones[tone].bg, border: tones[tone].border, color: "rgba(234,234,234,0.85)" }}>
+    <div className="rounded-2xl p-6 mb-6 text-sm" style={{ background: tones[tone].bg, border: tones[tone].border, color: "#eaeaea" }}>
       {children}
     </div>
   );
@@ -160,7 +160,7 @@ export default function ClaimPage() {
           )}
 
           {txHash && (
-            <div className="rounded-2xl p-4 mb-6 text-xs" style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(234,234,234,0.85)", fontFamily: "var(--font-space-mono), monospace" }}>
+            <div className="rounded-2xl p-4 mb-6 text-xs" style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.25)", color: "#eaeaea", fontFamily: "var(--font-space-mono), monospace" }}>
               <div className="font-semibold mb-1" style={{ color: "#34d399" }}>
                 {isTxPending ? "Claim pending" : isTxSuccess ? "Claim confirmed — ZENT sent" : "Transaction submitted"}
               </div>
@@ -170,7 +170,7 @@ export default function ClaimPage() {
         </>
       )}
 
-      <div className="rounded-2xl p-6 mt-4 text-xs" style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "rgba(234,234,234,0.7)" }}>
+      <div className="rounded-2xl p-6 mt-4 text-xs" style={{ background: "rgba(194,53,63,0.04)", border: "1px solid rgba(194,53,63,0.2)", color: "#bfc3c7" }}>
         <div className="font-semibold mb-2" style={{ color: "#c2353f" }}>How eligibility works</div>
         The snapshot scores three tracks — faucet usage, vault deposits, and signal submissions — at a
         fixed block. Proofs are published statically; the contract verifies your proof against the

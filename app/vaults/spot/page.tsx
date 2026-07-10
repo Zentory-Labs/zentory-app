@@ -270,7 +270,7 @@ export default function SpotVaultPage() {
             more BTC, by stepping to cash in downturns and rebuying lower — drawdown insurance, not a
             guarantee: in a straight-up rally the vault can hold fewer sats than holding (the cost of
             stepping aside).
-            {" "}<span style={{ color: "rgba(234,234,234,0.45)" }}>
+            {" "}<span style={{ color: "#6a6f75" }}>
               Note: at the current ~1-BTC test seed, NAV is dominated by fixed swap costs from churning a tiny
               position, not strategy economics — see the{" "}
               <a href="/backtest" className="underline" style={{ color: "#b08d57" }}>6-year backtest</a>{" "}
@@ -336,7 +336,7 @@ export default function SpotVaultPage() {
                   </div>
                 )}
                 {isDepositSuccess && <div className="text-center text-sm" style={{ color: "#34d399" }}>Deposit successful!</div>}
-                <p className="text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
+                <p className="text-xs" style={{ color: "#6a6f75" }}>
                   Need testnet BTC? <Link href="/faucet" className="underline" style={{ color: "#c2353f" }}>Mint from the faucet →</Link>
                 </p>
               </div>

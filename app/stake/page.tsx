@@ -357,7 +357,7 @@ function TopStakersBlock() {
     return (
       <div
         className="rounded-2xl p-6 text-center text-sm"
-        style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "rgba(106,111,117,0.7)" }}
+        style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "#6a6f75" }}
       >
         Top-staker ranking goes live with the indexer (post-mainnet).
       </div>
@@ -369,7 +369,7 @@ function TopStakersBlock() {
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
-          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
+          style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), var(--font-montserrat), sans-serif" }}
         >
           Top Stakers
           <DemoBadge />
@@ -401,7 +401,7 @@ function TopStakersBlock() {
             <span className="text-sm font-mono" style={{ color: "#eaeaea" }}>
               {s.staked.toLocaleString("en-US")} ZENT
             </span>
-            <span className="text-xs hidden sm:inline-block" style={{ color: "rgba(106,111,117,0.8)" }}>
+            <span className="text-xs hidden sm:inline-block" style={{ color: "#6a6f75" }}>
               {s.lockMonths}mo lock
             </span>
             <span className="text-xs font-mono" style={{ color: "#b08d57" }}>

@@ -55,7 +55,7 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
     return (
       <div
         className="rounded-2xl p-4 mb-4 flex items-center justify-between"
-        style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "rgba(106,111,117,0.9)" }}
+        style={{ background: "#1c1c21", border: "1px solid #2a2f3a", color: "#6a6f75" }}
       >
         <div className="text-xs uppercase tracking-widest">Live signal</div>
         <div className="text-xs">{err ? "ledger not yet published" : "waiting for first entry…"}</div>
@@ -76,7 +76,7 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
       style={{ background: "#1c1c21", border: "1px solid #2a2f3a", fontFamily: "var(--font-space-mono), monospace" }}
     >
       <div className="flex items-center gap-3">
-        <div className="text-xs uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)" }}>
+        <div className="text-xs uppercase tracking-widest" style={{ color: "#6a6f75" }}>
           {stale ? "Last signal" : "Live signal"}
         </div>
         <span
@@ -88,19 +88,19 @@ export default function LiveSignalWidget({ asset }: { asset: string }) {
       </div>
       <div className="flex gap-5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
         <div>
-          <span style={{ color: "rgba(106,111,117,0.9)" }}>raw ensemble </span>
+          <span style={{ color: "#6a6f75" }}>raw ensemble </span>
           {latest.target_frac.toFixed(2)}
         </div>
         <div>
-          <span style={{ color: "rgba(106,111,117,0.9)" }}>price </span>
+          <span style={{ color: "#6a6f75" }}>price </span>
           ${latest.price.toLocaleString("en-US", { maximumFractionDigits: 2 })}
         </div>
         <div>
-          <span style={{ color: "rgba(106,111,117,0.9)" }}>bar </span>
+          <span style={{ color: "#6a6f75" }}>bar </span>
           {latest.bar_ts.replace("T", " ").replace("Z", "")}Z
         </div>
         <div style={stale ? { color: "#b08d57" } : undefined}>
-          <span style={{ color: "rgba(106,111,117,0.9)" }}>age </span>
+          <span style={{ color: "#6a6f75" }}>age </span>
           {timeAgo(latest.recorded_at)}{stale ? " · delayed" : ""}
         </div>
       </div>

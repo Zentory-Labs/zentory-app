@@ -262,7 +262,7 @@ export default function SignalsPage() {
             Signal Arena
             {demoMode && <DemoBadge />}
           </h1>
-          <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.9)" }}>
+          <p className="text-sm mt-1" style={{ color: "#6a6f75" }}>
             Live signals from on-chain SignalRegistry · Conviction-Weighted Leaderboard
           </p>
         </div>
@@ -283,7 +283,7 @@ export default function SignalsPage() {
         >
           <div>
             {error}
-            <div className="text-xs mt-1" style={{ color: "rgba(234,234,234,0.45)" }}>
+            <div className="text-xs mt-1" style={{ color: "#6a6f75" }}>
               On-chain signals will reappear automatically once the connection recovers.
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function SignalsPage() {
 
         {/* Asset filter */}
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>Filter:</span>
+          <span className="text-xs" style={{ color: "#6a6f75" }}>Filter:</span>
           {[null, 0, 1, 2, 3, 4].map((ac) => (
             <button
               key={String(ac)}
@@ -341,7 +341,7 @@ export default function SignalsPage() {
       {tab === "feed" && (
         <div>
           {loading ? (
-            <div className="text-center py-16 text-sm" style={{ color: "rgba(106,111,117,0.7)" }}>
+            <div className="text-center py-16 text-sm" style={{ color: "#6a6f75" }}>
               Loading signals from SignalRegistry...
             </div>
           ) : filteredSignals.length === 0 ? (
@@ -349,7 +349,7 @@ export default function SignalsPage() {
               <div className="text-lg font-semibold mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>
                 No signals found
               </div>
-              <div className="text-sm" style={{ color: "rgba(106,111,117,0.7)" }}>
+              <div className="text-sm" style={{ color: "#6a6f75" }}>
                 Signals are submitted by quants via the SignalRegistry contract.
                 <br />
                 Submit a signal using the keeper engine or deploy a quant bot.
@@ -397,7 +397,7 @@ export default function SignalsPage() {
                           </div>
                         );
                       })()}
-                      <div className="text-xs mt-0.5" style={{ color: "rgba(106,111,117,0.7)" }}>
+                      <div className="text-xs mt-0.5" style={{ color: "#6a6f75" }}>
                         {fmtTime(sig.submittedAt)}
                       </div>
                     </div>
@@ -411,18 +411,18 @@ export default function SignalsPage() {
                         <span className="text-sm font-semibold" style={{ color: "#eaeaea" }}>
                           {assetLabel}
                         </span>
-                        <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(106,111,117,0.9)" }}>
+                        <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)", color: "#6a6f75" }}>
                           {ASSET_CLASS_LABEL[sig.assetClass] ?? `Class ${sig.assetClass}`}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
+                      <div className="flex items-center gap-3 mt-1 text-xs" style={{ color: "#6a6f75" }}>
                         <span>Confidence: <span style={{ color: "#eaeaea" }}>{Math.round(sig.confidence / 100)}%</span></span>
                       </div>
                     </div>
 
                     {/* Conviction Score */}
                     <div className="text-right flex-shrink-0">
-                      <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                      <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                         Conviction
                       </div>
                       <div className="font-bold text-sm" style={{ color: tier.color, fontFamily: "var(--font-space-mono), monospace" }}>
@@ -450,7 +450,7 @@ export default function SignalsPage() {
       {tab === "leaderboard" && (
         <div>
           {leaderboard.length === 0 ? (
-            <div className="text-center py-16 text-sm" style={{ color: "rgba(106,111,117,0.7)" }}>
+            <div className="text-center py-16 text-sm" style={{ color: "#6a6f75" }}>
               No provider data yet. Signals from the feed will populate the leaderboard.
             </div>
           ) : (
@@ -462,7 +462,7 @@ export default function SignalsPage() {
                   gridTemplateColumns: "40px 1fr 100px 100px 120px",
                   background: "rgba(255,255,255,0.02)",
                   borderBottom: "1px solid #2a2f3a",
-                  color: "rgba(106,111,117,0.7)",
+                  color: "#6a6f75",
                   fontFamily: "var(--font-montserrat), sans-serif",
                 }}
               >
@@ -531,7 +531,7 @@ export default function SignalsPage() {
             </div>
           )}
 
-          <div className="mt-4 text-center text-xs" style={{ color: "rgba(106,111,117,0.5)" }}>
+          <div className="mt-4 text-center text-xs" style={{ color: "#6a6f75" }}>
             Conviction scores are weighted by ZENT staked per signal. Leaderboard updates when signals are submitted on-chain.
           </div>
         </div>
@@ -551,12 +551,12 @@ export default function SignalsPage() {
           </div>
           <div>
             <div className="text-sm font-semibold" style={{ color: "#eaeaea" }}>Ghost Portfolio</div>
-            <div className="text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
+            <div className="text-xs" style={{ color: "#6a6f75" }}>
               On-chain attribution — coming Q3 2026
             </div>
           </div>
         </div>
-        <p className="text-xs leading-relaxed" style={{ color: "rgba(234,234,234,0.55)" }}>
+        <p className="text-xs leading-relaxed" style={{ color: "#bfc3c7" }}>
           Once enough signals resolve, every vault page will plot a third line —
           <strong className="text-white/80"> GHOST</strong> — showing what following the on-chain
           signals would have returned versus the <strong className="text-white/80">HOLD</strong>{" "}

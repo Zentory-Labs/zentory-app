@@ -39,14 +39,14 @@ export default function ContributePage() {
       </h1>
       <p
         className="text-base leading-relaxed max-w-lg mb-3"
-        style={{ color: "rgba(234,234,234,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}
+        style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         Build a publicly verifiable on-chain track record. Stake ZENT as a bond against
         accuracy. Earn payouts on profitable epochs.
       </p>
       <p
         className="text-sm leading-relaxed max-w-lg mb-10"
-        style={{ color: "rgba(234,234,234,0.45)", fontFamily: "var(--font-montserrat), sans-serif" }}
+        style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         Public quant onboarding opens when the on-chain signal pipeline
         (SignalRegistry + EpochScoring + keeper bot) finishes integration.
@@ -120,7 +120,7 @@ export default function ContributePage() {
             </h3>
             <p
               className="text-xs leading-relaxed"
-              style={{ color: "rgba(234,234,234,0.45)", fontFamily: "var(--font-montserrat), sans-serif" }}
+              style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {f.desc}
             </p>

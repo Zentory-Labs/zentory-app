@@ -195,7 +195,7 @@ function CopyButton({ text }: { text: string }) {
 function MetricCard({ label, value, accent, pill }: { label: string; value: string; accent?: string; pill?: string }) {
   return (
     <div className="rounded-2xl p-5" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-      <span className="text-xs uppercase tracking-widest" style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+      <span className="text-xs uppercase tracking-widest" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {label}
       </span>
       <div className="flex items-end gap-2 flex-wrap mt-1">
@@ -265,7 +265,7 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
       {/* Asset class + asset */}
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs uppercase tracking-wider" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>Asset Class</label>
+          <label className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>Asset Class</label>
           <select
             value={assetClass}
             onChange={(e) => setAssetClass(e.target.value)}
@@ -278,7 +278,7 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
           </select>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs uppercase tracking-wider" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>Asset</label>
+          <label className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>Asset</label>
           <select
             value={assetId}
             onChange={(e) => setAssetId(e.target.value)}
@@ -294,7 +294,7 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
 
       {/* Direction */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs uppercase tracking-wider" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>Direction</label>
+        <label className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>Direction</label>
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
@@ -328,7 +328,7 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
       {/* Confidence */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs uppercase tracking-wider" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>Confidence</label>
+          <label className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>Confidence</label>
           <span className="text-sm font-bold" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>{confidencePct}%</span>
         </div>
         <input
@@ -341,14 +341,14 @@ function PublishResearchForm({ apiKey, onSuccess }: { apiKey: string; onSuccess:
           className="w-full accent-[#b08d57]"
           style={{ accentColor: "#b08d57" }}
         />
-        <div className="flex justify-between text-[10px]" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <div className="flex justify-between text-[10px]" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
           <span>Low</span><span>High</span>
         </div>
       </div>
 
       {/* Expiry */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs uppercase tracking-wider" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>Expires In</label>
+        <label className="text-xs uppercase tracking-wider" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>Expires In</label>
         <div className="grid grid-cols-3 gap-2">
           {EXPIRY_OPTIONS.map((opt, i) => (
             <button
@@ -403,7 +403,7 @@ function ResearchTable({ research }: { research: Research[] }) {
   if (research.length === 0) {
     return (
       <div className="text-center py-10">
-        <p className="text-sm" style={{ color: "rgba(106,111,117,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
           No research published yet
         </p>
       </div>
@@ -414,7 +414,7 @@ function ResearchTable({ research }: { research: Research[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
         <thead>
-          <tr style={{ color: "rgba(106,111,117,0.7)", textAlign: "left", borderBottom: "1px solid #2a2f3a" }}>
+          <tr style={{ color: "#6a6f75", textAlign: "left", borderBottom: "1px solid #2a2f3a" }}>
             {["Time", "Asset", "Class", "Direction", "Confidence", "Expires", "Status"].map((h) => (
               <th key={h} className="pb-3 pr-4 text-xs uppercase tracking-widest font-semibold">{h}</th>
             ))}
@@ -426,16 +426,16 @@ function ResearchTable({ research }: { research: Research[] }) {
             const statusColor = s.status === "Active" ? "#34d399" : s.status === "Resolved" ? "#b08d57" : "#6a6f75";
             return (
               <tr key={s.id} style={{ borderTop: "1px solid #2a2f3a", color: "#eaeaea" }}>
-                <td className="py-3 pr-4 text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
+                <td className="py-3 pr-4 text-xs" style={{ color: "#6a6f75" }}>
                   {s.submitted_at ? new Date(s.submitted_at * 1000).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                 </td>
                 <td className="py-3 pr-4 font-semibold">{s.asset_id}</td>
-                <td className="py-3 pr-4 text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>{s.asset_class}</td>
+                <td className="py-3 pr-4 text-xs" style={{ color: "#6a6f75" }}>{s.asset_class}</td>
                 <td className="py-3 pr-4 font-semibold" style={{ color: isLong ? "#34d399" : "#c2353f" }}>
                   {isLong ? "+ LONG" : "- SHORT"}
                 </td>
                 <td className="py-3 pr-4 text-xs">{Math.round((s.confidence / 10000) * 100)}%</td>
-                <td className="py-3 pr-4 text-xs" style={{ color: "rgba(106,111,117,0.7)" }}>
+                <td className="py-3 pr-4 text-xs" style={{ color: "#6a6f75" }}>
                   {s.expires_at ? new Date(s.expires_at * 1000).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                 </td>
                 <td className="py-3 pr-4">
@@ -509,7 +509,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
         <h1 className="text-3xl font-bold text-white" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
           Contributor Dashboard
         </h1>
-        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm mt-1" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Manage your API keys, publish research, and monitor performance
         </p>
       </div>
@@ -521,7 +521,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
             <h2 className="text-base font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
               Your API Keys
             </h2>
-            <p className="text-xs mt-0.5" style={{ color: "rgba(106,111,117,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+            <p className="text-xs mt-0.5" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
               Use your API key to authenticate research submissions from your trading bot
             </p>
           </div>
@@ -542,7 +542,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
                 <p className="text-xs font-bold mb-1" style={{ color: "#34d399", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   API Key Generated
                 </p>
-                <p className="text-[11px] mb-2" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                <p className="text-[11px] mb-2" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                   Save this key now — it will not be shown again.
                 </p>
                 <code className="text-xs font-mono break-all" style={{ color: "#eaeaea", fontFamily: "monospace" }}>
@@ -554,7 +554,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
                 <button
                   onClick={() => setGeneratedKey(null)}
                   className="text-xs px-3 py-1.5 rounded-lg transition-colors"
-                  style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a", color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}
+                  style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a", color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
                   Dismiss
                 </button>
@@ -572,7 +572,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
           </div>
         ) : keys.length === 0 && !generatedKey ? (
           <div className="text-center py-8">
-            <p className="text-sm mb-4" style={{ color: "rgba(106,111,117,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+            <p className="text-sm mb-4" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
               No API keys yet. Generate one to start publishing research.
             </p>
           </div>
@@ -588,7 +588,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
                         {k.prefix}***
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 mt-0.5 text-[11px]" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                    <div className="flex items-center gap-3 mt-0.5 text-[11px]" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                       <span>Created {fmtTs(k.createdAt)}</span>
                       <span>·</span>
                       <span>Last used {fmtRelative(k.lastUsedAt)}</span>
@@ -699,7 +699,7 @@ export default function ContributeDashboardPage() {
         <h1 className="text-2xl font-bold mb-3" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Connect your wallet
         </h1>
-        <p className="text-sm mb-8 max-w-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm mb-8 max-w-sm" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Connect your wallet to access the contributor dashboard and manage your research.
         </p>
         <button
@@ -732,7 +732,7 @@ export default function ContributeDashboardPage() {
           <h1 className="text-2xl font-bold mb-3" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
             No API key found
           </h1>
-          <p className="text-sm mb-8 max-w-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <p className="text-sm mb-8 max-w-sm" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Generate an API key from the dashboard to start publishing research.
           </p>
           <a

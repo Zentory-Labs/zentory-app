@@ -367,7 +367,7 @@ function HowItWorks() {
         <p
           className="text-sm"
           style={{
-            color: "rgba(234,234,234,0.5)",
+            color: "#bfc3c7",
             fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
@@ -400,7 +400,7 @@ function HowItWorks() {
             <p
               className="text-sm"
               style={{
-                color: "rgba(234,234,234,0.5)",
+                color: "#bfc3c7",
                 fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
@@ -466,7 +466,7 @@ function FAQ() {
                 <p
                   className="pt-4 pb-4 px-6 text-sm leading-relaxed"
                   style={{
-                    color: "rgba(234,234,234,0.55)",
+                    color: "#bfc3c7",
                     fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
@@ -499,7 +499,7 @@ function AssetClassTable() {
         <p
           className="text-sm"
           style={{
-            color: "rgba(234,234,234,0.5)",
+            color: "#bfc3c7",
             fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
@@ -521,7 +521,7 @@ function AssetClassTable() {
               <th
                 className="px-6 py-4 text-left font-semibold uppercase tracking-wider"
                 style={{
-                  color: "rgba(234,234,234,0.5)",
+                  color: "#bfc3c7",
                   fontFamily: "var(--font-montserrat), sans-serif",
                 }}
               >
@@ -532,7 +532,7 @@ function AssetClassTable() {
                   key={t}
                   className="px-6 py-4 text-center font-semibold uppercase tracking-wider"
                   style={{
-                    color: "rgba(234,234,234,0.5)",
+                    color: "#bfc3c7",
                     fontFamily: "var(--font-montserrat), sans-serif",
                   }}
                 >
@@ -566,7 +566,7 @@ function AssetClassTable() {
                     {val ? (
                       <span style={{ color: "#34d399" }}>Yes</span>
                     ) : (
-                      <span style={{ color: "rgba(234,234,234,0.2)" }}>—</span>
+                      <span style={{ color: "#6a6f75" }}>—</span>
                     )}
                   </td>
                 ))}
@@ -619,7 +619,7 @@ export default function SubscriptionVaultPage() {
           </h1>
           <p
             className="text-base leading-relaxed max-w-xl mx-auto"
-            style={{ color: "rgba(234,234,234,0.6)" }}
+            style={{ color: "#bfc3c7" }}
           >
             Subscribe to quant research contributors across crypto, equities, forex,
             and commodities. Execute on your own wallet — fully transparent, all
@@ -642,7 +642,7 @@ export default function SubscriptionVaultPage() {
             <p
               className="text-sm"
               style={{
-                color: "rgba(234,234,234,0.5)",
+                color: "#bfc3c7",
                 fontFamily: "var(--font-montserrat), sans-serif",
               }}
             >
@@ -694,7 +694,7 @@ export default function SubscriptionVaultPage() {
                       <h3
                         className="text-base font-semibold"
                         style={{
-                          color: "rgba(234,234,234,0.7)",
+                          color: "#bfc3c7",
                           fontFamily: "var(--font-montserrat), sans-serif",
                         }}
                       >
@@ -738,7 +738,7 @@ export default function SubscriptionVaultPage() {
                     </div>
                     <div
                       className="text-xs mt-0.5"
-                      style={{ color: "rgba(234,234,234,0.4)" }}
+                      style={{ color: "#6a6f75" }}
                     >
                       USD price set post-listing · testnet only
                     </div>
@@ -747,7 +747,7 @@ export default function SubscriptionVaultPage() {
                   {/* Description */}
                   <p
                     className="text-sm leading-relaxed"
-                    style={{ color: "rgba(234,234,234,0.55)" }}
+                    style={{ color: "#bfc3c7" }}
                   >
                     {tier.description}
                   </p>
@@ -809,12 +809,12 @@ function SubscriberStatsBlock() {
       <div className="flex items-center justify-between mb-4">
         <h3
           className="text-sm font-semibold uppercase tracking-widest inline-flex items-center gap-2"
-          style={{ color: "rgba(106,111,117,0.9)", fontFamily: "var(--font-montserrat), sans-serif" }}
+          style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
         >
           Active Subscriptions
           <DemoBadge />
         </h3>
-        <span className="text-xs" style={{ color: "rgba(106,111,117,0.8)" }}>
+        <span className="text-xs" style={{ color: "#6a6f75" }}>
           MRR: <span style={{ color: "#b08d57", fontWeight: 600 }}>{s.totalMrrZent.toLocaleString("en-US")} ZENT/mo</span>
         </span>
       </div>
@@ -831,14 +831,14 @@ function SubscriberStatsBlock() {
             <div className="text-2xl font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
               {c.count}
             </div>
-            <div className="text-xs mt-1" style={{ color: "rgba(106,111,117,0.7)" }}>
+            <div className="text-xs mt-1" style={{ color: "#6a6f75" }}>
               {(c.count * c.price).toLocaleString("en-US")} ZENT/mo
             </div>
           </div>
         ))}
       </div>
       <div className="rounded-xl p-4" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
-        <div className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(106,111,117,0.9)" }}>
+        <div className="text-xs uppercase tracking-widest mb-2" style={{ color: "#6a6f75" }}>
           Recent subscriptions
         </div>
         <ul className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
@@ -846,12 +846,12 @@ function SubscriberStatsBlock() {
             <li
               key={i}
               className="rounded-md px-2 py-1.5 flex items-center justify-between"
-              style={{ background: "rgba(255,255,255,0.03)", color: "rgba(234,234,234,0.85)" }}
+              style={{ background: "rgba(255,255,255,0.03)", color: "#eaeaea" }}
             >
               <span style={{ color: r.tier === "ELITE" ? "#c2353f" : r.tier === "PRO" ? "#b08d57" : "#c2353f", fontWeight: 600 }}>
                 {r.tier}
               </span>
-              <span style={{ color: "rgba(106,111,117,0.8)" }}>{r.ago}</span>
+              <span style={{ color: "#6a6f75" }}>{r.ago}</span>
             </li>
           ))}
         </ul>

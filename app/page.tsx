@@ -350,7 +350,7 @@ function ChainStats() {
           style={{
             background: "rgba(194,53,63,0.08)",
             borderColor: "rgba(194,53,63,0.25)",
-            color: "rgba(234,234,234,0.8)",
+            color: "#eaeaea",
             fontFamily: "var(--font-montserrat), sans-serif",
           }}
         >
@@ -523,9 +523,9 @@ export default function Home() {
                   { label: "Custody", value: "Non-custodial", sub: "ERC-4626 shares, redeem anytime" },
                 ].map(({ label, value, sub }) => (
                   <div key={label} className="flex flex-col gap-0.5">
-                    <span className="text-xs" style={{ color: "rgba(234,234,234,0.4)" }}>{label}</span>
+                    <span className="text-xs" style={{ color: "#6a6f75" }}>{label}</span>
                     <span className="text-sm font-semibold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>{value}</span>
-                    <span className="text-xs" style={{ color: "rgba(234,234,234,0.25)" }}>{sub}</span>
+                    <span className="text-xs" style={{ color: "#6a6f75" }}>{sub}</span>
                   </div>
                 ))}
               </div>
@@ -589,7 +589,7 @@ export default function Home() {
           >
             <span>⬡</span> Vaults
           </div>
-          <p className="text-xs text-center" style={{ color: "rgba(234,234,234,0.35)" }}>
+          <p className="text-xs text-center" style={{ color: "#6a6f75" }}>
             Powered by Hyperliquid · On-chain execution · ERC-4626 vaults
           </p>
           <div className="h-px flex-1" style={{ background: "linear-gradient(to right, transparent, #2a2f3a, transparent)" }} />

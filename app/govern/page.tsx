@@ -221,7 +221,7 @@ export default function GovernPage() {
           <h2 className="text-sm font-semibold mb-3" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Who controls the protocol today
           </h2>
-          <ul className="space-y-2 text-sm" style={{ color: "rgba(234,234,234,0.6)" }}>
+          <ul className="space-y-2 text-sm" style={{ color: "#bfc3c7" }}>
             <li>
               · Protocol parameters are currently controlled by the team deployer key, behind a{" "}
               <strong className="text-white/80">48-hour timelock</strong> — every change is publicly visible on-chain before it executes.

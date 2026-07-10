@@ -23,7 +23,7 @@ function RiskCard({ title, children }: { title: string; children: React.ReactNod
       </div>
       <div
         className="space-y-3 text-sm leading-relaxed"
-        style={{ color: "rgba(234,234,234,0.6)", fontFamily: "var(--font-montserrat), sans-serif" }}
+        style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         {children}
       </div>
@@ -41,7 +41,7 @@ export default function RisksPage() {
         <h1 className="text-4xl font-bold tracking-tight" style={{ color: "#eaeaea" }}>
           Risks
         </h1>
-        <p className="text-sm max-w-2xl leading-relaxed" style={{ color: "rgba(234,234,234,0.5)" }}>
+        <p className="text-sm max-w-2xl leading-relaxed" style={{ color: "#bfc3c7" }}>
           If you are considering a deposit, read this first. These are the ways the vaults
           can lose money or get stuck — in plain language, including the scenarios where the
           strategy is simply worse than doing nothing.
@@ -120,7 +120,7 @@ export default function RisksPage() {
         </p>
       </RiskCard>
 
-      <p className="text-xs pt-2" style={{ color: "rgba(234,234,234,0.35)" }}>
+      <p className="text-xs pt-2" style={{ color: "#6a6f75" }}>
         Questions about any of this:{" "}
         <a href="mailto:info@zentorylabs.com" className="underline" style={LINK}>
           info@zentorylabs.com

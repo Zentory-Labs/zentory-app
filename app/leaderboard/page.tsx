@@ -193,14 +193,14 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
         <div className="font-mono text-sm font-semibold mb-1" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
           {provider.providerShort}
         </div>
-        <div className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <div className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
           {provider.provider.slice(0, 10)}...{provider.provider.slice(-6)}
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
         <div className="text-center">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Accuracy
           </div>
           <div className="font-bold text-sm font-mono" style={{ color, fontFamily: "var(--font-montserrat), sans-serif" }}>
@@ -208,7 +208,7 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
           </div>
         </div>
         <div className="text-center">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Signals
           </div>
           <div className="font-bold text-sm font-mono" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
@@ -216,7 +216,7 @@ function Top3Card({ provider, index }: { provider: LeaderboardProvider; index: n
           </div>
         </div>
         <div className="text-center">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             ZENT Earned
           </div>
           <div className="font-bold text-sm font-mono" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
@@ -299,7 +299,7 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
         {provider.totalSignals}
       </td>
 
-      <td className="px-4 py-3.5 text-sm font-mono text-center" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+      <td className="px-4 py-3.5 text-sm font-mono text-center" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {provider.resolvedSignals}
       </td>
 
@@ -311,7 +311,7 @@ function LeaderboardRow({ provider }: { provider: LeaderboardProvider }) {
         </div>
       </td>
 
-      <td className="px-4 py-3.5 text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+      <td className="px-4 py-3.5 text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {provider.lastSignal}
       </td>
 
@@ -339,12 +339,12 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
           <div className="text-sm font-bold mb-1" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Your Position
           </div>
-          <div className="text-xs" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Not ranked yet — stake ZENT and publish research to appear here
           </div>
         </div>
         <div
-          className="px-4 py-2 rounded-xl text-xs font-semibold"
+          className="px-4 py-2 rounded-lg text-xs font-semibold"
           style={{
             background: "rgba(139,30,45,0.15)",
             border: "1px solid rgba(139,30,45,0.3)",
@@ -376,7 +376,7 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
       </div>
       <div className="flex items-center gap-6">
         <div className="text-right">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Total Signals
           </div>
           <div className="font-bold font-mono" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>
@@ -384,7 +384,7 @@ function YourPosition({ address, providers }: { address: string; providers: Lead
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xs mb-0.5" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="text-xs mb-0.5" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             ZENT Earned
           </div>
           <div className="font-bold font-mono" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>
@@ -578,13 +578,13 @@ export default function LeaderboardPage() {
               Contributor Leaderboard
               {demoMode && <DemoBadge />}
             </h1>
-            <p className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: "rgba(234,234,234,0.5)" }}>
+            <p className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: "#bfc3c7" }}>
               Verifiable, on-chain track records — led by Zentory Core, the protocol&apos;s own systematic engine. Third-party quants are ranked here as their signed signals settle.
             </p>
           </div>
           <div className="flex items-center gap-3">
             <EpochTimerPill hours={hours} minutes={minutes} secs={secs} />
-            <span className="text-xs" style={{ color: "rgba(234,234,234,0.3)" }}>
+            <span className="text-xs" style={{ color: "#6a6f75" }}>
               Updated {updateLabel || "just now"}
             </span>
           </div>
@@ -607,7 +607,7 @@ export default function LeaderboardPage() {
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200"
+              className="px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200"
               style={{
                 background: activeFilter === f ? "#8b1e2d" : "rgba(255,255,255,0.04)",
                 border: `1px solid ${activeFilter === f ? "rgba(139,30,45,0.5)" : "#2a2f3a"}`,
@@ -618,7 +618,7 @@ export default function LeaderboardPage() {
               {f}
             </button>
           ))}
-          <span className="ml-auto text-xs pr-2" style={{ color: "rgba(234,234,234,0.3)" }}>
+          <span className="ml-auto text-xs pr-2" style={{ color: "#6a6f75" }}>
             {filteredProviders.length} external provider{filteredProviders.length !== 1 ? "s" : ""}
           </span>
         </div>
@@ -638,7 +638,7 @@ export default function LeaderboardPage() {
             <h3 className="text-xl font-bold mb-2" style={{ color: "#eaeaea" }}>
               Zentory Core is live. Third-party quants join next.
             </h3>
-            <p className="text-sm max-w-xl mx-auto" style={{ color: "rgba(234,234,234,0.6)" }}>
+            <p className="text-sm max-w-xl mx-auto" style={{ color: "#bfc3c7" }}>
               The founding provider above is the protocol&apos;s own systematic engine, already building a public
               track record. External contributors submit EIP-712 signed signals to{" "}
               <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>SignalRegistry</code>;
@@ -646,7 +646,7 @@ export default function LeaderboardPage() {
               <code className="px-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "#b08d57" }}>EpochScoring</code>{" "}
               — and they&apos;ll be ranked here as their signals resolve. No edits, no deletions, no screenshots.
             </p>
-            <div className="text-xs mt-6" style={{ color: "rgba(234,234,234,0.4)" }}>
+            <div className="text-xs mt-6" style={{ color: "#6a6f75" }}>
               Want to contribute?{" "}
               <a href="/contribute" className="underline" style={{ color: "#b08d57" }}>Become a contributor →</a>
             </div>
@@ -686,7 +686,7 @@ export default function LeaderboardPage() {
                 <thead>
                   <tr style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid #2a2f3a" }}>
                     {["Rank", "Provider", "Accuracy", "Total", "Resolved", "ZENT Earned", "Last Signal", "Trend"].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
                         {h}
                       </th>
                     ))}
@@ -695,13 +695,13 @@ export default function LeaderboardPage() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-12 text-center text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
+                      <td colSpan={8} className="px-4 py-12 text-center text-sm" style={{ color: "#6a6f75" }}>
                         Loading leaderboard...
                       </td>
                     </tr>
                   ) : rest.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-12 text-center text-sm" style={{ color: "rgba(234,234,234,0.4)" }}>
+                      <td colSpan={8} className="px-4 py-12 text-center text-sm" style={{ color: "#6a6f75" }}>
                         No providers match this filter
                       </td>
                     </tr>
@@ -757,7 +757,7 @@ function StatCard({ label, value, accent = "#eaeaea" }: { label: string; value: 
       className="rounded-2xl p-4 flex-1 min-w-[140px]"
       style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}
     >
-      <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "rgba(234,234,234,0.4)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+      <div className="text-xs uppercase tracking-wider mb-1" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
         {label}
       </div>
       <div className="text-2xl font-bold" style={{ color: accent, fontFamily: "var(--font-montserrat), sans-serif" }}>

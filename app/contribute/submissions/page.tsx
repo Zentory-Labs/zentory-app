@@ -60,7 +60,7 @@ function ResearchTable({ research }: { research: Research[] }) {
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(106,111,117,0.3)" strokeWidth="1.5" className="mx-auto mb-3">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
         </svg>
-        <p className="text-sm" style={{ color: "rgba(106,111,117,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>No research found</p>
+        <p className="text-sm" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>No research found</p>
       </div>
     );
   }
@@ -69,7 +69,7 @@ function ResearchTable({ research }: { research: Research[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>
         <thead>
-          <tr style={{ color: "rgba(106,111,117,0.7)", textAlign: "left", borderBottom: "1px solid #2a2f3a" }}>
+          <tr style={{ color: "#6a6f75", textAlign: "left", borderBottom: "1px solid #2a2f3a" }}>
             {["Time", "Epoch", "Asset", "Class", "Direction", "Confidence", "Accuracy", "Payout", "Expires", "Status"].map((h) => (
               <th key={h} className="pb-3 pr-4 text-xs uppercase tracking-widest font-semibold whitespace-nowrap">{h}</th>
             ))}
@@ -83,14 +83,14 @@ function ResearchTable({ research }: { research: Research[] }) {
             const payoutColor = s.payout != null ? (s.payout >= 0 ? "#34d399" : "#c2353f") : undefined;
             return (
               <tr key={s.id} style={{ borderTop: "1px solid #2a2f3a", color: "#eaeaea" }}>
-                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "rgba(106,111,117,0.7)" }}>
+                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "#6a6f75" }}>
                   {s.submitted_at ? fmtTs(s.submitted_at) : "—"}
                 </td>
-                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "rgba(106,111,117,0.6)" }}>
+                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "#6a6f75" }}>
                   {s.epoch ?? "—"}
                 </td>
                 <td className="py-3 pr-4 font-semibold whitespace-nowrap">{s.asset_id}</td>
-                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "rgba(106,111,117,0.6)" }}>{s.asset_class}</td>
+                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "#6a6f75" }}>{s.asset_class}</td>
                 <td className="py-3 pr-4 font-semibold whitespace-nowrap" style={{ color: isLong ? "#34d399" : "#c2353f" }}>
                   {isLong ? "+ LONG" : "- SHORT"}
                 </td>
@@ -101,7 +101,7 @@ function ResearchTable({ research }: { research: Research[] }) {
                 <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: payoutColor ?? "inherit" }}>
                   {s.payout != null ? `${s.payout >= 0 ? "+" : ""}${s.payout}` : "—"}
                 </td>
-                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "rgba(106,111,117,0.6)" }}>
+                <td className="py-3 pr-4 text-xs whitespace-nowrap" style={{ color: "#6a6f75" }}>
                   {s.expires_at ? fmtTs(s.expires_at) : "—"}
                 </td>
                 <td className="py-3 pr-4">
@@ -174,7 +174,7 @@ export default function SubmissionsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
         <h1 className="text-2xl font-bold mb-3" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet</h1>
-        <p className="text-sm" style={{ color: "rgba(234,234,234,0.5)", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet to view your research submissions.</p>
+        <p className="text-sm" style={{ color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}>Connect your wallet to view your research submissions.</p>
       </div>
     );
   }
@@ -190,7 +190,7 @@ export default function SubmissionsPage() {
           <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#b08d57", fontFamily: "var(--font-montserrat), sans-serif" }}>Research Contributor</span>
         </div>
         <h1 className="text-3xl font-bold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>Research Submissions</h1>
-        <p className="text-sm mt-1" style={{ color: "rgba(106,111,117,0.8)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+        <p className="text-sm mt-1" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
           Full history of your submitted research across all epochs
         </p>
       </div>
@@ -198,7 +198,7 @@ export default function SubmissionsPage() {
       {/* Filters */}
       <div className="rounded-2xl p-5" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-3 text-xs" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="flex items-center gap-3 text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             <span className="uppercase tracking-widest font-semibold">Filters</span>
             <span>·</span>
             <span>{total} total research</span>
@@ -259,7 +259,7 @@ export default function SubmissionsPage() {
           >
             ‹
           </button>
-          <span className="text-sm" style={{ color: "rgba(106,111,117,0.7)", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <span className="text-sm" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             Page {page + 1} of {totalPages}
           </span>
           <button

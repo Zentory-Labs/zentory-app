@@ -194,7 +194,7 @@ export default function WhitelistPopup() {
               </button>
             </form>
 
-            <p className="text-center text-xs mt-4" style={{ color: "rgba(106,111,117,0.7)" }}>
+            <p className="text-center text-xs mt-4" style={{ color: "#6a6f75" }}>
               No credit card required. Unsubscribe anytime.
             </p>
           </>
