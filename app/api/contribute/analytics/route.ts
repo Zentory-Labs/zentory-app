@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
-import { createClient } from "@/utils/supabase/server";
+// Audit #21: `api_keys` is the authn root for this surface and is no longer
+// anon-readable, and `signals` / `provider_stats` have no anon write policy.
+// The whole route family runs on the service-role key; the x-api-key check
+// below is the authorization gate.
+import { createAdminClient } from "@/utils/supabase/admin";
 
-function deriveProviderFromApiKey(apiKey: string, supabase: Awaited<ReturnType<typeof createClient>>) {
+function deriveProviderFromApiKey(apiKey: string, supabase: ReturnType<typeof createAdminClient>) {
   const keyHash = createHash("sha256").update(apiKey).digest("hex");
   return supabase
     .from("api_keys")
@@ -24,7 +28,7 @@ export async function GET(req: NextRequest) {
 
     let supabase;
     try {
-      supabase = await createClient();
+      supabase = createAdminClient();
     } catch {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
     }

@@ -1,8 +1,10 @@
 // One-off seed for the investor demo: 14 days of fresh zBTC NAV history
 // ending NOW so the vault chart isn't empty during the demo.
 //
-// RLS on public.vault_nav_history allows insert with check (true), so the
-// anon (publishable) key is sufficient — no service role key needed.
+// Needs SUPABASE_SERVICE_ROLE_KEY. RLS used to allow `insert with check (true)`
+// on public.vault_nav_history, so the anon key worked — that was audit finding
+// #21 (anyone holding the publishable key could write the NAV history a
+// depositor reads). anon is SELECT-only now; writes require the service role.
 //
 // Usage:  node scripts/seed_nav_demo.mjs
 
@@ -20,12 +22,17 @@ const env = Object.fromEntries(
 );
 
 const url = env.NEXT_PUBLIC_SUPABASE_URL;
-const key =
-  env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-  env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const key = env.SUPABASE_SERVICE_ROLE_KEY;
+if (!key) {
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY missing from .env.local. Since the RLS lockdown " +
+      "(audit #21) the publishable key can only read; seeding needs the service role."
+  );
+  process.exit(1);
+}
 
-if (!url || !key) {
-  console.error("Missing NEXT_PUBLIC_SUPABASE_URL or publishable key in .env.local");
+if (!url) {
+  console.error("Missing NEXT_PUBLIC_SUPABASE_URL in .env.local");
   process.exit(1);
 }
 

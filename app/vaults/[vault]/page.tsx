@@ -332,7 +332,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   // Audit D-04: gate every write behind a chain-id check. Previously, a user
   // on Ethereum mainnet hitting Deposit would approve whatever contract sat
   // at our vault address on mainnet (often unrelated, occasionally hostile).
-  const requireChain = useRequireCorrectChain();
+  const { requireChain } = useRequireCorrectChain();
 
   const handleApprove = useCallback(async () => {
     if (!asset || !depositAmtBn || !vault) return;

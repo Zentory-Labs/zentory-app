@@ -5,11 +5,11 @@ import {
   useAccount,
   useWriteContract,
   useWaitForTransactionReceipt,
-  useChainId,
   useSwitchChain,
 } from "wagmi";
 import { erc20Abi } from "viem";
-import { addresses, SUBSCRIPTION_VAULT_ABI } from "@/lib/contracts";
+import { addresses, SUBSCRIPTION_VAULT_ABI, HYPEREVM_TESTNET } from "@/lib/contracts";
+import { useRequireCorrectChain } from "@/lib/useRequireCorrectChain";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoSubscribers } from "@/lib/demo/data";
 import { reportError } from "@/lib/reportError";
@@ -120,11 +120,10 @@ const FAQ_ITEMS = [
 
 type SubscribeState = "idle" | "approving" | "subscribing" | "done" | "error";
 
-const HYPER_EVM_CHAIN_ID = 998;
+const HYPER_EVM_CHAIN_ID = HYPEREVM_TESTNET.id;
 
 function CryptoSubscribeButton({ tier }: { tier: Tier }) {
   const { isConnected } = useAccount();
-  const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const [state, setState] = useState<SubscribeState>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +131,14 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const wrongNetwork = isConnected && chainId && chainId !== HYPER_EVM_CHAIN_ID;
+  // Audit finding #42. This flow had NO chain guard at all: it approved ZENT
+  // and then auto-fired subscribe() on whatever chain the wallet happened to
+  // be on, against addresses nobody here owns off HyperEVM. And `wrongNetwork`
+  // required isConnected while the warning pill was rendered only inside the
+  // `!isConnected` early return — so it could never display when it was true.
+  // The guard now reads the real connection chain id (see the hook), the pill
+  // renders in the connected path, and the button is disabled while wrong.
+  const { requireChain, wrongNetwork } = useRequireCorrectChain();
 
   const { writeContract, data: approveHash, isPending: isApproving } =
     useWriteContract();
@@ -148,7 +154,11 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
   const { isLoading: isSubscribeConfirming, isSuccess: isSubscribed } =
     useWaitForTransactionReceipt({ hash: subscribeHash ?? undefined });
 
-  // Once approve is confirmed, automatically trigger subscribe
+  // Once approve is confirmed, automatically trigger subscribe.
+  // The explicit `chainId` is load-bearing: wagmi only forwards
+  // `assertChainId` to viem when the caller supplies one, so without it viem
+  // skips assertCurrentChain and the tx goes out on whatever chain the
+  // injected provider is on (audit finding #42).
   useEffect(() => {
     if (
       state === "approving" &&
@@ -156,9 +166,9 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       approveHash &&
       !isApproving
     ) {
-      const amountWei = BigInt(tier.priceZent) * 10n ** 18n;
       setState("subscribing");
       writeSubscribe({
+        chainId: HYPER_EVM_CHAIN_ID,
         address: addresses.SubscriptionVault as `0x${string}`,
         abi: SUBSCRIPTION_VAULT_ABI as any,
         functionName: "subscribe",
@@ -181,11 +191,21 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       return;
     }
     setError(null);
+
+    // Hard gate: never broadcast off HyperEVM. Prompts the wallet to switch
+    // and bails if the user declines.
+    if (!(await requireChain())) {
+      setState("idle");
+      setError("Switch your wallet to HyperEVM testnet to subscribe.");
+      return;
+    }
+
     try {
       const amountWei = BigInt(tier.priceZent) * 10n ** 18n;
       setState("approving");
 
       writeContract({
+        chainId: HYPER_EVM_CHAIN_ID,
         address: addresses.ZENT as `0x${string}`,
         abi: erc20Abi,
         functionName: "approve",
@@ -199,45 +219,42 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
 
   const isWorking = state === "approving" || state === "subscribing";
 
+  // Rendered in the CONNECTED path (below) as well as here — the original bug
+  // was that this markup only existed inside the `!isConnected` branch, where
+  // `wrongNetwork` (which requires isConnected) can never be true.
+  const wrongNetworkPill = wrongNetwork ? (
+    <div
+      className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg"
+      style={{
+        background: "rgba(194,53,63,0.1)",
+        border: "1px solid rgba(194,53,63,0.3)",
+      }}
+      role="alert"
+    >
+      <div
+        className="h-2 w-2 rounded-full"
+        style={{ background: "#c2353f", boxShadow: "0 0 6px #c2353f" }}
+      />
+      <span
+        className="text-xs"
+        style={{ color: "#c2353f", fontFamily: "var(--font-montserrat), sans-serif" }}
+      >
+        Wrong network
+      </span>
+      <button
+        onClick={() => switchChain?.({ chainId: HYPER_EVM_CHAIN_ID })}
+        className="text-xs font-semibold underline"
+        style={{ color: "#c2353f", fontFamily: "var(--font-montserrat), sans-serif" }}
+      >
+        Switch
+      </button>
+    </div>
+  ) : null;
+
   if (!mounted || !isConnected) {
     return (
       <div className="space-y-2">
-        {wrongNetwork && (
-          <div
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg"
-            style={{
-              background: "rgba(194,53,63,0.1)",
-              border: "1px solid rgba(194,53,63,0.3)",
-            }}
-          >
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{
-                background: "#c2353f",
-                boxShadow: "0 0 6px #c2353f",
-              }}
-            />
-            <span
-              className="text-xs"
-              style={{
-                color: "#c2353f",
-                fontFamily: "var(--font-montserrat), sans-serif",
-              }}
-            >
-              Wrong network
-            </span>
-            <button
-              onClick={() => switchChain?.({ chainId: HYPER_EVM_CHAIN_ID })}
-              className="text-xs font-semibold underline"
-              style={{
-                color: "#c2353f",
-                fontFamily: "var(--font-montserrat), sans-serif",
-              }}
-            >
-              Switch
-            </button>
-          </div>
-        )}
+        {wrongNetworkPill}
         <button
           onClick={() => window.dispatchEvent(new Event("open-wallet-modal"))}
           className="w-full py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200"
@@ -272,9 +289,10 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
 
   return (
     <div className="space-y-2">
+      {wrongNetworkPill}
       <button
         onClick={handleSubscribe}
-        disabled={isWorking}
+        disabled={isWorking || wrongNetwork}
         className="w-full py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
         style={{
           background: isWorking
@@ -293,7 +311,9 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
           boxShadow: isWorking ? undefined : `0 0 24px ${tier.badge}`,
         }}
       >
-        {state === "approving"
+        {wrongNetwork
+          ? "Switch to HyperEVM to subscribe"
+          : state === "approving"
           ? isApproving
             ? "Waiting for wallet…"
             : "Confirming approval…"

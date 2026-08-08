@@ -44,53 +44,18 @@ export async function getResearch(limit = 100) {
   return (data as DbResearch[]) ?? [];
 }
 
-/** Insert a new research entry */
-export async function insertResearch(
-  research: Omit<DbResearch, "id" | "created_at">
-) {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("signals")
-    .insert(research)
-    .select()
-    .single();
-  if (error) {
-    console.error("[supabase] insertResearch:", error.message);
-    return null;
-  }
-  return data as DbResearch;
-}
+// Audit finding #21: `insertResearch`, `updateResearchStatus` and
+// `insertKeeperAudit` used to live here and wrote to `signals` / `keeper_audit`
+// with the browser (publishable) key. That is exactly the hole the finding
+// describes — anyone could forge rows on the public research feed and the
+// "tamper-evident" keeper audit trail. Neither had a caller. They are gone:
+// anon now has SELECT and only SELECT, and every write goes through an API
+// route using utils/supabase/admin.ts (service role).
+//
+// If you need to write from the app, add a route under app/api/ — do not
+// reintroduce a browser-side write here.
 
-/** Update research status after execution */
-export async function updateResearchStatus(
-  id: string,
-  status: "pending" | "executed" | "failed",
-  txHash?: string,
-  executedBy?: string,
-  executorAddress?: string
-) {
-  const supabase = createClient();
-  const { error } = await supabase
-    .from("signals")
-    .update({
-      status,
-      tx_hash: txHash ?? null,
-      executed_by: executedBy ?? null,
-      executor_address: executorAddress ?? null,
-    })
-    .eq("id", id);
-  if (error) console.error("[supabase] updateResearchStatus:", error.message);
-}
-
-// ─── Keeper audit helpers ──────────────────────────────────────────────────────
-
-export async function insertKeeperAudit(
-  entry: Omit<DbKeeperAudit, "id" | "created_at">
-) {
-  const supabase = createClient();
-  const { error } = await supabase.from("keeper_audit").insert(entry);
-  if (error) console.error("[supabase] insertKeeperAudit:", error.message);
-}
+// ─── Keeper audit helpers (read-only) ──────────────────────────────────────────
 
 export async function getKeeperAudit(limit = 50) {
   const supabase = createClient();

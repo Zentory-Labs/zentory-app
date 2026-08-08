@@ -8,6 +8,22 @@ import { createClient } from "@/utils/supabase/client";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoProviders } from "@/lib/demo/data";
 
+// The forward recorder appends every 4h. One missed bar plus slack before the
+// record is called stale (matches app/track-record).
+const LEDGER_STALE_AFTER_MS = 9 * 3_600_000;
+
+/** "3d 4h" / "5h" / "22m". */
+function humanAge(ms: number): string {
+  if (!Number.isFinite(ms)) return "unknown";
+  const mins = Math.max(0, Math.floor(ms / 60_000));
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  const remHours = hours % 24;
+  return remHours ? `${days}d ${remHours}h` : `${days}d`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type AssetClass = "CRYPTO_SPOT" | "CRYPTO_PERP" | "EQUITY" | "FOREX" | "COMMODITY";
@@ -416,7 +432,7 @@ export default function LeaderboardPage() {
       .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
       .then((txt) => {
         if (cancelled) return;
-        type E = { asset: string; bar_ts: string; hold_nav: number; actual_nav: number };
+        type E = { asset: string; bar_ts: string; recorded_at?: string; hold_nav: number; actual_nav: number };
         const es: E[] = txt
           .split("\n")
           .filter(Boolean)
@@ -434,12 +450,21 @@ export default function LeaderboardPage() {
           });
         if (perAsset.length === 0) return;
         const first = Date.parse(es[0].bar_ts);
-        const last = Date.parse(es[es.length - 1].bar_ts);
+        const head = es[es.length - 1];
+        const last = Date.parse(head.bar_ts);
+        // Audit finding #30: liveness is head-age vs. the wall clock, never
+        // (last - first) from the file's own endpoints. A ledger frozen weeks
+        // ago still parses and still spans N days.
+        const headMs = Date.parse(head.recorded_at ?? head.bar_ts);
+        const headAgeMs = Number.isFinite(headMs) ? Math.max(0, Date.now() - headMs) : Infinity;
         setHouse({
           daysLive: Math.max(1, Math.round((last - first) / 86_400_000)),
           assets: perAsset.length,
           avgAhead: perAsset.reduce((s, p) => s + p.ahead, 0) / perAsset.length,
           perAsset,
+          headAgeMs,
+          stale: headAgeMs > LEDGER_STALE_AFTER_MS,
+          headAgeLabel: humanAge(headAgeMs),
         });
       })
       .catch(() => { /* card degrades to "—"; never breaks the page */ })
@@ -593,7 +618,13 @@ export default function LeaderboardPage() {
         {/* ── Stat cards (live; led by the founding provider) ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Live Providers" value={houseLoading && !house ? "—" : (house ? 1 : 0) + providers.length} accent="#b08d57" />
-          <StatCard label="Days Recording" value={house ? house.daysLive : "—"} accent="#34d399" />
+          {/* Green means "currently recording". If the ledger head is stale the
+              day count is still true, but the accent must not claim liveness. */}
+          <StatCard
+            label={house?.stale ? `Days Recorded (stalled ${house.headAgeLabel})` : "Days Recording"}
+            value={house ? house.daysLive : "—"}
+            accent={house?.stale ? "#c2353f" : "#34d399"}
+          />
           <StatCard label="Assets Tracked" value={house ? house.assets : "—"} accent="#eaeaea" />
           <StatCard label="Avg Ahead of Holding" value={house ? `${house.avgAhead >= 0 ? "+" : ""}${(house.avgAhead * 100).toFixed(1)}%` : "—"} accent="#b08d57" />
         </div>

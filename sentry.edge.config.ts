@@ -4,17 +4,22 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { scrubSentryEvent } from "@/lib/sentry-scrub";
 
 Sentry.init({
   dsn: "https://c5dc033ef25cc26169acdef479e436fd@o4511450247069696.ingest.de.sentry.io/4511450294517840",
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  // Audit finding #43 — see sentry.server.config.ts for the reasoning. The
+  // edge runtime fronts proxy.ts, so it sees every request's cookies.
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  // Audit finding #43: was `true`. PII off, matching lib/reportError.ts and
+  // components/Providers.tsx.
+  sendDefaultPii: false,
+
+  beforeSend: scrubSentryEvent,
+  beforeSendTransaction: scrubSentryEvent,
 });

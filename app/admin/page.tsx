@@ -21,10 +21,29 @@ export default function AdminPage() {
   // on-chain. On mainnet that becomes a phishing template. This is a UI
   // lockout, not a security boundary — writes still revert if the caller
   // lacks the role.
+  //
+  // Audit finding #44 fix: EVERY hook now runs unconditionally, before any
+  // early return. Previously six hooks ran, then two conditional returns, then
+  // ten more hooks — so the second render (after `mounted` flipped) called 16
+  // hooks where React had recorded 6 and threw "Rendered more hooks than
+  // during the previous render". That took out /admin — the emergency-pause
+  // and per-vault risk-limit console — for every connected wallet, including
+  // the guardian, which is the one wallet that needs it under time pressure.
+  //
+  // The reads below are cheap and wagmi's `query.enabled` already gates the
+  // ones that need an argument, so hoisting them costs nothing. Branch on the
+  // results at the end of the hook list, not in the middle of it.
+  //
   const { address, isConnected } = useAccount();
   const { writeContract } = useWriteContract();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  const [selectedVault, setSelectedVault] = useState<string>(addresses.zETH);
+  const [maxPosSize, setMaxPosSize] = useState("");
+  const [maxLevBPS, setMaxLevBPS] = useState("");
+  const [txStatus, setTxStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const guardianRoleId = useReadContract({
     address: addresses.StrategyExecutor,
@@ -42,29 +61,6 @@ export default function AdminPage() {
         : undefined,
     query: { enabled: Boolean(address && guardianRoleId.data) },
   } as any);
-
-  if (!mounted || !isConnected) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-[#bfc3c7] p-8">
-        Connect a wallet to access the admin console.
-      </div>
-    );
-  }
-
-  if (callerHasGuardian.data === false) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-center p-8">
-        <div className="max-w-md">
-          <div className="text-2xl font-bold text-white mb-2">Not authorized</div>
-          <div className="text-sm text-[#bfc3c7]">
-            This page is restricted to wallets holding{" "}
-            <code>GUARDIAN_ROLE</code> on the StrategyExecutor contract.
-            Connected: <code>{shorten(address!)}</code>.
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const isPaused = useReadContract({
     address: addresses.StrategyExecutor,
@@ -84,14 +80,6 @@ export default function AdminPage() {
     functionName: "GUARDIAN_ROLE",
   } as any);
 
-  const [selectedVault, setSelectedVault] = useState<string>(addresses.zETH);
-  const [maxPosSize, setMaxPosSize] = useState("");
-  const [maxLevBPS, setMaxLevBPS] = useState("");
-  const [txStatus, setTxStatus] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const meta = vaultMeta[selectedVault];
-
   const vaultMaxPos = useReadContract({
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
@@ -105,6 +93,8 @@ export default function AdminPage() {
     functionName: "maxLeverageBPS",
     args: [selectedVault],
   } as any);
+
+  const meta = vaultMeta[selectedVault];
 
   function handlePauseToggle() {
     const shouldPause = !(isPaused.data as boolean);
@@ -152,6 +142,44 @@ export default function AdminPage() {
     } catch (err: any) {
       setError(err.message);
     }
+  }
+
+  // ─── Gates ────────────────────────────────────────────────────────────────
+  // All hooks above this line, all branching below it.
+
+  if (!mounted || !isConnected) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[#bfc3c7] p-8">
+        Connect a wallet to access the admin console.
+      </div>
+    );
+  }
+
+  // `undefined` means the role read is still in flight — it is NOT "authorized".
+  // Letting undefined fall through to the console is what made the old crash
+  // deterministic for the guardian, and it would also flash the controls to a
+  // wallet that turns out not to hold the role.
+  if (callerHasGuardian.data === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[#bfc3c7] p-8">
+        Checking <code className="mx-1">GUARDIAN_ROLE</code> on the StrategyExecutor…
+      </div>
+    );
+  }
+
+  if (callerHasGuardian.data === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-center p-8">
+        <div className="max-w-md">
+          <div className="text-2xl font-bold text-white mb-2">Not authorized</div>
+          <div className="text-sm text-[#bfc3c7]">
+            This page is restricted to wallets holding{" "}
+            <code>GUARDIAN_ROLE</code> on the StrategyExecutor contract.
+            Connected: <code>{shorten(address!)}</code>.
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

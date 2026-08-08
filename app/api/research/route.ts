@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import type { Asset, Direction, ResearchContributor } from "@/lib/research";
 import { geoBlockCheck } from "@/lib/geo-blocking";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
@@ -66,9 +67,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
+    // Audit #21: anon has no INSERT policy on `signals` any more — this write
+    // runs with the service-role key. The rate limit above is the gate.
     let supabase;
     try {
-      supabase = await createClient();
+      supabase = createAdminClient();
     } catch {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
     }

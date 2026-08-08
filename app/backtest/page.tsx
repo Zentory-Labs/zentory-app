@@ -127,10 +127,21 @@ export default function BacktestPage() {
         <p className="text-sm max-w-3xl" style={{ color: "#bfc3c7" }}>
           A <strong style={{ color: TEXT }}>walk-forward out-of-sample</strong> backtest across ~6 years of 4-hour data.
           Each fold trades only on data <em>after</em> its training window — there is no peeking at the future.
-          And there are <strong style={{ color: TEXT }}>no fitted parameters</strong>: the target exposure is the
-          average long/flat vote across the entire trend + volatility-gate family, so in-sample equals
-          out-of-sample by construction. That is the opposite of curve-fitting — it is why these numbers should
-          survive contact with live markets.
+          That is the opposite of curve-fitting, and it is why these numbers should survive contact with live markets.
+        </p>
+        {/* Audit finding #29: this page previously asserted "no fitted parameters"
+            over figures produced by a walk-forward that re-selects the best spec
+            on every training fold. The parameter-free property belongs to the
+            deployed ensemble, not to those figures. Say which model is which
+            rather than borrowing one model's virtue for another's numbers. */}
+        <p className="text-sm max-w-3xl" style={{ color: "#bfc3c7" }}>
+          <strong style={{ color: TEXT }}>Which model is this?</strong> The vaults run the{" "}
+          <strong style={{ color: TEXT }}>continuous parameter ensemble</strong>: target exposure is the average
+          long/flat vote across the <em>entire</em> trend + volatility-gate family — no single spec is chosen — and
+          that vote is passed through hysteresis before it is signed on-chain. Because nothing is selected, the
+          ensemble has no fitted parameters and in-sample equals out-of-sample by construction. Where a table below
+          is labelled as fold-selected, its parameters <em>were</em> chosen per fold, so read it as a test of the
+          rule family rather than as the deployed model&apos;s record.
         </p>
       </header>
 
@@ -342,7 +353,8 @@ export default function BacktestPage() {
             <h3 className="text-lg font-semibold" style={{ color: TEXT }}>Methodology & honest disclaimers</h3>
             <ul className="list-disc list-inside space-y-1.5">
               <li><strong style={{ color: TEXT }}>Walk-forward OOS:</strong> {a.nFolds} folds; every trade is on out-of-sample data after its training window.</li>
-              <li><strong style={{ color: TEXT }}>No fitted parameters:</strong> exposure = mean long/flat vote over the whole trend+vol-gate grid, quantized to 25%. We deliberately do <em>not</em> hyper-optimize — that&apos;s how backtests lie.</li>
+              <li><strong style={{ color: TEXT }}>Deployed model — no fitted parameters:</strong> exposure = mean long/flat vote over the whole trend+vol-gate grid, quantized to 25%, then passed through hysteresis before it is signed on-chain. Nothing is selected, so there is nothing to over-fit. We deliberately do <em>not</em> hyper-optimize — that&apos;s how backtests lie.</li>
+              <li><strong style={{ color: TEXT }}>Where the figures come from:</strong> the frozen spec shown above each chart names the model that produced that panel. A fold-selected spec is a study of the rule family; only the ensemble figures describe what the vault does. If the two disagree, the ensemble is the one that matters.</li>
               <li><strong style={{ color: TEXT }}>Spot, long/flat only:</strong> no leverage, no shorts. Returns are in the underlying asset.</li>
               <li><strong style={{ color: TEXT }}>Costs:</strong> {data?.costBpsPerSide} bps per side modeled; see the cost-sensitivity table for the margin of safety.</li>
               <li><strong style={{ color: TEXT }}>Not a guarantee:</strong> a backtest is not live performance. Crypto can draw down {">"}40% even here. Past results do not predict the future.</li>
