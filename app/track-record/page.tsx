@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 type Entry = {
   asset: string;
   bar_ts: string;
+  /** Wall-clock time the recorder appended this line. Present on every entry. */
+  recorded_at?: string;
   price: number;
   weight?: number;
   hold_nav: number;
@@ -23,13 +25,38 @@ type Entry = {
 const ASSETS = ["BTC", "ETH", "SOL", "XRP"] as const;
 const BUDGET = 100_000; // paper budget each line starts from
 
+// The recorder appends every 4h. Allow one missed bar plus slack before we call
+// the record stale — anything past this and the publisher is not running.
+const EPOCH_HOURS = 4;
+const STALE_AFTER_HOURS = 9;
+
 function pct(x: number, d = 1): string {
   return `${x >= 0 ? "+" : ""}${(x * 100).toFixed(d)}%`;
+}
+
+/** "3d 4h" / "5h" / "22m" — coarse, honest, no false precision. */
+function humanAge(ms: number): string {
+  const mins = Math.max(0, Math.floor(ms / 60_000));
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  const remHours = hours % 24;
+  return remHours ? `${days}d ${remHours}h` : `${days}d`;
 }
 
 export default function TrackRecordPage() {
   const [entries, setEntries] = useState<Entry[] | null>(null);
   const [error, setError] = useState(false);
+  // Wall clock. null during SSR/first paint so the server and client agree;
+  // set on mount and refreshed so a page left open goes stale on its own.
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const t = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     fetch("/forward_ledger.jsonl", { cache: "no-store" })
@@ -49,7 +76,8 @@ export default function TrackRecordPage() {
 
   const latest = new Map<string, Entry>();
   const firstBar = entries?.[0]?.bar_ts;
-  const lastBar = entries?.[entries.length - 1]?.bar_ts;
+  const headEntry = entries?.[entries.length - 1];
+  const lastBar = headEntry?.bar_ts;
   if (entries) for (const e of entries) latest.set(e.asset, e);
   const daysLive =
     firstBar && lastBar
@@ -57,16 +85,33 @@ export default function TrackRecordPage() {
       : 0;
   const recent = entries ? entries.slice(-12).reverse() : [];
 
+  // ─── Freshness ──────────────────────────────────────────────────────────────
+  // Audit finding #30. `daysLive` is computed purely from the ledger's own
+  // first and last bar, so a green "Recording live — day N" badge rendered
+  // indefinitely no matter how old the head was — it sat over a 30-day-old
+  // head for a month while the publisher was frozen. Liveness has to be
+  // measured against the wall clock, not against the file's own endpoints.
+  const headTsRaw = headEntry?.recorded_at ?? lastBar;
+  const headMs = headTsRaw ? Date.parse(headTsRaw) : NaN;
+  const headAgeMs =
+    now !== null && Number.isFinite(headMs) ? Math.max(0, now - headMs) : null;
+  const isStale = headAgeMs !== null && headAgeMs > STALE_AFTER_HOURS * 3_600_000;
+  const isFresh = headAgeMs !== null && !isStale;
+  const headIso = Number.isFinite(headMs)
+    ? new Date(headMs).toISOString().replace("T", " ").slice(0, 16) + " UTC"
+    : null;
+
   return (
     <div className="space-y-10 pb-16">
       <header className="space-y-3">
         <h1 className="text-4xl font-bold tracking-tight" style={{ color: "#eaeaea" }}>
-          Live Paper Track Record
+          {isStale ? "Paper Track Record" : "Live Paper Track Record"}
         </h1>
         <p className="text-sm max-w-2xl" style={{ color: "#bfc3c7" }}>
-          Every 4 hours, the strategy&apos;s decision and three NAV lines are appended to a public,
-          hash-chained ledger — published before the future is known, impossible to edit after the
-          fact. <span style={{ color: "#eaeaea" }}>HOLD</span> = just holding,{" "}
+          {isStale
+            ? "The strategy's decision and three NAV lines are appended to a public, hash-chained ledger on a 4-hour cadence — published before the future is known, impossible to edit after the fact. Publishing is currently stalled; see the notice below."
+            : "Every 4 hours, the strategy's decision and three NAV lines are appended to a public, hash-chained ledger — published before the future is known, impossible to edit after the fact."}{" "}
+          <span style={{ color: "#eaeaea" }}>HOLD</span> = just holding,{" "}
           <span style={{ color: "#eaeaea" }}>GHOST</span> = the strategy at signed
           prices, <span style={{ color: "#eaeaea" }}>ACTUAL</span> = with simulated
           costs. Paper record on real market prices — not live capital, not a guarantee of future
@@ -81,10 +126,43 @@ export default function TrackRecordPage() {
           stepping aside). This {daysLive}-day window is a single regime, far too short to judge; the 6-year
           backtest is what tests the full cycle.
         </p>
-        {daysLive > 0 && (
+        {/* Liveness badge — gated on wall-clock freshness, never on daysLive
+            alone. The absolute head timestamp is always printed next to it so
+            staleness is visible even if the badge logic is ever wrong again. */}
+        {isFresh && daysLive > 0 && (
           <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "#34d399" }}>
             ● Recording live — day {daysLive}
+            {headAgeMs !== null && headIso && (
+              <span style={{ color: "#6a6f75", letterSpacing: "0.05em" }}>
+                {" "}· last entry {humanAge(headAgeMs)} ago ({headIso})
+              </span>
+            )}
           </p>
+        )}
+
+        {isStale && headAgeMs !== null && (
+          <div
+            className="rounded-xl border p-4 text-sm max-w-2xl"
+            style={{
+              borderColor: "rgba(194,53,63,0.35)",
+              background: "rgba(194,53,63,0.10)",
+              color: "#eaeaea",
+            }}
+            role="alert"
+          >
+            <div
+              className="text-xs uppercase tracking-[0.2em] mb-1"
+              style={{ color: "#c2353f" }}
+            >
+              ● Publishing stalled — not recording
+            </div>
+            <p style={{ color: "#bfc3c7" }}>
+              The newest ledger entry is <strong style={{ color: "#eaeaea" }}>{humanAge(headAgeMs)} old</strong>
+              {headIso && <> ({headIso})</>}, against a {EPOCH_HOURS}-hour publishing cadence. The{" "}
+              {daysLive}-day record below is real and its hash chain still verifies, but it stops at
+              that entry — treat everything on this page as a snapshot as of then, not as live.
+            </p>
+          </div>
         )}
         <p className="text-sm" style={{ color: "#bfc3c7" }}>
           Want the long view?{" "}
@@ -196,8 +274,9 @@ curl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mj
             {"CHAIN OK — <entries> entries, <assets> assets, head <hash>"}
           </pre>
           <p className="text-xs" style={{ color: "#bfc3c7" }}>
-            The entry count grows every 4 hours; anything other than CHAIN OK exits non-zero and names the first
-            broken line.
+            The entry count grows every 4 hours while the recorder is publishing (the badge above reports whether
+            it currently is). Anything other than CHAIN OK exits non-zero and names the first broken line — note
+            that the verifier checks the chain&apos;s integrity, not its freshness.
           </p>
         </div>
         <p className="text-sm" style={{ color: "#bfc3c7" }}>

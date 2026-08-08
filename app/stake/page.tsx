@@ -97,7 +97,7 @@ export default function StakePage() {
 
   const { writeContractAsync } = useWriteContract();
   // Audit D-05: gate stake/approve behind a chain-id check (HyperEVM 998).
-  const requireChain = useRequireCorrectChain();
+  const { requireChain } = useRequireCorrectChain();
 
   // veZENT preview calculator
   const previewVe = useMemo(() => {

@@ -52,7 +52,7 @@ const NAV_CHART = { actual: "#b08d57", hold: "#5a5a6a", grid: "rgba(255,255,255,
 
 export default function SpotVaultPage() {
   const { address: user, isConnected } = useAccount();
-  const requireChain = useRequireCorrectChain();
+  const { requireChain } = useRequireCorrectChain();
 
   const [activeTab, setActiveTab] = useState<"deposit" | "withdraw">("deposit");
   const [depositAmount, setDepositAmount] = useState("");

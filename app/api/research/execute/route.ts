@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { privateKeyToAccount } from "viem/accounts";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { strategyExecutorABI, HYPEREVM_TESTNET } from "@/lib/contracts";
@@ -275,9 +275,12 @@ export async function POST(req: NextRequest) {
       return safeJson({ error: "Transaction not confirmed" }, { status: 502 });
     }
 
+    // Audit #21: the signals UPDATE and the keeper_audit INSERT below have no
+    // anon policy any more — they run with the service-role key. The keeper
+    // bearer-token check earlier in this handler is the authorization gate.
     let supabase;
     try {
-      supabase = await createClient();
+      supabase = createAdminClient();
     } catch {
       return safeJson({ error: "Supabase not configured" }, { status: 503 });
     }

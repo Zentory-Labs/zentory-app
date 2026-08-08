@@ -52,11 +52,11 @@ export default function WhitelistPopup() {
     setStatus("loading");
     setErrorMsg("");
     const result = await insertWhitelistEmail(email);
-    if (result) {
+    if (result.ok) {
       setStatus("success");
     } else {
       setStatus("error");
-      setErrorMsg("Something went wrong. Please try again.");
+      setErrorMsg(result.error ?? "Something went wrong. Please try again.");
     }
   };
 

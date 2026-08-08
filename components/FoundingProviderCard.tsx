@@ -17,6 +17,12 @@ export type HouseStats = {
   assets: number;
   avgAhead: number;
   perAsset: { asset: string; ahead: number; strat: number; hold: number }[];
+  /** ms since the newest ledger entry, measured against the wall clock. */
+  headAgeMs: number;
+  /** True when the newest entry is older than the staleness threshold. */
+  stale: boolean;
+  /** "3d 4h" — how old the newest entry is. */
+  headAgeLabel: string;
 };
 
 function pct(x: number) {
@@ -29,8 +35,19 @@ export default function FoundingProviderCard({ house, loading = false }: { house
   // as fake on the protocol's flagship trust surface, so gate the live badge on
   // having real ledger stats. While the ledger fetch is in flight, show a muted
   // "Loading track record…" instead of asserting "live".
-  const liveLabel = house ? `Recording · Day ${house.daysLive}` : loading ? "Loading track record…" : "Track record initializing";
-  const showLivePulse = !!house;
+  //
+  // Audit finding #30: presence of data was never the same thing as liveness.
+  // A ledger frozen 30 days ago still parses, so `!!house` kept the pulsing
+  // green badge on through the whole outage. Gate it on head age instead.
+  const liveLabel = house
+    ? house.stale
+      ? `Stalled · last entry ${house.headAgeLabel} ago`
+      : `Recording · Day ${house.daysLive}`
+    : loading
+    ? "Loading track record…"
+    : "Track record initializing";
+  const showLivePulse = !!house && !house.stale;
+  const labelColor = house?.stale ? "#c2353f" : showLivePulse ? "#34d399" : "rgba(234,234,234,0.4)";
   return (
     <section
       className="relative rounded-2xl p-6 md:p-7 overflow-hidden"
@@ -59,7 +76,7 @@ export default function FoundingProviderCard({ house, loading = false }: { house
               </span>
               <span
                 className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider"
-                style={{ color: showLivePulse ? "#34d399" : "rgba(234,234,234,0.4)" }}
+                style={{ color: labelColor }}
               >
                 {showLivePulse && (
                   <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#34d399", boxShadow: "0 0 8px #34d399" }} />

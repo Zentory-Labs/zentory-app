@@ -3,8 +3,81 @@
 -- Run this in: Supabase Dashboard → SQL Editor
 -- Safe to re-run: drops and recreates every object
 -- ============================================================
+--
+-- RLS MODEL (audit findings #21 / #41 — do not weaken without a review):
+--
+--   * `anon` (the publishable key, inlined into every page of the browser
+--     bundle) gets SELECT and ONLY SELECT, and only on tables whose contents
+--     are already public (on-chain data, or data rendered on a public page).
+--   * `anon` gets NO policy at all on tables holding PII, credentials or
+--     operator state (whitelist, subscriptions, profiles, api_keys,
+--     indexer_state). RLS with no policy denies everything.
+--   * NOBODY gets an INSERT / UPDATE / DELETE policy. All writes go through
+--     the service-role key, which bypasses RLS — that is the keeper, the
+--     indexers, and the Next.js API routes via utils/supabase/admin.ts.
+--
+-- Previously every policy here was `using (true)` / `with check (true)` with
+-- no TO clause (= TO PUBLIC = includes anon), so any visitor could forge rows
+-- in signals / provider_stats / keeper_audit and dump the waitlist. Worse,
+-- `drop policy if exists` only drops the names this file knows about, so
+-- re-running it silently ORed its permissive policies on top of a hardening
+-- migration and cancelled it out. rls_reset() below fixes that class of bug by
+-- dropping EVERY policy on the table, whatever it is called.
+--
+-- To fix an ALREADY-LIVE database without re-running this whole file, use
+-- supabase/migrations/2026-08-07_lock_down_rls.sql instead.
+-- ============================================================
 create extension if not exists "uuid-ossp";
 create extension if not exists pgcrypto;
+
+-- ─── RLS helpers ───────────────────────────────────────────
+-- rls_reset(table): enable RLS, drop EVERY existing policy on the table (not
+-- just the ones named in this file), and revoke write grants from anon /
+-- authenticated. Leaves the table deny-all; callers then add back exactly the
+-- reads they want. Dropped again at the bottom of this file.
+create or replace function public.zentory_rls_reset(tbl text)
+returns void language plpgsql as $$
+declare
+  p record;
+begin
+  if to_regclass(format('public.%I', tbl)) is null then
+    raise notice '[rls] skipping public.% — table does not exist', tbl;
+    return;
+  end if;
+
+  execute format('alter table public.%I enable row level security', tbl);
+
+  for p in
+    select policyname from pg_policies
+     where schemaname = 'public' and tablename = tbl
+  loop
+    execute format('drop policy %I on public.%I', p.policyname, tbl);
+  end loop;
+
+  -- Defence in depth: Supabase ships a blanket GRANT ALL on public tables to
+  -- anon/authenticated. Take the write bits back so a future policy mistake
+  -- cannot re-open a write path on its own.
+  if exists (select 1 from pg_roles where rolname = 'anon') then
+    execute format(
+      'revoke insert, update, delete, truncate on public.%I from anon, authenticated', tbl);
+  end if;
+end;
+$$;
+
+-- rls_public_read(table): anon + authenticated may SELECT. Nothing else.
+create or replace function public.zentory_rls_public_read(tbl text)
+returns void language plpgsql as $$
+begin
+  if to_regclass(format('public.%I', tbl)) is null then
+    return;
+  end if;
+  if exists (select 1 from pg_roles where rolname = 'anon') then
+    execute format(
+      'create policy %I on public.%I for select to anon, authenticated using (true)',
+      tbl || '_public_read', tbl);
+  end if;
+end;
+$$;
 
 -- ─── Signals ───────────────────────────────────────────────
 create table if not exists public.signals (
@@ -45,23 +118,10 @@ create trigger signals_updated_at
   before update on public.signals
   for each row execute function public.handle_updated_at();
 
-alter table public.signals enable row level security;
-
-drop policy if exists "signals_read_all" on public.signals;
-create policy "signals_read_all"
-  on public.signals for select using (true);
-
-drop policy if exists "signals_insert_keeper" on public.signals;
-create policy "signals_insert_keeper"
-  on public.signals for insert with check (true);
-
-drop policy if exists "signals_update_keeper" on public.signals;
-create policy "signals_update_keeper"
-  on public.signals for update using (true);
-
-drop policy if exists "signals_insert_public" on public.signals;
-create policy "signals_insert_public"
-  on public.signals for insert with check (true);
+-- Public: the research feed renders these rows. Writes are keeper-only, so
+-- they run with the service-role key (see app/api/research/*).
+select public.zentory_rls_reset('signals');
+select public.zentory_rls_public_read('signals');
 
 -- Multi-asset indexes
 create index if not exists signals_asset_idx               on public.signals(asset);
@@ -83,19 +143,9 @@ create table if not exists public.profiles (
   is_governor      boolean     not null default false
 );
 
-alter table public.profiles enable row level security;
-
-drop policy if exists "profiles_read_all" on public.profiles;
-create policy "profiles_read_all"
-  on public.profiles for select using (true);
-
-drop policy if exists "profiles_insert_own" on public.profiles;
-create policy "profiles_insert_own"
-  on public.profiles for insert with check (true);
-
-drop policy if exists "profiles_update_keeper" on public.profiles;
-create policy "profiles_update_keeper"
-  on public.profiles for update using (true);
+-- PRIVATE: maps a wallet address to an email. Personal data — no anon policy,
+-- so RLS denies every anon read and write. Service role only.
+select public.zentory_rls_reset('profiles');
 
 -- ─── Governance Proposals ───────────────────────────────────
 create table if not exists public.proposals (
@@ -110,15 +160,9 @@ create table if not exists public.proposals (
   created_at        timestamptz not null default now()
 );
 
-alter table public.proposals enable row level security;
-
-drop policy if exists "proposals_read_all" on public.proposals;
-create policy "proposals_read_all"
-  on public.proposals for select using (true);
-
-drop policy if exists "proposals_insert_keeper" on public.proposals;
-create policy "proposals_insert_keeper"
-  on public.proposals for insert with check (true);
+-- Public: governance proposals are already public on-chain.
+select public.zentory_rls_reset('proposals');
+select public.zentory_rls_public_read('proposals');
 
 -- ─── Keeper Audit Log ──────────────────────────────────────
 create table if not exists public.keeper_audit (
@@ -131,19 +175,11 @@ create table if not exists public.keeper_audit (
   created_at        timestamptz not null default now()
 );
 
-alter table public.keeper_audit enable row level security;
-
-drop policy if exists "keeper_audit_read_all" on public.keeper_audit;
-create policy "keeper_audit_read_all"
-  on public.keeper_audit for select using (true);
-
-drop policy if exists "keeper_audit_insert_keeper" on public.keeper_audit;
-create policy "keeper_audit_insert_keeper"
-  on public.keeper_audit for insert with check (true);
-
-drop policy if exists "keeper_audit_insert_keeper_v2" on public.keeper_audit;
-create policy "keeper_audit_insert_keeper_v2"
-  on public.keeper_audit for insert with check (true);
+-- Public read: this is the audit trail investors are invited to check. It is
+-- only tamper-evident if anon CANNOT write to it — inserts are service-role
+-- only (app/api/research/execute).
+select public.zentory_rls_reset('keeper_audit');
+select public.zentory_rls_public_read('keeper_audit');
 
 create index if not exists keeper_audit_created_idx on public.keeper_audit(created_at desc);
 create index if not exists keeper_audit_signal_idx on public.keeper_audit(signal_id);
@@ -156,19 +192,12 @@ create table if not exists public.whitelist (
   created_at timestamptz not null default now()
 );
 
-alter table public.whitelist enable row level security;
-
-drop policy if exists "whitelist_insert_public" on public.whitelist;
-create policy "whitelist_insert_public"
-  on public.whitelist for insert with check (true);
-
-drop policy if exists "whitelist_read_admin" on public.whitelist;
-create policy "whitelist_read_admin"
-  on public.whitelist for select using (true);
-
-drop policy if exists "whitelist_insert_keeper" on public.whitelist;
-create policy "whitelist_insert_keeper"
-  on public.whitelist for insert with check (true);
+-- PRIVATE: waitlist emails are personal data (GDPR). The old
+-- "whitelist_read_admin ... using (true)" policy let anyone holding the
+-- publishable key dump the entire list; the old insert policy let anyone
+-- stuff it. No anon policy now — signups go through POST /api/whitelist,
+-- which writes with the service-role key.
+select public.zentory_rls_reset('whitelist');
 
 create index if not exists whitelist_email_idx   on public.whitelist(email);
 create index if not exists whitelist_created_idx on public.whitelist(created_at desc);
@@ -182,15 +211,9 @@ create table if not exists public.vault_trading_accounts (
   created_at      timestamptz not null default now()
 );
 
-alter table public.vault_trading_accounts enable row level security;
-
-drop policy if exists "vault_trading_accounts_read_all" on public.vault_trading_accounts;
-create policy "vault_trading_accounts_read_all"
-  on public.vault_trading_accounts for select using (true);
-
-drop policy if exists "vault_trading_accounts_insert_keeper" on public.vault_trading_accounts;
-create policy "vault_trading_accounts_insert_keeper"
-  on public.vault_trading_accounts for insert with check (true);
+-- Public read: the execution-trace panel maps a vault to its HL account.
+select public.zentory_rls_reset('vault_trading_accounts');
+select public.zentory_rls_public_read('vault_trading_accounts');
 
 -- ─── Execution Attempts (Hybrid Execution) ─────────────────
 create table if not exists public.execution_attempts (
@@ -209,15 +232,9 @@ create table if not exists public.execution_attempts (
   unique (vault_address, tx_hash)
 );
 
-alter table public.execution_attempts enable row level security;
-
-drop policy if exists "execution_attempts_read_all" on public.execution_attempts;
-create policy "execution_attempts_read_all"
-  on public.execution_attempts for select using (true);
-
-drop policy if exists "execution_attempts_insert_keeper" on public.execution_attempts;
-create policy "execution_attempts_insert_keeper"
-  on public.execution_attempts for insert with check (true);
+-- Public read: rendered by lib/execution-trace.ts. Written by the keeper.
+select public.zentory_rls_reset('execution_attempts');
+select public.zentory_rls_public_read('execution_attempts');
 
 create index if not exists execution_attempts_created_idx
   on public.execution_attempts (created_at desc);
@@ -246,15 +263,9 @@ create table if not exists public.hl_user_fills (
   unique (vault_address, fill_key)
 );
 
-alter table public.hl_user_fills enable row level security;
-
-drop policy if exists "hl_user_fills_read_all" on public.hl_user_fills;
-create policy "hl_user_fills_read_all"
-  on public.hl_user_fills for select using (true);
-
-drop policy if exists "hl_user_fills_insert_keeper" on public.hl_user_fills;
-create policy "hl_user_fills_insert_keeper"
-  on public.hl_user_fills for insert with check (true);
+-- Public read: fills are already public on Hyperliquid. Written by the indexer.
+select public.zentory_rls_reset('hl_user_fills');
+select public.zentory_rls_public_read('hl_user_fills');
 
 create index if not exists hl_user_fills_time_idx
   on public.hl_user_fills (vault_address, time_ms desc);
@@ -276,15 +287,10 @@ create table if not exists public.signal_scores (
 create index if not exists idx_signal_scores_epoch  on public.signal_scores(epoch_id);
 create index if not exists idx_signal_scores_signal on public.signal_scores(signal_id);
 
-alter table public.signal_scores enable row level security;
-
-drop policy if exists "signal_scores_read_all" on public.signal_scores;
-create policy "signal_scores_read_all"
-  on public.signal_scores for select using (true);
-
-drop policy if exists "signal_scores_insert_keeper" on public.signal_scores;
-create policy "signal_scores_insert_keeper"
-  on public.signal_scores for insert with check (true);
+-- Public read: accuracy scores drive the public leaderboard. Written by the
+-- scoring indexer with the service-role key.
+select public.zentory_rls_reset('signal_scores');
+select public.zentory_rls_public_read('signal_scores');
 
 -- ─── provider_stats — live provider rankings ─────────────────
 create table if not exists public.provider_stats (
@@ -312,15 +318,11 @@ alter table public.provider_stats add column if not exists accuracy_sum_bps bigi
 create index if not exists idx_provider_stats_rank     on public.provider_stats(current_rank);
 create index if not exists idx_provider_stats_provider on public.provider_stats(provider);
 
-alter table public.provider_stats enable row level security;
-
-drop policy if exists "provider_stats_read_all" on public.provider_stats;
-create policy "provider_stats_read_all"
-  on public.provider_stats for select using (true);
-
-drop policy if exists "provider_stats_insert_keeper" on public.provider_stats;
-create policy "provider_stats_insert_keeper"
-  on public.provider_stats for insert with check (true);
+-- Public read: /api/leaderboard renders these. Anon INSERT previously let
+-- anyone fabricate a top-ranked provider — writes are now indexer-only
+-- (zentory-engine/scripts/index_signal_arena.py, service-role key).
+select public.zentory_rls_reset('provider_stats');
+select public.zentory_rls_public_read('provider_stats');
 
 -- ─── indexer_state — cursor for the incremental Signal Arena indexer ──────────
 -- Stores the last fully-scanned block so each indexer run scans only NEW blocks
@@ -331,7 +333,7 @@ create table if not exists public.indexer_state (
   last_block bigint not null default 0,
   updated_at bigint not null default (EXTRACT(EPOCH FROM NOW()))::BIGINT
 );
-alter table public.indexer_state enable row level security;
+select public.zentory_rls_reset('indexer_state');
 
 -- ─── subscriptions — ERC-6932 subscription tracking ───────────
 create table if not exists public.subscriptions (
@@ -358,15 +360,11 @@ create index if not exists idx_subscriptions_expiration  on public.subscriptions
 create index if not exists idx_subscriptions_active
   on public.subscriptions(subscriber, expiration);
 
-alter table public.subscriptions enable row level security;
-
-drop policy if exists "subscriptions_read_all" on public.subscriptions;
-create policy "subscriptions_read_all"
-  on public.subscriptions for select using (true);
-
-drop policy if exists "subscriptions_insert_keeper" on public.subscriptions;
-create policy "subscriptions_insert_keeper"
-  on public.subscriptions for insert with check (true);
+-- PRIVATE: subscriber address + tier + amount paid, i.e. a ready-made map of
+-- who paid what, keyed to an on-chain identity. The underlying events are
+-- public on HyperEVM, but this table hands a scraper the joined view for free.
+-- No anon policy — the indexer writes it with the service-role key.
+select public.zentory_rls_reset('subscriptions');
 
 -- ─── epochs — epoch windows for EpochScoring ──────────────────
 create table if not exists public.epochs (
@@ -382,15 +380,9 @@ create table if not exists public.epochs (
 
 create index if not exists idx_epochs_settled on public.epochs(settled) where not settled;
 
-alter table public.epochs enable row level security;
-
-drop policy if exists "epochs_read_all" on public.epochs;
-create policy "epochs_read_all"
-  on public.epochs for select using (true);
-
-drop policy if exists "epochs_insert_keeper" on public.epochs;
-create policy "epochs_insert_keeper"
-  on public.epochs for insert with check (true);
+-- Public read: epoch windows are public on-chain. Written by the keeper.
+select public.zentory_rls_reset('epochs');
+select public.zentory_rls_public_read('epochs');
 
 -- ─── cross_chain_signal_records — CCIP cross-chain signals ─────
 create table if not exists public.cross_chain_signal_records (
@@ -407,12 +399,50 @@ create table if not exists public.cross_chain_signal_records (
 create index if not exists idx_cc_records_signal on public.cross_chain_signal_records(signal_id);
 create index if not exists idx_cc_records_status on public.cross_chain_signal_records(ccip_status);
 
-alter table public.cross_chain_signal_records enable row level security;
+-- Public read: CCIP message status is public on both chains. Keeper-written.
+select public.zentory_rls_reset('cross_chain_signal_records');
+select public.zentory_rls_public_read('cross_chain_signal_records');
 
-drop policy if exists "cross_chain_signal_records_read_all" on public.cross_chain_signal_records;
-create policy "cross_chain_signal_records_read_all"
-  on public.cross_chain_signal_records for select using (true);
+-- ─── Tables that live in the project but not in this file ──────────────────
+-- vault_nav_history / vault_flow / vault_performance / epoch_history are read
+-- by the dApp; api_keys and keeper_heartbeats are credential/ops state. They
+-- were created out-of-band and are still not under version control here, so
+-- apply the same posture defensively if they exist. (Bringing their DDL into
+-- this file is tracked separately.)
+select public.zentory_rls_reset('vault_nav_history');
+select public.zentory_rls_public_read('vault_nav_history');
+select public.zentory_rls_reset('vault_flow');
+select public.zentory_rls_public_read('vault_flow');
+select public.zentory_rls_reset('vault_performance');
+select public.zentory_rls_public_read('vault_performance');
+select public.zentory_rls_reset('epoch_history');
+select public.zentory_rls_public_read('epoch_history');
+-- PRIVATE — sha256 contributor-key store; the authn root for /api/contribute.
+select public.zentory_rls_reset('api_keys');
+-- PRIVATE — keeper liveness/ops state.
+select public.zentory_rls_reset('keeper_heartbeats');
 
-drop policy if exists "cross_chain_signal_records_insert_keeper" on public.cross_chain_signal_records;
-create policy "cross_chain_signal_records_insert_keeper"
-  on public.cross_chain_signal_records for insert with check (true);
+-- ─── Tear down the helpers ─────────────────────────────────────────────────
+drop function if exists public.zentory_rls_public_read(text);
+drop function if exists public.zentory_rls_reset(text);
+
+-- ─── Post-run assertion ────────────────────────────────────────────────────
+-- Fails loudly if any policy on a public table grants a non-SELECT command to
+-- anon or PUBLIC. This is the regression that already happened once (a
+-- hardening migration was silently ORed back open by re-running this file).
+do $$
+declare
+  bad text;
+begin
+  select string_agg(format('%s.%s (%s -> %s)', tablename, policyname, cmd, roles), ', ')
+    into bad
+    from pg_policies
+   where schemaname = 'public'
+     and cmd <> 'SELECT'
+     and ('anon' = any(roles) or 'public' = any(roles));
+
+  if bad is not null then
+    raise exception 'RLS regression: anon/public has write policies: %', bad;
+  end if;
+end
+$$;
