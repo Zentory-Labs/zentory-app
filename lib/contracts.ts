@@ -343,13 +343,21 @@ export const SUBSCRIPTION_TIERS = [
 
 // ─── Chain config ────────────────────────────────────────────────────────────
 
+// Single source of truth for the public HyperEVM testnet RPC fallback.
+// Env vars (NEXT_PUBLIC_HYPEREVM_RPC, HYPEREVM_RPC_URL, RPC_FALLBACK_URLS) still
+// override at every call site — this is only the LAST-RESORT default when nothing
+// else is configured. Imported wherever a hardcoded "https://rpc.hyperliquid-testnet.xyz/evm"
+// would otherwise live (wagmi transport, /api/rpc upstream list, /api/research/execute,
+// Research-execute keeper, etc.) so we don't end up with N copies that drift.
+export const HYPEREVM_TESTNET_FALLBACK_RPC = "https://rpc.hyperliquid-testnet.xyz/evm";
+
 export const HYPEREVM_TESTNET = defineChain({
   id: 998,
   name: "Hyperliquid Testnet",
   nativeCurrency: { name: "Hyperliquid", symbol: "HYPE", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://rpc.hyperliquid-testnet.xyz/evm"] },
-    public: { http: ["https://rpc.hyperliquid-testnet.xyz/evm"] },
+    default: { http: [HYPEREVM_TESTNET_FALLBACK_RPC] },
+    public: { http: [HYPEREVM_TESTNET_FALLBACK_RPC] },
   },
   blockExplorers: {
     default: {
