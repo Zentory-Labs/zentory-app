@@ -5,7 +5,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { injected, coinbaseWallet, walletConnect } from "wagmi/connectors";
-import { HYPEREVM_TESTNET } from "@/lib/contracts";
+import { HYPEREVM_TESTNET, HYPEREVM_TESTNET_FALLBACK_RPC } from "@/lib/contracts";
 import { DemoModeProvider } from "@/lib/demo/context";
 
 // Initialize Sentry directly here. Next.js 16's Turbopack production build
@@ -33,7 +33,7 @@ if (typeof window !== "undefined" && !Sentry.getClient()) {
 
 const queryClient = new QueryClient();
 
-const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC || "https://rpc.hyperliquid-testnet.xyz/evm";
+const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC || HYPEREVM_TESTNET_FALLBACK_RPC;
 const TRANSPORT_URL = process.env.NODE_ENV === "production" ? "/api/rpc" : RPC_URL;
 
 // WalletConnect projectId. A Reown projectId is a PUBLIC client-side identifier

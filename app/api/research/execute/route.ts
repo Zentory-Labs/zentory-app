@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { privateKeyToAccount } from "viem/accounts";
 import { createPublicClient, createWalletClient, http } from "viem";
-import { strategyExecutorABI, HYPEREVM_TESTNET } from "@/lib/contracts";
+import { strategyExecutorABI, HYPEREVM_TESTNET, HYPEREVM_TESTNET_FALLBACK_RPC } from "@/lib/contracts";
 import { addresses } from "@/lib/contracts";
 import { geoBlockCheck } from "@/lib/geo-blocking";
 import { rateLimit } from "@/lib/rateLimit";
 
-const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC ?? "https://rpc.hyperliquid-testnet.xyz/evm";
+const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC ?? HYPEREVM_TESTNET_FALLBACK_RPC;
 const KEEPER_PRIVATE_KEY = process.env.KEEPER_PRIVATE_KEY ?? "";
 const API_KEY = process.env.KEEPER_API_KEY ?? "";
 
