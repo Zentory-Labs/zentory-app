@@ -59,10 +59,16 @@ export const addresses = {
   EpochScoring:      "0x659569A6f195698745779E59fef88e3B5Fe0484A",
   SubscriptionVault: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E",
 
-  // Airdrop claim (M9). Empty until DeployMerkleDistributor.s.sol runs; the /claim
-  // page treats "" as "airdrop not yet live". Set to the deployed address + publish
-  // public/airdrop-proofs.json (from scripts/airdrop/snapshot.ts) to open claims.
-  MerkleDistributor: "",
+  // Airdrop claim (M3-F2). Deployed to testnet 2026-08-22 via
+  //   forge create src/airdrop/MerkleDistributor.sol:MerkleDistributor
+  // with merkleRoot 0x1ec2a6e7e9206154422d48cd0ef55dff6b8d1d4b623c64b381364533a81e3bc0,
+  // claimDeadline 1795182299 (2026-11-20), admin 0x0dF78A7dFb84F93E0BC6500AA90a27617aF89dDA.
+  // The dApp ships public/airdrop-proofs.json with 27 test wallets totalling 30M ZENT
+  // (3% of 1B fixed supply per whitepaper §6.3). The /claim page auto-shows the eligible
+  // amount when the connected wallet is in `claims{}`; founder must still transfer
+  // 30M ZENT from the ZENT deployer (0x3F07...) into this contract to fund real claims
+  // — verified end-to-end on anvil fork (anvil_impersonateAccount + transfer + claim).
+  MerkleDistributor: "0xF518F93A5944b96918C4Cb31d51f8b4e0141379F",
 
   // ─── Shadow stack — SpotVault research vault (TESTNET ONLY, deployed 2026-06-02) ──
   // Oracle-valued ERC-4626 vault that rebalances BTC long ⇄ flat on signed signals.
