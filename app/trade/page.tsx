@@ -8,6 +8,7 @@ import {
   type PerpMeta, type L2Book, type ClearinghouseState,
 } from "@/lib/hyperliquid";
 import { approveBuilderFee, placeOrder } from "@/lib/hyperliquid-exchange";
+import { friendlyTradeError } from "@/lib/trade-errors";
 
 const GOLD = "#b08d57";
 const GREEN = "#34d399";
@@ -80,8 +81,6 @@ export default function TradePage() {
   // builder fee (f is tenths of a bp → fraction = f / 100_000)
   const builderFee = notional * (HL_BUILDER_FEE / 100_000);
 
-  const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
-
   // One-time: authorize Zentory's builder fee for the connected wallet.
   const onApprove = useCallback(async () => {
     if (!walletClient) { setStatus("Connect your wallet first."); return; }
@@ -90,7 +89,11 @@ export default function TradePage() {
       await approveBuilderFee(walletClient);
       setFeeApproved(true);
       setStatus("Builder fee approved — you can place orders.");
-    } catch (e) { setStatus(`Approval failed: ${errMsg(e)}`); }
+    } catch (e) {
+      // Friendly copy only; raw error stays in console for debugging.
+      console.error("[zentory/trade] approveBuilderFee failed:", e);
+      setStatus(`Approval failed: ${friendlyTradeError(e)}`);
+    }
     finally { setBusy(false); }
   }, [walletClient]);
 
@@ -108,7 +111,11 @@ export default function TradePage() {
     try {
       await placeOrder({ walletClient, coin, isBuy: side === "buy", sz: size, price: px, isMarket: type === "market" });
       setStatus(`Order submitted ✓ — ${side === "buy" ? "long" : "short"} ${size} ${coin}.`);
-    } catch (e) { setStatus(`Order failed: ${errMsg(e)}`); }
+    } catch (e) {
+      // Friendly copy only; raw error stays in console for debugging.
+      console.error("[zentory/trade] placeOrder failed:", e);
+      setStatus(`Order failed: ${friendlyTradeError(e)}`);
+    }
     finally { setBusy(false); }
   }, [walletClient, coin, side, size, type, limitPx, mark]);
 
