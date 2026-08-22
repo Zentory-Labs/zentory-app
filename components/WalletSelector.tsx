@@ -152,6 +152,17 @@ export function WalletButton() {
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
+  // Close on Escape key (VAL-DAPP-016 — keyboard accessibility, optional
+  // per the spec but wired for completeness with the outside-click branch).
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open]);
+
   // Listen for open-wallet-modal event from Nav
   useEffect(() => {
     const handler = () => { if (!isConnected) setOpen(true); };
@@ -289,6 +300,10 @@ export function WalletButton() {
 
       {open && (
         <div
+          data-test="wallet-modal"
+          role="dialog"
+          aria-label="Connect wallet"
+          aria-modal="true"
           className="absolute right-0 top-full mt-2 w-64 rounded-2xl overflow-hidden z-[100]"
           style={{
             background: "rgba(20, 20, 23, 0.97)",
