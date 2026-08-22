@@ -32,79 +32,125 @@ export default function VaultTrustPanel({
   const shortAddr = `${vaultAddress.slice(0, 6)}…${vaultAddress.slice(-4)}`;
 
   return (
-    <div className="grid md:grid-cols-3 gap-4 mb-8">
-      <PanelCard title="Fees">
-        <div className="space-y-3 text-sm">
-          {[
-            ["Management", "0%"],
-            ["Performance", "20% above high-water mark"],
-            ["Entry / Exit", "0%"],
-          ].map(([label, value]) => (
-            <div key={label} className="flex justify-between gap-3 border-b border-[#2a2f3a] pb-3">
-              <span style={{ color: DIM }}>{label}</span>
-              <span className="text-right" style={TEXT}>{value}</span>
-            </div>
-          ))}
-          <p className="text-xs leading-relaxed" style={BODY}>
-            Rebalance cost: paid by the vault at execution — see the{" "}
-            <Link href="/backtest" className="underline" style={LINK}>
-              cost-sensitivity table
-            </Link>{" "}
-            for how it erodes the edge.
-          </p>
-        </div>
-      </PanelCard>
-
-      <PanelCard title="Withdrawals">
-        <div className="space-y-3 text-sm leading-relaxed" style={BODY}>
-          <p>
-            <span style={TEXT}>Instant ERC-4626 redeem</span> — no lockup, no cooldown.
-          </p>
-          <p>
-            You receive the vault&apos;s current holdings mix: the underlying asset when{" "}
-            <span style={TEXT}>LONG</span>, USDC-equivalent when <span style={TEXT}>FLAT</span>.
-          </p>
-          <p>Shares burn at current NAV.</p>
-        </div>
-      </PanelCard>
-
-      <PanelCard title="Security">
-        <div className="space-y-3 text-xs leading-relaxed" style={BODY}>
-          <div className="flex justify-between gap-3 text-sm border-b border-[#2a2f3a] pb-3">
-            <span style={{ color: DIM }}>Contract</span>
-            <a
-              href={`https://app.hyperliquid-testnet.xyz/explorer/address/${vaultAddress}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={vaultAddress}
-              className="underline"
-              style={{ ...LINK, fontFamily: "var(--font-space-mono), monospace", fontSize: 12 }}
-            >
-              {shortAddr} ↗
-            </a>
+    <div className="space-y-4 mb-8" data-test="vault-trust-panel">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <PanelCard title="Fees">
+          <div className="space-y-3 text-sm">
+            {[
+              ["Management", "0%"],
+              ["Performance", "20% above high-water mark"],
+              ["Entry / Exit", "0%"],
+            ].map(([label, value]) => (
+              <div key={label} className="flex justify-between gap-3 border-b border-[#2a2f3a] pb-3">
+                <span style={{ color: DIM }}>{label}</span>
+                <span className="text-right" style={TEXT}>{value}</span>
+              </div>
+            ))}
+            <p className="text-xs leading-relaxed" style={BODY}>
+              Rebalance cost: paid by the vault at execution — see the{" "}
+              <Link href="/backtest" className="underline" style={LINK}>
+                cost-sensitivity table
+              </Link>{" "}
+              for how it erodes the edge.
+            </p>
           </div>
-          <p>
-            Internal reviews + 330-test suite; <span style={TEXT}>external audit scheduled — gates
-            mainnet</span>. See the{" "}
-            <Link href="/bug-bounty" className="underline" style={LINK}>
-              bug bounty
-            </Link>{" "}
-            and{" "}
-            <Link href="/risks" className="underline" style={LINK}>
-              full risk disclosure
-            </Link>
-            .
-          </p>
-          <p>
-            Managed by Zentory Labs — keeper-signed rebalances, bounded on-chain: the keeper can
-            only rotate asset ⇄ USDC, it can <span style={TEXT}>never withdraw funds</span>.
-            3-of-5 multisig migration is a hard mainnet gate.
-          </p>
-          {founderSeeded && (
-            <p style={{ color: DIM }}>Depositors: founder-seeded (testnet).</p>
-          )}
-        </div>
-      </PanelCard>
+        </PanelCard>
+
+        <PanelCard title="Withdrawals">
+          <div className="space-y-3 text-sm leading-relaxed" style={BODY}>
+            <p>
+              <span style={TEXT}>Instant ERC-4626 redeem</span> — no lockup, no cooldown.
+            </p>
+            <p>
+              You receive the vault&apos;s current holdings mix: the underlying asset when{" "}
+              <span style={TEXT}>LONG</span>, USDC-equivalent when <span style={TEXT}>FLAT</span>.
+            </p>
+            <p>Shares burn at current NAV.</p>
+          </div>
+        </PanelCard>
+
+        <PanelCard title="Security">
+          <div className="space-y-3 text-xs leading-relaxed" style={BODY}>
+            <div className="flex justify-between gap-3 text-sm border-b border-[#2a2f3a] pb-3">
+              <span style={{ color: DIM }}>Contract</span>
+              <a
+                href={`https://app.hyperliquid-testnet.xyz/explorer/address/${vaultAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={vaultAddress}
+                className="underline"
+                style={{ ...LINK, fontFamily: "var(--font-space-mono), monospace", fontSize: 12 }}
+              >
+                {shortAddr} ↗
+              </a>
+            </div>
+            <p>
+              Internal reviews + 330-test suite; <span style={TEXT}>external audit scheduled — gates
+              mainnet</span>. See the{" "}
+              <Link href="/bug-bounty" className="underline" style={LINK}>
+                bug bounty
+              </Link>{" "}
+              and{" "}
+              <Link href="/risks" className="underline" style={LINK}>
+                full risk disclosure
+              </Link>
+              .
+            </p>
+            <p>
+              Managed by Zentory Labs — keeper-signed rebalances, bounded on-chain: the keeper can
+              only rotate asset ⇄ USDC, it can <span style={TEXT}>never withdraw funds</span>.
+              3-of-5 multisig migration is a hard mainnet gate.
+            </p>
+            {founderSeeded && (
+              <p style={{ color: DIM }}>Depositors: founder-seeded (testnet).</p>
+            )}
+          </div>
+        </PanelCard>
+
+        <PanelCard title="Terms">
+          <div className="space-y-3 text-xs leading-relaxed" style={BODY}>
+            <p>
+              By depositing you accept the{" "}
+              <Link
+                href="https://zentorylabs.com/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+                style={LINK}
+              >
+                Terms of Service
+              </Link>{" "}
+              and acknowledge the{" "}
+              <Link href="/risks" className="underline" style={LINK}>
+                risk disclosure
+              </Link>
+              . Nothing here is financial, legal or tax advice.
+            </p>
+            <p>
+              <span style={TEXT}>Testnet only.</span> Deposits use valueless mock tokens — no real
+              funds at risk today. The same contract source will run on HyperEVM mainnet (chain 999)
+              after the external audit + 3-of-5 multisig migration.{" "}
+              <Link href="/state-of-protocol" className="underline" style={LINK}>
+                See launch status
+              </Link>
+              .
+            </p>
+            <p>
+              <span style={TEXT}>Geographic restrictions.</span> US, EU and OFAC-listed regions
+              are blocked at the proxy — attempting to interact from a restricted jurisdiction
+              routes to{" "}
+              <Link href="/blocked" className="underline" style={LINK}>
+                /blocked
+              </Link>
+              . Each visit is your own compliance check.
+            </p>
+            <p>
+              <span style={TEXT}>No withdrawal gates.</span> No minimum hold, no queue, no
+              permissioned exit. Redeemals settle in the same transaction.
+            </p>
+          </div>
+        </PanelCard>
+      </div>
     </div>
   );
 }

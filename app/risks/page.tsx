@@ -110,6 +110,82 @@ export default function RisksPage() {
         </p>
       </RiskCard>
 
+      <RiskCard title="Counterparty risk">
+        <p>
+          The vault does not lend, does not take leverage, and does not use a{" "}
+          <strong style={STRONG}>centralised custodian</strong> — your deposit sits in the
+          non-custodial ERC-4626 vault contract and you hold the redeemable share token. The only
+          off-chain counterparties are: the keeper (which only signs rebalances, never moves user
+          funds), the price oracle (which is a separate contract that the vault reads but cannot
+          instruct), and the timelock governance contract (which gates admin parameter changes
+          behind a 48-hour delay). Each of these is enumerable on-chain and individually
+          accountable.
+        </p>
+        <p>
+          Bridged assets carry the usual cross-chain risk: if the underlying asset is a wrapped
+          version of a foreign token, the wrapping bridge is itself a counterparty. The
+          testnet-mock assets in use today do not carry that risk because they are plain
+          ERC-20s minted by the deployer for the testnet.
+        </p>
+      </RiskCard>
+
+      <RiskCard title="Key-person risk">
+        <p>
+          Today the testnet admin key is held by a small team in a single-EOA configuration.{" "}
+          <strong style={STRONG}>A 3-of-5 Gnosis Safe migration</strong> is a hard gate for
+          mainnet — until that lands, a single lost key takes the protocol down on testnet.
+          Operational continuity runs through documented runbooks (Railway cron health,
+          Railway deploy history, and the founding signer set on the dApp&apos;s /team page).
+        </p>
+        <p>
+          The strategy itself is parameter-free — the deployed ensemble averages votes over the
+          whole trend+vol-gate family with no spec selected, so losing any single quant does not
+          take the strategy with them. On the contributor side, EpochScoring scores provider
+          accuracy per epoch so a single bad actor is slashed rather than poisoning the
+          leaderboard.
+        </p>
+      </RiskCard>
+
+      <RiskCard title="Regulatory risk">
+        <p>
+          ZENT is a <strong style={STRONG}>utility token</strong> for protocol governance
+          (veZENT voting), research subscriptions (SubscriptionVault), and buyback routing
+          (FeeDistributor). It is not marketed as a security, and the protocol does not promise
+          yield or profit. The vaults themselves are non-custodial smart contracts; the dApp is
+          geo-blocked from restricted jurisdictions at the proxy layer and an investor gating
+          popup protects the marketing site too.
+        </p>
+        <p>
+          That said, regulatory classification can change in any jurisdiction we serve. A future
+          rule change in your country could force us to geo-block you or delist features. You
+          are responsible for understanding the rules where you live; we are responsible for
+          honest disclosure, not legal advice.
+        </p>
+        <p>
+          For the full terms that govern using the dApp see the{" "}
+          <Link
+            href="https://zentorylabs.com/terms-of-service"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+            style={LINK}
+          >
+            Terms of Service
+          </Link>{" "}
+          and the marketing-site{" "}
+          <Link
+            href="https://zentorylabs.com/privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+            style={LINK}
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
+      </RiskCard>
+
       <RiskCard title="Testnet status">
         <p>
           Everything live today runs on <strong style={STRONG}>HyperEVM testnet</strong>. All
