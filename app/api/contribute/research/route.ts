@@ -2,26 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 // Audit #21: `api_keys` is the authn root for this surface and is no longer
 // anon-readable, and `signals` / `provider_stats` have no anon write policy.
-// The whole route family runs on the service-role key; the x-api-key check
-// below is the authorization gate.
+// Audit #22 (Q16): the gate below enforces `expires_at`. The whole route
+// family runs on the service-role key; the x-api-key check is the authn gate.
 import { createAdminClient } from "@/utils/supabase/admin";
-
-function deriveProviderFromApiKey(apiKey: string, supabase: ReturnType<typeof createAdminClient>) {
-  const keyHash = createHash("sha256").update(apiKey).digest("hex");
-  return supabase
-    .from("api_keys")
-    .select("provider, is_active")
-    .eq("key_hash", keyHash)
-    .single();
-}
+import { requireValidApiKey, apiKeyErrorResponse } from "../_auth";
 
 export async function GET(req: NextRequest) {
+  let keyRow;
   try {
-    const apiKey = req.headers.get("x-api-key");
-    if (!apiKey || typeof apiKey !== "string" || apiKey.length !== 64) {
-      return NextResponse.json({ error: "Missing or invalid x-api-key header" }, { status: 401 });
-    }
+    keyRow = await requireValidApiKey(req);
+  } catch (e) {
+    const resp = apiKeyErrorResponse(e);
+    if (resp) return resp;
+    throw e;
+  }
+  const provider = keyRow.provider;
+  const apiKey = req.headers.get("x-api-key") ?? "";
 
+  try {
     const { searchParams } = new URL(req.url);
     const assetClass = searchParams.get("assetClass") ?? undefined;
     const status = searchParams.get("status") ?? undefined;
@@ -35,18 +33,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
     }
 
-    const { data: keyData, error: keyError } = await deriveProviderFromApiKey(apiKey, supabase);
-    if (keyError || !keyData) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
-    }
-    if (!keyData.is_active) {
-      return NextResponse.json({ error: "API key is inactive" }, { status: 403 });
-    }
-    const provider = keyData.provider as string;
+    // Touch last_used_at so the API-keys page can surface "last seen" honestly.
+    await supabase
+      .from("api_keys")
+      .update({ last_used_at: Math.floor(Date.now() / 1000) })
+      .eq("id", keyRow.id);
 
     let query = supabase
       .from("signals")
-      .select("id, provider, asset, direction, size, price, status, submitted_at, created_at", { count: "exact" })
+      .select("id, signal_id, provider, asset, asset_class, asset_id, direction, confidence, expires_at, status, submitted_at, created_at, accuracy_bps, payout_zent", { count: "exact" })
       .eq("provider", provider)
       .order("submitted_at", { ascending: false })
       .range(offset, offset + limit - 1);

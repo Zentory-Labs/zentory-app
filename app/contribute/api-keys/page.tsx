@@ -10,11 +10,19 @@ interface ApiKeyInfo {
   createdAt: number;
   lastUsedAt: number | null;
   isActive: boolean;
+  expiresAt?: number;
+  expiresInDays?: number | null;
+  isExpired?: boolean;
 }
 
 function fmtTs(ts: number | null): string {
   if (!ts) return "—";
   return new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function fmtDateOnly(ts: number | null): string {
+  if (!ts) return "—";
+  return new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 function fmtRelative(ts: number | null): string {
@@ -33,7 +41,7 @@ async function fetchApiKeys(apiKey: string): Promise<ApiKeyInfo[]> {
   return data.keys ?? [];
 }
 
-async function createApiKey(apiKey: string, label: string): Promise<{ key: string; id: number; message?: string } | null> {
+async function createApiKey(apiKey: string, label: string): Promise<{ key: string; id: number; expiresInDays?: number; message?: string } | null> {
   const res = await fetch("/api/contribute/api-keys", {
     method: "POST",
     headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
@@ -121,6 +129,31 @@ function RevokeModal({ keyId, keyLabel, onConfirm, onCancel }: { keyId: number; 
 }
 
 function ApiKeyCard({ k, onRevoke }: { k: ApiKeyInfo; onRevoke: (id: number, label: string) => void }) {
+  // Q16 — show the expiry date and an "expiring soon" / "expired" pill so the
+  // contributor can rotate before the API call gets rejected with 403.
+  // Initialize `now` lazily via state so the lint rule for impure functions
+  // in render is satisfied. `k.isExpired` / `k.expiresInDays` are also computed
+  // server-side, so we always have a fallback if `now` hasn't hydrated yet.
+  const [now] = useState<number>(() => Math.floor(Date.now() / 1000));
+  const isExpired = k.isExpired ?? (typeof k.expiresAt === "number" && k.expiresAt <= now);
+  const daysLeft = k.expiresInDays ?? (typeof k.expiresAt === "number" ? Math.max(0, Math.floor((k.expiresAt - now) / 86400)) : null);
+  const expiringSoon = !isExpired && daysLeft !== null && daysLeft <= 14;
+  let pillBg = "rgba(52,211,153,0.12)";
+  let pillBorder = "rgba(52,211,153,0.3)";
+  let pillColor = "#34d399";
+  let pillText = "Active";
+  if (isExpired) {
+    pillBg = "rgba(194,53,63,0.15)";
+    pillBorder = "rgba(194,53,63,0.35)";
+    pillColor = "#c2353f";
+    pillText = "Expired";
+  } else if (expiringSoon) {
+    pillBg = "rgba(234,179,8,0.12)";
+    pillBorder = "rgba(234,179,8,0.35)";
+    pillColor = "#eab308";
+    pillText = daysLeft === 0 ? "Expires today" : `Expires in ${daysLeft}d`;
+  }
+
   return (
     <div className="rounded-2xl p-5" style={{ background: "#1c1c21", border: "1px solid #2a2f3a" }}>
       <div className="flex items-start justify-between gap-4">
@@ -130,17 +163,28 @@ function ApiKeyCard({ k, onRevoke }: { k: ApiKeyInfo; onRevoke: (id: number, lab
             <span className="text-xs px-2.5 py-0.5 rounded-full font-mono" style={{ background: "rgba(176,141,87,0.1)", border: "1px solid rgba(176,141,87,0.2)", color: "#b08d57" }}>
               {k.prefix}****{/* *** */}
             </span>
-            {k.isActive && (
-              <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "#34d399" }}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#34d399", boxShadow: "0 0 6px #34d399" }} />
-                Active
-              </span>
-            )}
+            <span
+              className="flex items-center gap-1.5 text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: pillBg, border: `1px solid ${pillBorder}`, color: pillColor }}
+            >
+              {!isExpired && (
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: pillColor, boxShadow: `0 0 6px ${pillColor}` }} />
+              )}
+              {pillText}
+            </span>
           </div>
-          <div className="flex items-center gap-4 text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
             <span>Created {fmtTs(k.createdAt)}</span>
             <span>·</span>
             <span>Last used {fmtRelative(k.lastUsedAt)}</span>
+            {typeof k.expiresAt === "number" && (
+              <>
+                <span>·</span>
+                <span>
+                  Expires <span style={{ color: isExpired ? "#c2353f" : expiringSoon ? "#eab308" : "#bfc3c7" }}>{fmtDateOnly(k.expiresAt)}</span>
+                </span>
+              </>
+            )}
           </div>
         </div>
         <button

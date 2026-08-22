@@ -2,31 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 // Audit #21: `api_keys` is the authn root for this surface and is no longer
 // anon-readable, and `signals` / `provider_stats` have no anon write policy.
-// The whole route family runs on the service-role key; the x-api-key check
-// below is the authorization gate.
+// Audit #22 (Q16): the gate below enforces `expires_at`. The whole route
+// family runs on the service-role key; the x-api-key check is the authn gate.
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireValidApiKey, apiKeyErrorResponse, ApiKeyRow } from "./_auth";
 
 const VALID_ASSET_CLASSES = ["CRYPTO_PERP", "CRYPTO_SPOT", "EQUITY", "FOREX", "COMMODITY"] as const;
 const VALID_ASSETS = ["BTC", "ETH", "SOL", "XRP", "AAPL", "TSLA", "NVDA", "MSFT", "EURUSD", "GBPUSD", "GOLD", "OIL"] as const;
 type AssetClass = (typeof VALID_ASSET_CLASSES)[number];
 type Asset = (typeof VALID_ASSETS)[number];
 
-function deriveProviderFromApiKey(apiKey: string, supabase: ReturnType<typeof createAdminClient>) {
-  const keyHash = createHash("sha256").update(apiKey).digest("hex");
-  return supabase
-    .from("api_keys")
-    .select("provider, is_active")
-    .eq("key_hash", keyHash)
-    .single();
-}
-
 export async function POST(req: NextRequest) {
+  let keyRow: ApiKeyRow;
   try {
-    const apiKey = req.headers.get("x-api-key");
-    if (!apiKey || typeof apiKey !== "string" || apiKey.length !== 64) {
-      return NextResponse.json({ error: "Missing or invalid x-api-key header" }, { status: 401 });
-    }
+    keyRow = await requireValidApiKey(req);
+  } catch (e) {
+    const resp = apiKeyErrorResponse(e);
+    if (resp) return resp;
+    throw e;
+  }
+  const provider = keyRow.provider;
+  const apiKey = req.headers.get("x-api-key") ?? "";
 
+  try {
     const body = await req.json();
     const { assetClass, assetId, direction, confidence, expiresAt } = body as {
       assetClass?: string;
@@ -60,15 +58,6 @@ export async function POST(req: NextRequest) {
     } catch {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
     }
-
-    const { data: keyData, error: keyError } = await deriveProviderFromApiKey(apiKey, supabase);
-    if (keyError || !keyData) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
-    }
-    if (!keyData.is_active) {
-      return NextResponse.json({ error: "API key is inactive" }, { status: 403 });
-    }
-    const provider = keyData.provider as string;
 
     await supabase
       .from("api_keys")

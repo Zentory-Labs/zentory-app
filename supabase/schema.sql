@@ -409,6 +409,10 @@ select public.zentory_rls_public_read('cross_chain_signal_records');
 -- were created out-of-band and are still not under version control here, so
 -- apply the same posture defensively if they exist. (Bringing their DDL into
 -- this file is tracked separately.)
+--
+-- Q16 (audit #22, API-key expiry): api_keys.expires_at column added by
+-- supabase/migrations/2026-08-22-api-keys-expires-at.sql. The migration is
+-- idempotent and backfills any pre-existing rows with a 90-day default.
 select public.zentory_rls_reset('vault_nav_history');
 select public.zentory_rls_public_read('vault_nav_history');
 select public.zentory_rls_reset('vault_flow');

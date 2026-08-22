@@ -55,6 +55,9 @@ interface ApiKeyInfo {
   createdAt: number;
   lastUsedAt: number | null;
   isActive: boolean;
+  expiresAt?: number;
+  expiresInDays?: number | null;
+  isExpired?: boolean;
 }
 
 interface Research {
@@ -86,6 +89,11 @@ function fmtTs(ts: number | null): string {
   return new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function fmtDateOnly(ts: number | null): string {
+  if (!ts) return "—";
+  return new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
 function fmtRelative(ts: number | null): string {
   if (!ts) return "Never";
   const diff = Math.floor(Date.now() / 1000) - ts;
@@ -106,7 +114,7 @@ async function fetchApiKeys(apiKey: string): Promise<ApiKeyInfo[]> {
   return data.keys ?? [];
 }
 
-async function createApiKey(apiKey: string, label: string): Promise<{ key: string; id: number } | null> {
+async function createApiKey(apiKey: string, label: string): Promise<{ key: string; id: number; expiresInDays?: number } | null> {
   const res = await fetch("/api/contribute/api-keys", {
     method: "POST",
     headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
@@ -455,10 +463,15 @@ function ResearchTable({ research }: { research: Research[] }) {
 // ─── Dashboard Content ─────────────────────────────────────────────────────────
 
 function DashboardContent({ apiKey }: { apiKey: string }) {
+  // Initialize `now` lazily via state so the lint rule for impure functions
+  // in render is satisfied. `k.isExpired` / `k.expiresInDays` are also computed
+  // server-side, so we always have a fallback if `now` hasn't hydrated yet.
+  const [now] = useState<number>(() => Math.floor(Date.now() / 1000));
   const [keys, setKeys] = useState<ApiKeyInfo[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [research, setResearch] = useState<Research[]>([]);
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [generatedKeyExpiry, setGeneratedKeyExpiry] = useState<number | null>(null);
   const [loadingKeys, setLoadingKeys] = useState(true);
   const [loadingAnalytics, setLoadingAnalytics] = useState(true);
   const [generatingKey, setGeneratingKey] = useState(false);
@@ -488,6 +501,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
       const result = await createApiKey(apiKey, newKeyLabel || "Unnamed");
       if (result) {
         setGeneratedKey(result.key);
+        setGeneratedKeyExpiry(typeof result.expiresInDays === "number" ? Math.floor(Date.now() / 1000) + result.expiresInDays * 86400 : null);
         setNewKeyLabel("");
         setRefreshCounter((c) => c + 1);
       }
@@ -543,7 +557,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
                   API Key Generated
                 </p>
                 <p className="text-[11px] mb-2" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
-                  Save this key now — it will not be shown again.
+                  Save this key now — it will not be shown again. {generatedKeyExpiry ? `Expires ${fmtDateOnly(generatedKeyExpiry)}.` : ""}
                 </p>
                 <code className="text-xs font-mono break-all" style={{ color: "#eaeaea", fontFamily: "monospace" }}>
                   {generatedKey}
@@ -552,7 +566,7 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
               <div className="flex flex-col gap-2">
                 <CopyButton text={generatedKey} />
                 <button
-                  onClick={() => setGeneratedKey(null)}
+                  onClick={() => { setGeneratedKey(null); setGeneratedKeyExpiry(null); }}
                   className="text-xs px-3 py-1.5 rounded-lg transition-colors"
                   style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a", color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
@@ -578,25 +592,39 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
           </div>
         ) : (
           <div className="space-y-3">
-            {keys.map((k) => (
-              <div key={k.id} className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
-                <div className="flex items-center gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>{k.label}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full font-mono" style={{ background: "rgba(176,141,87,0.12)", color: "#b08d57", fontFamily: "monospace" }}>
-                        {k.prefix}***
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 mt-0.5 text-[11px]" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
-                      <span>Created {fmtTs(k.createdAt)}</span>
-                      <span>·</span>
-                      <span>Last used {fmtRelative(k.lastUsedAt)}</span>
+            {keys.map((k) => {
+              const isExpired = k.isExpired ?? (typeof k.expiresAt === "number" && k.expiresAt <= now);
+              const daysLeft = k.expiresInDays ?? (typeof k.expiresAt === "number" ? Math.max(0, Math.floor((k.expiresAt - now) / 86400)) : null);
+              const expiringSoon = !isExpired && daysLeft !== null && daysLeft <= 14;
+              return (
+                <div key={k.id} className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a" }}>
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold" style={{ color: "#eaeaea", fontFamily: "var(--font-montserrat), sans-serif" }}>{k.label}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full font-mono" style={{ background: "rgba(176,141,87,0.12)", color: "#b08d57", fontFamily: "monospace" }}>
+                          {k.prefix}***
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5 text-[11px]" style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}>
+                        <span>Created {fmtTs(k.createdAt)}</span>
+                        <span>·</span>
+                        <span>Last used {fmtRelative(k.lastUsedAt)}</span>
+                        {typeof k.expiresAt === "number" && (
+                          <>
+                            <span>·</span>
+                            <span>
+                              Expires <span style={{ color: isExpired ? "#c2353f" : expiringSoon ? "#eab308" : "#bfc3c7" }}>{fmtDateOnly(k.expiresAt)}</span>
+                              {isExpired ? " (expired)" : expiringSoon && daysLeft !== null ? ` (${daysLeft}d)` : ""}
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

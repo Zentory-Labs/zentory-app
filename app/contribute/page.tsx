@@ -18,16 +18,20 @@ export default function ContributePage() {
         </svg>
       </div>
 
-      {/* Coming soon badge */}
+      {/* Coming soon badge — kept honest: the program is OPEN, the on-chain
+          signal pipeline (SignalRegistry + EpochScoring) is still being wired
+          in by the engine team. Until the keeper can publish signals on-chain,
+          contributor submissions land in Supabase only. */}
       <div
         className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold mb-6"
         style={{
-          background: "rgba(176,141,87,0.12)",
-          borderColor: "rgba(176,141,87,0.3)",
-          color: "#b08d57",
+          background: "rgba(52,211,153,0.12)",
+          borderColor: "rgba(52,211,153,0.3)",
+          color: "#34d399",
         }}
       >
-        Coming Q3 2026
+        <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#34d399", boxShadow: "0 0 6px #34d399" }} />
+        Contributor program open
       </div>
 
       {/* Heading */}
@@ -48,12 +52,11 @@ export default function ContributePage() {
         className="text-sm leading-relaxed max-w-lg mb-10"
         style={{ color: "#6a6f75", fontFamily: "var(--font-montserrat), sans-serif" }}
       >
-        Public quant onboarding opens when the on-chain signal pipeline
-        (SignalRegistry + EpochScoring + keeper bot) finishes integration.
-        Until then, signals are produced by the ZENTORY engine.
+        The dashboard, API-key manager, and submissions log are live for approved
+        contributors. Apply via email to receive your bootstrap API key.
       </p>
 
-      {/* Waitlist external link instead of broken Connect button */}
+      {/* CTA: email (still required for human-issued bootstrap) */}
       <a
         href="mailto:info@zentorylabs.com?subject=Quant%20Contributor%20Application"
         className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
@@ -66,6 +69,33 @@ export default function ContributePage() {
       >
         Apply via email
       </a>
+
+      {/* Direct links to the now-live sub-pages. Available to contributors who
+          already have a bootstrap API key; gate is `useAccount().isConnected`
+          + `localStorage["zent_contributor_api_key"]`. */}
+      <div className="flex flex-wrap items-center justify-center gap-3 mt-6 text-xs">
+        <a
+          href="/contribute/dashboard"
+          className="px-4 py-2 rounded-xl font-semibold transition-colors"
+          style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a", color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
+        >
+          Dashboard
+        </a>
+        <a
+          href="/contribute/api-keys"
+          className="px-4 py-2 rounded-xl font-semibold transition-colors"
+          style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a", color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
+        >
+          API Keys
+        </a>
+        <a
+          href="/contribute/submissions"
+          className="px-4 py-2 rounded-xl font-semibold transition-colors"
+          style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #2a2f3a", color: "#bfc3c7", fontFamily: "var(--font-montserrat), sans-serif" }}
+        >
+          Submissions
+        </a>
+      </div>
 
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 max-w-3xl">

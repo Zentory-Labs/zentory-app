@@ -2,17 +2,12 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Contributor onboarding is "Coming Q3 2026" (see /contribute). The dashboard,
-  // API-keys and submissions sub-pages are built but not yet live (no first-key
-  // bootstrap), so gate them to /contribute until the program opens. Temporary
-  // (not permanent) so they can be re-enabled when the signal pipeline is ready.
-  async redirects() {
-    return [
-      { source: "/contribute/dashboard", destination: "/contribute", permanent: false },
-      { source: "/contribute/api-keys", destination: "/contribute", permanent: false },
-      { source: "/contribute/submissions", destination: "/contribute", permanent: false },
-    ];
-  },
+  // The contributor program sub-pages (/contribute/dashboard, /contribute/api-keys,
+  // /contribute/submissions) are live and reachable. They gate themselves on
+  // wallet connect + x-api-key auth, and the API routes validate every key
+  // (audit Q16: expires_at + is_active). See app/api/contribute/* for the
+  // server-side gate; see supabase/migrations/2026-08-22-api-keys-expires-at.sql
+  // for the schema that backs the expiry check.
 };
 
 export default withSentryConfig(nextConfig, {
