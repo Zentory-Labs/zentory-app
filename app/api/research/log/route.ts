@@ -11,6 +11,12 @@ import { rateLimit, clientIp } from "@/lib/rateLimit";
  * Phase 1: open to anyone (testnet, no real capital at stake).
  * Phase 2: will be gated by ZENT governance — only proposals passed by
  * token holders can trigger keeper execution.
+ *
+ * Numeric chain_id validation (VAL-DAPP-137). The signals table stores
+ * `chain_id` as a Postgres bigint; sending a string like `"abc"` here would
+ * either crash the JSON parse in @supabase/supabase-js or silently coerce
+ * (NaN) into the column and break the unique-constraint path. Either way
+ * the request must be rejected with a 400 BEFORE we hand it to Supabase.
  */
 export async function POST(req: NextRequest) {
   const block = geoBlockCheck(req);
@@ -29,16 +35,33 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { provider, asset, direction, size, price } = body as {
+    const { provider, asset, direction, size, price, chain_id } = body as {
       provider: ResearchContributor;
       asset: Asset;
       direction: Direction;
       size: number;
       price: number;
+      chain_id?: unknown;
     };
 
     if (!provider || !asset || !direction || typeof size !== "number" || typeof price !== "number") {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    }
+
+    // VAL-DAPP-137: optional chain_id MUST be a JSON number. Any string
+    // (including "abc"), `null`, or non-finite number returns 400 with a
+    // clear message instead of letting the value reach Supabase.
+    if (chain_id !== undefined && chain_id !== null) {
+      if (
+        typeof chain_id !== "number" ||
+        !Number.isFinite(chain_id) ||
+        !Number.isInteger(chain_id)
+      ) {
+        return NextResponse.json(
+          { error: "chain_id must be an integer (got non-numeric value)" },
+          { status: 400 },
+        );
+      }
     }
 
     // Audit #21: anon has no INSERT policy on `signals` any more — this write
@@ -50,19 +73,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
     }
 
+    const insertPayload: Record<string, unknown> = {
+      provider,
+      asset,
+      direction,
+      size,
+      price,
+      status: "pending",
+      tx_hash: null,
+      executed_by: null,
+      executor_address: null,
+    };
+    if (typeof chain_id === "number") {
+      insertPayload.chain_id = chain_id;
+    }
+
     const { data, error } = await supabase
       .from("signals")
-      .insert({
-        provider,
-        asset,
-        direction,
-        size,
-        price,
-        status: "pending",
-        tx_hash: null,
-        executed_by: null,
-        executor_address: null,
-      })
+      .insert(insertPayload)
       .select()
       .single();
 

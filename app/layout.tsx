@@ -88,9 +88,16 @@ export default function RootLayout({
     <html lang="en" className={`${montserrat.variable} ${spaceMono.variable}`}>
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <Providers>
-          <DemoBanner />
           <Nav />
+          {/*
+           * DemoBanner is rendered INSIDE <main> (rather than as a body-level
+           * sibling of <Nav />) so it sits below the fixed nav, not behind it.
+           * The fixed nav uses z-50; without this nesting the banner's exit
+           * button was untouchable. See lib/demo/context.tsx for the original
+           * bug history.
+           */}
           <main className="mx-auto max-w-7xl px-6 pt-24 pb-8">
+            <DemoBanner />
             {children}
           </main>
           <footer className="text-[#bfc3c7]">
