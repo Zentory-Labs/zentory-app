@@ -12,9 +12,12 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { useRequireCorrectChain } from "@/lib/useRequireCorrectChain";
 import { reportError } from "@/lib/reportError";
 import { STAKING_ABI, ZENT_ABI, addresses } from "@/lib/contracts";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoStakers } from "@/lib/demo/data";
+
+type ReadArgs = Parameters<typeof useReadContract>[0];
+type WriteArgs = Parameters<ReturnType<typeof useWriteContract>["writeContract"]>[0];
 
 const MAX_LOCK_SECONDS = 730 * 24 * 60 * 60;
 const MIN_LOCK_SECONDS = 7 * 24 * 60 * 60;
@@ -79,15 +82,22 @@ export default function StakePage() {
   // Gate wallet-dependent UI until after mount to avoid SSR/client hydration
   // mismatch — wagmi reads from localStorage after first paint and the tree
   // would diverge, breaking onClick handlers.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // useSyncExternalStore with a no-op subscribe flips the snapshot to `true`
+  // on first client render and stays `false` during SSR — same effect as the
+  // old `useState(false) + useEffect(setMounted, [])` pair, without firing
+  // setState in an effect (which react-hooks/set-state-in-effect disallows).
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
-  const totalStaked = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "totalStaked" } as any);
-  const minStake = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "minStake" } as any);
-  const userStaked = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "stakedBalance", args: address ? [address] : undefined, query: { enabled: isConnected } } as any);
-  const userVeBalance = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "veBalance", args: address ? [address] : undefined, query: { enabled: isConnected } } as any);
-  const userHasAccess = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "hasAccess", args: address ? [address] : undefined, query: { enabled: isConnected } } as any);
-  const userLockEnd = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "lockEndOf", args: address ? [address] : undefined, query: { enabled: isConnected } } as any);
+  const totalStaked = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "totalStaked" } as ReadArgs);
+  const minStake = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "minStake" } as ReadArgs);
+  const userStaked = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "stakedBalance", args: address ? [address] : undefined, query: { enabled: isConnected } } as ReadArgs);
+  const userVeBalance = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "veBalance", args: address ? [address] : undefined, query: { enabled: isConnected } } as ReadArgs);
+  const userHasAccess = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "hasAccess", args: address ? [address] : undefined, query: { enabled: isConnected } } as ReadArgs);
+  const userLockEnd = useReadContract({ address: addresses.ZENTStaking, abi: STAKING_ABI, functionName: "lockEndOf", args: address ? [address] : undefined, query: { enabled: isConnected } } as ReadArgs);
 
   const [stakeAmount, setStakeAmount] = useState("");
   const [lockDays, setLockDays] = useState(365);
@@ -133,17 +143,17 @@ export default function StakePage() {
         abi: ZENT_ABI,
         functionName: "approve",
         args: [addresses.ZENTStaking, amountWei],
-      } as any);
+      } as WriteArgs);
 
       const stakeTxHash = await writeContractAsync({
         address: addresses.ZENTStaking,
         abi: STAKING_ABI,
         functionName: "stake",
         args: [amountWei, BigInt(lockDurationSeconds)],
-      } as any);
+      } as WriteArgs);
       setTxHash(stakeTxHash);
       setIsPending(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(reportError(err, { scope: "stake.submit", lockDays }));
       setIsPending(false);
     }

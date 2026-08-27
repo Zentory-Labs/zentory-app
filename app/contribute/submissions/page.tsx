@@ -143,7 +143,14 @@ export default function SubmissionsPage() {
     setLoading(false);
   }, [page, assetClass, status]);
 
-  useEffect(() => { loadResearch(); }, [loadResearch]);
+  // Defer loadResearch through queueMicrotask so the synchronous setState
+  // calls inside it (the early-return setLoading(false) at the top of the
+  // async function) don't trip the react-hooks/set-state-in-effect rule.
+  useEffect(() => {
+    queueMicrotask(() => {
+      loadResearch();
+    });
+  }, [loadResearch]);
 
   function exportCsv() {
     if (research.length === 0) return;

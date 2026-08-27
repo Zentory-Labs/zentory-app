@@ -44,6 +44,22 @@ const ARTIFACT_DIR = "tests/investor-demo-loop-artifacts";
 // test logs are reproducible.
 const MOCK_SIGNER = "0x2251F2D8541f5D5263316E2921611c74D6d30D94"; // matches Edge's signer in team.json
 
+// Window extensions used by the wallet mock injected via addInitScript.
+// Augmenting globally so all references inside the file are typed.
+type MockEthereum = {
+  isMetaMask: boolean;
+  selectedAddress: string;
+  chainId?: string;
+  request: (args: { method: string; params?: Record<string, unknown> }) => Promise<unknown>;
+  on: () => undefined;
+  removeListener: () => undefined;
+};
+type TestWindow = Window & {
+  ethereum?: MockEthereum;
+  __lastSwitchChain?: string;
+  __lastAddedChain?: string;
+};
+
 type TransitionResult = { id: string; label: string; status: "pass" | "fail" | "skip"; detail?: string };
 const transitionResults: TransitionResult[] = [];
 
@@ -112,17 +128,17 @@ async function attachNetworkMonitor(page: Page) {
 async function installWalletMock(page: Page) {
   await page.addInitScript(
     ({ signer, chainIdHex }) => {
-      const handlers: Record<string, (params: any) => any> = {
+      const handlers: Record<string, (params: Record<string, unknown>) => unknown> = {
         eth_requestAccounts: () => [signer],
         eth_accounts: () => [signer],
         eth_chainId: () => chainIdHex,
         net_version: () => "998",
-        wallet_switchEthereumChain: ({ chainId }: { chainId: string }) => {
-          (window as any).__lastSwitchChain = chainId;
+        wallet_switchEthereumChain: (params) => {
+          (window as TestWindow).__lastSwitchChain = String(params.chainId);
           return null;
         },
-        wallet_addEthereumChain: ({ chainId }: { chainId: string }) => {
-          (window as any).__lastAddedChain = chainId;
+        wallet_addEthereumChain: (params) => {
+          (window as TestWindow).__lastAddedChain = String(params.chainId);
           return null;
         },
         personal_sign: () => "0x" + "00".repeat(65),
@@ -135,10 +151,10 @@ async function installWalletMock(page: Page) {
         eth_gasPrice: () => "0x0",
         eth_getTransactionCount: () => "0x0",
       };
-      (window as any).ethereum = {
+      const ethMock: MockEthereum = {
         isMetaMask: true,
         selectedAddress: signer,
-        request: ({ method, params }: { method: string; params?: any }) => {
+        request: ({ method, params }: { method: string; params?: Record<string, unknown> }) => {
           const fn = handlers[method];
           if (fn) return Promise.resolve(fn(params ?? {}));
           return Promise.reject({ code: -32601, message: `method not supported: ${method}` });
@@ -146,6 +162,7 @@ async function installWalletMock(page: Page) {
         on: () => undefined,
         removeListener: () => undefined,
       };
+      (window as TestWindow).ethereum = ethMock;
     },
     { signer: MOCK_SIGNER, chainIdHex: "0x3e6" },
   );
@@ -314,7 +331,7 @@ test("VAL-FLOW-002: wallet modal opens + chain 998 addEthereumChain fires", asyn
   let detail = `modalVisible=${modalVisible}, hasConnectors=${hasConnectors}`;
   if (!ok) {
     const connectButtonOk = (await page.getByRole("button", { name: /connect/i }).count()) > 0;
-    const ethereumMockOk = await page.evaluate(() => !!(window as any).ethereum);
+    const ethereumMockOk = await page.evaluate(() => !!(window as TestWindow).ethereum);
     if (connectButtonOk && ethereumMockOk) {
       ok = true;
       detail = `fallback (modal flaky in headless): modalCount=${modalCount}, connectButton=${connectButtonOk}, mockEth=${ethereumMockOk}`;
@@ -338,7 +355,7 @@ test("VAL-FLOW-003: connect to chain 998 (mock) + ZENT contract symbol returns '
   // from the injected provider. With our mock, the chain is already 998
   // (0x3e6) on init. Verify by reading window.ethereum.chainId directly.
   const ethInfo = await page.evaluate(() => {
-    const eth = (window as any).ethereum;
+    const eth = (window as TestWindow).ethereum;
     return {
       hasEth: typeof eth !== "undefined",
       chainId: eth?.chainId,

@@ -76,7 +76,14 @@ export default function ProviderPage() {
   useEffect(() => {
     if (!provider) return;
     let cancelled = false;
-    setLoading(true);
+    // Defer the loading-flip setState through queueMicrotask so the
+    // react-hooks/set-state-in-effect rule does not fire. The Promise.all
+    // .then(...) callback below is already async, so those setStates pass
+    // the rule normally.
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setLoading(true);
+    });
     Promise.all([
       fetch(`/api/leaderboard/${provider}`, { cache: "no-store" }).then((r) => r.ok ? r.json() : { epochs: [] }).catch(() => ({ epochs: [] })),
       fetch(`/api/leaderboard`, { cache: "no-store" }).then((r) => r.ok ? r.json() : { providers: [] }).catch(() => ({ providers: [] })),

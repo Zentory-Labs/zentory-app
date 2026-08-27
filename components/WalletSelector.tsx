@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { useAccount, useDisconnect, useConnect, useChainId, useSwitchChain } from "wagmi";
 
 const HYPER_EVM_CHAIN_ID = 998;
@@ -99,7 +99,7 @@ export function WalletButton() {
 
   const [open, setOpen] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [connectionTimeoutId, setConnectionTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const connectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   // SSR/hydration guard — wagmi resolves isConnected/address asynchronously
@@ -107,8 +107,14 @@ export function WalletButton() {
   // mount produces a different tree than the server did, throwing React
   // error #418 and (critically) preventing onClick handlers across the
   // entire app from binding correctly.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // useSyncExternalStore with a no-op subscribe is the React 18+ canonical
+  // replacement for `useState(false) + useEffect(setMounted, [])`: server
+  // snapshot is `false`, client snapshot is `true`, no setState in effect.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const wrongNetwork = mounted && isConnected && chainId !== HYPER_EVM_CHAIN_ID;
   // EIP-6963 wallets (MetaMask, Phantom, Rabby, Coinbase extension, …) each show
@@ -121,33 +127,48 @@ export function WalletButton() {
   );
   const noInjected = mounted && !injectedDetected;
 
-  // Clear connection error when modal opens
+  // Clear connection error when modal opens — clear via the open-toggle
+  // handler instead of a sync setState-in-effect (react-hooks/set-state-in-effect).
   useEffect(() => {
-    if (open) setConnectionError(null);
+    // No-op: setConnectionError(null) used to live here, but firing setState
+    // synchronously inside an effect trips the lint rule. The reset is now
+    // performed in setOpen wrapper below.
   }, [open]);
 
-  // Set up connection timeout when connecting starts
+  // Set up connection timeout when connecting starts. The timer id is kept
+  // in a ref because no UI depends on it — we only need it for cleanup.
   useEffect(() => {
     if (isConnecting) {
-      const timer = setTimeout(() => {
+      connectionTimeoutRef.current = setTimeout(() => {
         setConnectionError("Connection timed out. Try again or use a different wallet.");
       }, 15000);
-      setConnectionTimeoutId(timer);
-      return () => clearTimeout(timer);
+      return () => {
+        if (connectionTimeoutRef.current) {
+          clearTimeout(connectionTimeoutRef.current);
+          connectionTimeoutRef.current = null;
+        }
+      };
     } else {
-      if (connectionTimeoutId) {
-        clearTimeout(connectionTimeoutId);
-        setConnectionTimeoutId(null);
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+        connectionTimeoutRef.current = null;
       }
     }
   }, [isConnecting]);
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) setConnectionError(null);
+    setOpen(next);
+  };
 
   // Close on outside click
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
+    }
+    // setOpen(false) is allowed because we already cleared the error when the
+    // modal was opened; closing it doesn't need to clear anything.;
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
@@ -165,7 +186,7 @@ export function WalletButton() {
 
   // Listen for open-wallet-modal event from Nav
   useEffect(() => {
-    const handler = () => { if (!isConnected) setOpen(true); };
+    const handler = () => { if (!isConnected) handleOpenChange(true); };
     window.addEventListener("open-wallet-modal", handler);
     return () => window.removeEventListener("open-wallet-modal", handler);
   }, [isConnected]);
@@ -262,7 +283,7 @@ export function WalletButton() {
   return (
     <div className="relative" ref={ref}>
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => handleOpenChange(!open)}
         disabled={isConnecting}
         className="rounded-xl border px-4 py-2 text-xs font-medium transition-all duration-300 flex items-center gap-2"
         style={{
