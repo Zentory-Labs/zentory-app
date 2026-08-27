@@ -96,62 +96,116 @@ function fmtRelative(ts: number | null): string {
 }
 
 // ─── API helpers ─────────────────────────────────────────────────────────────
+//
+// All helpers below defensively coerce server responses into the documented
+// shape before they reach React. Sentry alert JAVASCRIPT-NEXTJS-A
+// (`TypeError: e.map is not a function`) was caused by an API returning
+// `{keys: null}` (or a JSON parse error → undefined) while the dashboard
+// code did `data.keys ?? []`. The downstream `keys.map(...)` then crashed
+// because `keys` was still null when the response was unexpected. We
+// normalize at the helper boundary so the React tree only ever sees an
+// array or null.
+
+function asArray<T>(value: unknown): T[] {
+  if (Array.isArray(value)) return value as T[];
+  return [];
+}
 
 async function fetchApiKeys(apiKey: string): Promise<ApiKeyInfo[]> {
-  const res = await fetch("/api/contribute/api-keys", {
-    headers: { "x-api-key": apiKey },
-  });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.keys ?? [];
+  try {
+    const res = await fetch("/api/contribute/api-keys", {
+      headers: { "x-api-key": apiKey },
+    });
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    return asArray<ApiKeyInfo>((data as { keys?: unknown } | null)?.keys);
+  } catch {
+    return [];
+  }
 }
 
 async function createApiKey(apiKey: string, label: string): Promise<{ key: string; id: number } | null> {
-  const res = await fetch("/api/contribute/api-keys", {
-    method: "POST",
-    headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ label }),
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch("/api/contribute/api-keys", {
+      method: "POST",
+      headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ label }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    if (data && typeof data === "object" && "key" in data && "id" in data) {
+      return data as { key: string; id: number };
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function revokeApiKey(apiKey: string, keyId: number): Promise<boolean> {
-  const res = await fetch("/api/contribute/api-keys", {
-    method: "DELETE",
-    headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ keyId }),
-  });
-  return res.ok;
+  try {
+    const res = await fetch("/api/contribute/api-keys", {
+      method: "DELETE",
+      headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ keyId }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 async function fetchAnalytics(apiKey: string, epochs = 20): Promise<Analytics | null> {
-  const res = await fetch(`/api/contribute/analytics?epochs=${epochs}`, {
-    headers: { "x-api-key": apiKey },
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(`/api/contribute/analytics?epochs=${epochs}`, {
+      headers: { "x-api-key": apiKey },
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    return (data && typeof data === "object" ? (data as Analytics) : null);
+  } catch {
+    return null;
+  }
 }
 
 async function fetchRecentResearch(apiKey: string): Promise<Research[]> {
-  const res = await fetch("/api/contribute/research?limit=10", {
-    headers: { "x-api-key": apiKey },
-  });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch("/api/contribute/research?limit=10", {
+      headers: { "x-api-key": apiKey },
+    });
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    // Some endpoints wrap the list in `{ research: [...] }`, others return a
+    // bare array. Accept either, coerce to array.
+    if (Array.isArray(data)) return data as Research[];
+    if (data && typeof data === "object" && "research" in data) {
+      return asArray<Research>((data as { research?: unknown }).research);
+    }
+    return [];
+  } catch {
+    return [];
+  }
 }
 
 async function submitResearch(
   apiKey: string,
   payload: { assetClass: string; assetId: string; direction: number; confidence: number; expiresAt: number }
 ): Promise<{ researchId: string; dbId: number } | null> {
-  const res = await fetch("/api/contribute", {
-    method: "POST",
-    headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch("/api/contribute", {
+      method: "POST",
+      headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    if (data && typeof data === "object") {
+      return data as { researchId: string; dbId: number };
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 // ─── CopyButton ───────────────────────────────────────────────────────────────
@@ -466,19 +520,31 @@ function DashboardContent({ apiKey }: { apiKey: string }) {
   const [refreshCounter, setRefreshCounter] = useState(0);
 
   const loadData = useCallback(async () => {
-    const [k, a, s] = await Promise.all([
-      fetchApiKeys(apiKey).catch(() => []),
-      fetchAnalytics(apiKey).catch(() => null),
-      fetchRecentResearch(apiKey).catch(() => []),
-    ]);
-    setKeys(k);
-    setAnalytics(a);
-    setResearch(s);
-    setLoadingKeys(false);
-    setLoadingAnalytics(false);
+    try {
+      const [k, a, s] = await Promise.all([
+        fetchApiKeys(apiKey).catch(() => [] as ApiKeyInfo[]),
+        fetchAnalytics(apiKey).catch(() => null),
+        fetchRecentResearch(apiKey).catch(() => [] as Research[]),
+      ]);
+      setKeys(Array.isArray(k) ? k : []);
+      setAnalytics(a ?? null);
+      setResearch(Array.isArray(s) ? s : []);
+    } catch {
+      // Final defensive net — never let a fetch error escape into the React
+      // tree as a thrown exception. The UI already has empty-state copy for
+      // every list.
+      setKeys([]);
+      setAnalytics(null);
+      setResearch([]);
+    } finally {
+      setLoadingKeys(false);
+      setLoadingAnalytics(false);
+    }
   }, [apiKey]);
 
   useEffect(() => {
+    // Fire-and-forget; the loadData callback resolves asynchronously so the
+    // setState calls inside it are NOT in the synchronous effect body.
     loadData();
   }, [loadData, refreshCounter]);
 

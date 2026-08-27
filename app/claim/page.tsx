@@ -43,8 +43,16 @@ function Panel({ tone, children }: { tone: "neutral" | "gold" | "green" | "red" 
 }
 
 export default function ClaimPage() {
-  const { address: user, isConnected } = useAccount();
-  const chainId = useChainId();
+  const account = useAccount();
+  // Defensive null check — Sentry alert JAVASCRIPT-NEXTJS-9 (`Cannot set
+  // properties of undefined (setting 'connect')`). When a wallet provider
+  // is unavailable or the wagmi tree is not mounted yet, `useAccount()`
+  // can throw; the surrounding error boundary would catch it but the
+  // user sees a hard crash. Null-coalesce here so the page renders the
+  // "connect your wallet" panel regardless.
+  const user = account?.address;
+  const isConnected = Boolean(account?.isConnected);
+  const chainId = useChainId() ?? 0;
   const onCorrectChain = chainId === HYPEREVM_TESTNET.id;
 
   const [proofs, setProofs] = useState<ProofsFile | null>(null);
@@ -79,14 +87,25 @@ export default function ClaimPage() {
   const amountLabel = entry ? `${Number(formatUnits(BigInt(entry.amount), ZENT_DECIMALS)).toLocaleString()} ZENT` : "—";
 
   function handleClaim() {
-    if (!DISTRIBUTOR || !entry || !user) return;
-    reset();
-    writeContract({
-      address: DISTRIBUTOR as `0x${string}`,
-      abi: DISTRIBUTOR_ABI,
-      functionName: "claim",
-      args: [BigInt(entry.index), user, BigInt(entry.amount), entry.proof],
-    });
+    if (!DISTRIBUTOR || !entry || !user || !writeContract) return;
+    try {
+      reset();
+      writeContract({
+        address: DISTRIBUTOR as `0x${string}`,
+        abi: DISTRIBUTOR_ABI,
+        functionName: "claim",
+        args: [BigInt(entry.index), user, BigInt(entry.amount), entry.proof],
+      });
+    } catch (e) {
+      // Defensive: a missing wallet connector used to surface as a hard
+      // `TypeError: Cannot set properties of undefined (setting 'connect')`
+      // in Sentry. Swallow + report via Sentry (no PII; scrubbed).
+      import("@sentry/nextjs").then((Sentry) => {
+        try {
+          Sentry.captureException(e, { extra: { scope: "claim-handleClaim" } });
+        } catch {}
+      });
+    }
   }
 
   // Airdrop not deployed yet, or snapshot proofs not published → honest pre-launch state.

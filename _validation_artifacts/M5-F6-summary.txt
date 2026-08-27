@@ -1,0 +1,6 @@
+INVESTOR VERIFICATION FLOW: PASS (4/4)
+
+PASS  VAL-FLOW-052  /track-record renders 'Verify in 60 seconds' block with copy commands  — curl=true node=true verifiedCopy=true
+PASS  VAL-FLOW-053  Copy + run locally → VERIFIED and exit 0  — verifier exit 0, line matches /^VERIFIED — \d+ entries, \d+ assets, head [0-9a-f]{64}$/
+PASS  VAL-FLOW-054  Tamper detection — modified ledger detected with exit 1  — edit-first / insert-line / delete-line all trigger CHAIN BROKEN ≥ exit 1
+PASS  VAL-FLOW-055  Explorer link → working HyperEVM testnet block explorer  — href=https://hyperevmscan.io/tx/6ff51864ec93249c960fdcd82ef6cb58cee1004b5c93b3c46a43232eb0c88b85 status=200
