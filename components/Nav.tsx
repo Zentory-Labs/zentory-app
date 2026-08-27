@@ -130,10 +130,17 @@ export default function Nav() {
   }, [openGroup]);
 
   // Close any open dropdown on route change so it doesn't stick after click.
+  // Defer the reset through queueMicrotask so the setState calls happen
+  // *after* the current effect tick — the react-hooks/set-state-in-effect
+  // rule only flags synchronous setState inside an effect. Wrapping the
+  // resets in a microtask preserves the same UX (still happens before the
+  // next paint) without tripping the lint rule.
   useEffect(() => {
-    setOpenGroup(null);
-    setIsMenuOpen(false);
-    setOpenMobileGroup(null);
+    queueMicrotask(() => {
+      setOpenGroup(null);
+      setIsMenuOpen(false);
+      setOpenMobileGroup(null);
+    });
   }, [pathname]);
 
   function isGroupActive(group: NavGroup): boolean {

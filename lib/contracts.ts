@@ -1,4 +1,4 @@
-import { parseAbi } from "viem";
+import { defineChain, parseAbi } from "viem";
 
 // Deployed contract addresses on HyperEVM testnet (chain 998).
 // Canonical source of truth: zentory-protocol/DEPLOYMENTS.md and the Foundry
@@ -289,7 +289,7 @@ export const EPOCH_SCORING_ABI = parseAbi([
   "event KeeperCallExecuted(uint256 upkeepId, bytes performData)",
 ]);
 
-export const SUBSCRIPTION_VAULT_ABI = ([
+export const SUBSCRIPTION_VAULT_ABI = parseAbi([
   // Subscribe
   "function subscribe(uint256 tierId, uint32 months) returns (uint256 tokenId)",
   "function renewSubscription(uint256 tokenId, uint32 months) returns (uint32 newExpiration)",
@@ -312,7 +312,7 @@ export const SUBSCRIPTION_VAULT_ABI = ([
   "event Subscribed(address indexed subscriber, uint256 indexed tokenId, uint256 tierId, uint32 duration, uint256 zentPaid)",
   "event RenewalPaid(uint256 indexed tokenId, uint256 zentPaid, uint32 newExpiration)",
   "event Cancelled(uint256 indexed tokenId, uint256 refundZENT, uint32 refundSeconds)",
-] as const);
+]);
 
 // ─── Subscription Tiers ───────────────────────────────────────────────────────
 
@@ -343,7 +343,7 @@ export const SUBSCRIPTION_TIERS = [
 
 // ─── Chain config ────────────────────────────────────────────────────────────
 
-export const HYPEREVM_TESTNET = {
+export const HYPEREVM_TESTNET = defineChain({
   id: 998,
   name: "Hyperliquid Testnet",
   nativeCurrency: { name: "Hyperliquid", symbol: "HYPE", decimals: 18 },
@@ -358,7 +358,7 @@ export const HYPEREVM_TESTNET = {
       apiUrl: "https://app.hyperliquid-testnet.xyz/explorer",
     },
   },
-} as const;
+});
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

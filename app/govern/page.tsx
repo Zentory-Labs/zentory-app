@@ -6,6 +6,9 @@ import { useState, useEffect } from "react";
 import { useDemoMode, DemoBadge } from "@/lib/demo/context";
 import { demoProposals } from "@/lib/demo/data";
 
+type ReadArgs = Parameters<typeof useReadContract>[0];
+type WriteArgs = Parameters<ReturnType<typeof useWriteContract>["writeContract"]>[0];
+
 const PROPOSAL_STATES = ["pending", "active", "canceled", "defeated", "succeeded", "queued", "expired", "executed"];
 
 function shorten(addr: string): string {
@@ -121,20 +124,20 @@ export default function GovernPage() {
     address: addresses.ZentGovernor,
     abi: GOVERNOR_ABI,
     functionName: "votingDelay",
-  } as any);
+  } as ReadArgs);
 
   const votingPeriod = useReadContract({
     address: addresses.ZentGovernor,
     abi: GOVERNOR_ABI,
     functionName: "votingPeriod",
-  } as any);
+  } as ReadArgs);
 
   const quorum = useReadContract({
     address: addresses.ZentGovernor,
     abi: GOVERNOR_ABI,
     functionName: "quorum",
     args: [1n],
-  } as any);
+  } as ReadArgs);
 
   const { writeContract } = useWriteContract();
   const { enabled: demoMode } = useDemoMode();
@@ -176,9 +179,10 @@ export default function GovernPage() {
         abi: GOVERNOR_ABI,
         functionName: "castVote",
         args: [BigInt(proposalId), support],
-      } as any);
-    } catch (err: any) {
-      console.error("Vote failed:", err.message);
+      } as WriteArgs);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Vote failed:", message);
     }
   }
 

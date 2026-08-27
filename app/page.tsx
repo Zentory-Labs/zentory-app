@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { createPublicClient, formatUnits, http } from "viem";
+import { createPublicClient, formatUnits, http, type ReadContractParameters } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import { VideoHero } from "@/components/VideoHero";
 import { addresses, ZENT_ABI, VAULT_ABI, STAKING_ABI, vaultMeta, HYPEREVM_TESTNET } from "@/lib/contracts";
@@ -12,6 +12,14 @@ import RecentActivityTicker from "@/components/RecentActivityTicker";
 import TrackRecordDay from "@/components/TrackRecordDay";
 
 const VAULTS = [addresses.zBTC, addresses.zETH, addresses.zSOL, addresses.zXRP] as const;
+
+// Typed aliases that capture the parameter shape of each read/write helper
+// without committing to specific ABI generics. viem + wagmi both require the
+// ABI to be const-narrowed for full inference, which our parsed ABIs already
+// are — but the call sites still need to relax the generic on `abi` so the
+// parameter object satisfies the helper's overload set.
+type ReadArgs = Parameters<ReturnType<typeof createPublicClient>["readContract"]>[0];
+type WagmiReadArgs = Parameters<typeof useReadContract>[0];
 
 // lib/contracts.ts now exports already-parsed ABIs. The _VIEM aliases stay for
 // backward-compat references below; future code should just use the imports.
@@ -131,7 +139,7 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
 
   const publicClient = useMemo(() => {
     return createPublicClient({
-      chain: HYPEREVM_TESTNET as any,
+      chain: HYPEREVM_TESTNET,
       transport: http("/api/rpc"),
     });
   }, []);
@@ -164,9 +172,9 @@ function VaultCard({ vault }: { vault: (typeof VAULTS)[number] }) {
         // getAssetDecimalsFallback) and label-based decimals give wrong
         // magnitudes — most visibly the inflated zSOL TVL.
         const [assets, navPerShare, underlying] = await Promise.all([
-          publicClient.readContract({ address: vault as any, abi: VAULT_ABI_VIEM as any, functionName: "totalAssets" }),
-          publicClient.readContract({ address: vault as any, abi: VAULT_ABI_VIEM as any, functionName: "getNavPerShare" }),
-          publicClient.readContract({ address: vault as any, abi: VAULT_ABI_VIEM as any, functionName: "asset" }),
+          publicClient.readContract({ address: vault, abi: VAULT_ABI_VIEM, functionName: "totalAssets" } as ReadArgs),
+          publicClient.readContract({ address: vault, abi: VAULT_ABI_VIEM, functionName: "getNavPerShare" } as ReadArgs),
+          publicClient.readContract({ address: vault, abi: VAULT_ABI_VIEM, functionName: "asset" } as ReadArgs),
         ]);
         const onChainDecimals = (await publicClient.readContract({
           address: underlying as `0x${string}`,
@@ -284,7 +292,7 @@ function ChainStats() {
 
   const publicClient = useMemo(() => {
     return createPublicClient({
-      chain: HYPEREVM_TESTNET as any,
+      chain: HYPEREVM_TESTNET,
       transport: http("/api/rpc"),
     });
   }, []);
@@ -295,8 +303,8 @@ function ChainStats() {
       try {
         setChainReadError(false);
         const [s, t] = await Promise.all([
-          publicClient.readContract({ address: addresses.ZENT as any, abi: ZENT_ABI_VIEM as any, functionName: "totalSupply" }),
-          publicClient.readContract({ address: addresses.ZENTStaking as any, abi: STAKING_ABI_VIEM as any, functionName: "totalStaked" }),
+          publicClient.readContract({ address: addresses.ZENT, abi: ZENT_ABI_VIEM, functionName: "totalSupply" } as ReadArgs),
+          publicClient.readContract({ address: addresses.ZENTStaking, abi: STAKING_ABI_VIEM, functionName: "totalStaked" } as ReadArgs),
         ]);
         if (cancelled) return;
         setSupply(s as bigint);
@@ -322,7 +330,7 @@ function ChainStats() {
     abi: ZENT_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined, query: { enabled: !!isConnected },
-  } as any);
+  } as WagmiReadArgs);
 
   const supplyTokens = supply ? Number(supply / 10n ** 18n) : 0;
   const supplyHuman =

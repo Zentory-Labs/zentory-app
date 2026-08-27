@@ -6,7 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
@@ -36,6 +36,30 @@ interface DemoModeContextValue {
 
 const STORAGE_KEY = "zentory.demoMode";
 
+// Server snapshot is always `false` so SSR markup matches the first client
+// render before localStorage is consulted. This avoids hydration mismatches.
+const SERVER_SNAPSHOT = false;
+
+function subscribeToDemoStorage(onStoreChange: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", onStoreChange);
+  return () => window.removeEventListener("storage", onStoreChange);
+}
+
+function getClientDemoSnapshot(): boolean {
+  if (typeof window === "undefined") return SERVER_SNAPSHOT;
+  // URL flag takes precedence on every read so a deep link with ?demo=1
+  // immediately enables demo mode without waiting for a navigation event.
+  const fromUrl = new URLSearchParams(window.location.search).get("demo");
+  if (fromUrl === "1" || fromUrl === "true") return true;
+  if (fromUrl === "0" || fromUrl === "false") return false;
+  return window.localStorage.getItem(STORAGE_KEY) === "1";
+}
+
+function getServerDemoSnapshot(): boolean {
+  return SERVER_SNAPSHOT;
+}
+
 const DemoModeContext = createContext<DemoModeContextValue>({
   enabled: false,
   toggle: () => {},
@@ -43,36 +67,45 @@ const DemoModeContext = createContext<DemoModeContextValue>({
 });
 
 export function DemoModeProvider({ children }: { children: ReactNode }) {
-  const [enabled, setEnabledState] = useState(false);
-
   // Resolve initial state from URL + localStorage on mount. We deliberately
   // start `enabled = false` on SSR to avoid hydration mismatches; the real
   // value lands on the first client effect.
+  //
+  // `useSyncExternalStore` with a localStorage subscription is the React 18+
+  // canonical replacement for `useState(false) + useEffect(setEnabled, [])`:
+  // the server snapshot is always `false`, the client snapshot reads
+  // localStorage (or the URL `?demo=` flag), and a storage event subscription
+  // keeps multiple tabs in sync. The setState-in-effect lint rule fires on
+  // synchronous setState inside an effect — this pattern has no such call.
+  const enabled = useSyncExternalStore(
+    subscribeToDemoStorage,
+    getClientDemoSnapshot,
+    getServerDemoSnapshot,
+  );
+
+  // Mirror URL flag → localStorage on mount. Runs once. The lint rule allows
+  // setState inside a microtask because it's no longer synchronous with the
+  // effect call.
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     const params = new URLSearchParams(window.location.search);
     const fromUrl = params.get("demo");
-
-    let resolved: boolean | null = null;
     if (fromUrl === "1" || fromUrl === "true") {
-      resolved = true;
       window.localStorage.setItem(STORAGE_KEY, "1");
     } else if (fromUrl === "0" || fromUrl === "false") {
-      resolved = false;
       window.localStorage.removeItem(STORAGE_KEY);
-    } else {
-      resolved = window.localStorage.getItem(STORAGE_KEY) === "1";
     }
-
-    setEnabledState(resolved);
+    // Notify subscribers so the snapshot re-reads after we touched storage.
+    window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
   }, []);
 
   const setEnabled = useCallback((v: boolean) => {
-    setEnabledState(v);
     if (typeof window === "undefined") return;
     if (v) window.localStorage.setItem(STORAGE_KEY, "1");
     else window.localStorage.removeItem(STORAGE_KEY);
+    // Manually fire a storage event so the useSyncExternalStore subscriber
+    // re-reads the snapshot (storage events only fire for *other* tabs).
+    window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
   }, []);
 
   const toggle = useCallback(() => setEnabled(!enabled), [enabled, setEnabled]);

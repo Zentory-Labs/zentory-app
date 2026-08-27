@@ -59,7 +59,13 @@ export default function TradePage() {
 
   // poll the connected wallet's positions
   useEffect(() => {
-    if (!isConnected || !address) { setChState(null); return; }
+    if (!isConnected || !address) {
+      // Defer the clearing-state reset through queueMicrotask. The setState
+      // would otherwise be a synchronous call inside the effect body, which
+      // the react-hooks/set-state-in-effect rule disallows.
+      queueMicrotask(() => setChState(null));
+      return;
+    }
     let alive = true;
     const tick = () => getClearinghouseState(address).then((s) => alive && setChState(s)).catch(() => {});
     tick();

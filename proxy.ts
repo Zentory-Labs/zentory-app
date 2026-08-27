@@ -1,5 +1,5 @@
 import { updateSession } from "@/utils/supabase/middleware";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { isRestrictedCountry } from "@/lib/geo-blocking";
 
 // The restricted-country list (US securities law, EU MiCA, OFAC sanctions) is the
@@ -17,16 +17,14 @@ const ALWAYS_OPEN_ROUTES = [
   "/admin",           // internal — guard separately; not investor-facing
 ];
 
-function getCountry(request: Request): string {
-  const req = request as any;
-  const country = req.headers.get("x-vercel-ip-country") ??
-    req.headers.get("cf-ipcountry") ??
+function getCountry(request: NextRequest): string {
+  const country = request.headers.get("x-vercel-ip-country") ??
+    request.headers.get("cf-ipcountry") ??
     "XX";
   return country.toUpperCase();
 }
 
-export async function proxy(request: Request) {
-  const req = request as any;
+export async function proxy(request: NextRequest) {
   const pathname = new URL(request.url).pathname;
   const country = getCountry(request);
 
@@ -50,7 +48,7 @@ export async function proxy(request: Request) {
     return NextResponse.redirect(new URL("/blocked", request.url));
   }
 
-  return await updateSession(req);
+  return await updateSession(request);
 }
 
 export const config = {

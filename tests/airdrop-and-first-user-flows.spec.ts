@@ -44,6 +44,29 @@ const ARTIFACT_DIR = "tests/airdrop-and-first-user-flows-artifacts";
 const MOCK_SIGNER = "0x0dF78A7dFb84F93E0BC6500AA90a27617aF89dDA"; // deployer, eligible for 6M ZENT
 const MOCK_SIGNER_NOT_ELIGIBLE = "0x2251F2D8541f5D5263316E2921611c74D6d30D94"; // NOT in the snapshot
 
+// Window extensions used by the wallet mock injected via addInitScript.
+type MockEthereum = {
+  isMetaMask: boolean;
+  selectedAddress: string;
+  chainId?: string;
+  request: (args: { method: string; params?: Record<string, unknown> }) => Promise<unknown>;
+  on: () => undefined;
+  removeListener: () => undefined;
+};
+type WalletMockMeta = {
+  signer: string;
+  chainIdHex: string;
+  claimed: boolean;
+  distributorAddr: `0x${string}`;
+  isClaimedFn: () => boolean | undefined;
+};
+type TestWindow = Window & {
+  ethereum?: MockEthereum;
+  __lastSwitchChain?: string;
+  __lastAddedChain?: string;
+  __walletMock?: WalletMockMeta;
+};
+
 type TransitionResult = { id: string; label: string; status: "pass" | "fail" | "skip"; detail?: string };
 const transitionResults: TransitionResult[] = [];
 
@@ -123,18 +146,20 @@ async function installWalletMock(
         : "0x0000000000000000000000000000000000000000";
 
       // Per-leaf claimed map: index → claimed. Use a single global flag here
-      // because the E2E doesn't drive an actual contract read.
-      const handlers: Record<string, (params: any) => any> = {
+      // because the E2E doesn't drive an actual contract read. Handlers
+      // receive an arbitrary params shape — each handler picks the fields it
+      // needs from the runtime object.
+      const handlers: Record<string, (params: Record<string, unknown>) => unknown> = {
         eth_requestAccounts: () => [signer],
         eth_accounts: () => [signer],
         eth_chainId: () => chainIdHex,
         net_version: () => "998",
-        wallet_switchEthereumChain: ({ chainId }: { chainId: string }) => {
-          (window as any).__lastSwitchChain = chainId;
+        wallet_switchEthereumChain: (params) => {
+          (window as TestWindow).__lastSwitchChain = String(params.chainId);
           return null;
         },
-        wallet_addEthereumChain: ({ chainId }: { chainId: string }) => {
-          (window as any).__lastAddedChain = chainId;
+        wallet_addEthereumChain: (params) => {
+          (window as TestWindow).__lastAddedChain = String(params.chainId);
           return null;
         },
         personal_sign: () => "0x" + "00".repeat(65),
@@ -152,11 +177,11 @@ async function installWalletMock(
         eth_gasPrice: () => "0x0",
         eth_getTransactionCount: () => "0x0",
       };
-      (window as any).ethereum = {
+      const ethMock: MockEthereum = {
         isMetaMask: true,
         selectedAddress: signer,
         chainId: chainIdHex,
-        request: ({ method, params }: { method: string; params?: any }) => {
+        request: ({ method, params }: { method: string; params?: Record<string, unknown> }) => {
           const fn = handlers[method];
           if (fn) return Promise.resolve(fn(params ?? {}));
           return Promise.reject({ code: -32601, message: `method not supported: ${method}` });
@@ -164,8 +189,9 @@ async function installWalletMock(
         on: () => undefined,
         removeListener: () => undefined,
       };
+      (window as TestWindow).ethereum = ethMock;
       // Stash config so the test can read back what was installed.
-      (window as any).__walletMock = { signer, chainIdHex, claimed, distributorAddr, isClaimedFn };
+      (window as TestWindow).__walletMock = { signer, chainIdHex, claimed, distributorAddr, isClaimedFn };
     },
     { signer, chainIdHex, claimed: !!opts.claimed, merkleDeployed: !!opts.merkleDeployed },
   );
