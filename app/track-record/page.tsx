@@ -19,8 +19,16 @@ type Entry = {
   ghost_nav: number;
   actual_nav: number;
   prev_hash?: string;
+  /** Canonical hash of this entry, computed by the recorder. Recorders
+   *  occasionally use `hash`; we accept both. */
+  entry_hash?: string;
   hash?: string;
 };
+
+/** Pick whichever hash field the recorder wrote this line with. */
+function entryHashOf(e: Entry): string {
+  return (e.entry_hash ?? e.hash ?? "").toString();
+}
 
 const ASSETS = ["BTC", "ETH", "SOL", "XRP"] as const;
 const BUDGET = 100_000; // paper budget each line starts from
@@ -244,7 +252,7 @@ export default function TrackRecordPage() {
                     <td className="px-4 py-2.5">${e.hold_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
                     <td className="px-4 py-2.5">${e.actual_nav.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
                     <td className="px-4 py-2.5 font-mono text-[10px]" style={{ color: "#6a6f75" }}>
-                      {(e.hash ?? e.prev_hash ?? "").slice(0, 12)}…
+                      {(entryHashOf(e) || e.prev_hash || "").slice(0, 12)}…
                     </td>
                   </tr>
                 ))}
@@ -262,23 +270,81 @@ export default function TrackRecordPage() {
           inserted or deleted entry breaks every hash after it. Recompute the whole chain yourself with two
           commands (Node 18+, no installs):
         </p>
-        <pre className="rounded-xl border border-[#2a2f3a] bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "#eaeaea" }}>
+        <pre
+          className="rounded-xl border border-[#2a2f3a] bg-black/40 p-4 font-mono text-xs overflow-x-auto"
+          style={{ color: "#eaeaea" }}
+          data-test="verify-commands"
+        >
 {`curl -sO https://app.zentorylabs.com/verify_ledger.mjs
 curl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mjs`}
         </pre>
+        <div className="flex flex-wrap gap-2">
+          <CopyButton
+            label="Copy commands"
+            text={`curl -sO https://app.zentorylabs.com/verify_ledger.mjs\ncurl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mjs`}
+            testId="verify-copy-button"
+          />
+          <a
+            href="/verify_ledger.mjs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs underline whitespace-nowrap"
+            style={{ color: "#B08D57" }}
+            data-test="verify-script-link"
+          >
+            Inspect the verifier script ↗
+          </a>
+        </div>
         <div className="space-y-1">
           <div className="text-[11px] uppercase tracking-wider" style={{ color: "#6a6f75" }}>
             expected output
           </div>
           <pre className="rounded-xl border border-[#2a2f3a] bg-black/40 p-4 font-mono text-xs overflow-x-auto" style={{ color: "#34d399" }}>
-            {"CHAIN OK — <entries> entries, <assets> assets, head <hash>"}
+            {"VERIFIED — <entries> entries, <assets> assets, head <hash>"}
           </pre>
           <p className="text-xs" style={{ color: "#bfc3c7" }}>
             The entry count grows every 4 hours while the recorder is publishing (the badge above reports whether
-            it currently is). Anything other than CHAIN OK exits non-zero and names the first broken line — note
-            that the verifier checks the chain&apos;s integrity, not its freshness.
+            it currently is). A line starting with <code className="text-[11px]">VERIFIED</code> exits 0; a line
+            starting with <code className="text-[11px]">CHAIN BROKEN</code> exits 1 and names the first broken
+            line. The verifier checks the chain&apos;s integrity, not its freshness.
           </p>
         </div>
+
+        {/* Chain head + on-chain anchor link (VAL-FLOW-055) */}
+        {headEntry && (
+          <div className="rounded-xl border border-[#2a2f3a] bg-black/40 p-4 space-y-2">
+            <div className="text-[11px] uppercase tracking-wider" style={{ color: "#6a6f75" }}>
+              chain head — latest anchor hash
+            </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <code
+                className="font-mono text-xs break-all"
+                style={{ color: "#eaeaea" }}
+                data-test="chain-head-hash"
+              >
+                {entryHashOf(headEntry).slice(0, 64)}
+              </code>
+              <a
+                href={`https://hyperevmscan.io/tx/${entryHashOf(headEntry)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs underline whitespace-nowrap"
+                style={{ color: "#B08D57" }}
+                data-test="anchor-tx-explorer-link"
+              >
+                View on explorer ↗
+              </a>
+            </div>
+            <p className="text-[11px] leading-snug" style={{ color: "#6a6f75" }}>
+              The latest <code className="text-[10px]">entry_hash</code> is what the recorder will anchor on-chain
+              as a zero-value self-tx once the Railway recorder is back online. The chain head advances every 4h
+              bar-close; the explorer link goes to the working HyperEVM testnet block explorer
+              (<code className="text-[10px]">hyperevmscan.io</code>) for that hash. While the recorder is offline
+              the link will land on the explorer&apos;s &ldquo;tx not found&rdquo; page — that&apos;s the honest state
+              until the anchor is actually broadcast.
+            </p>
+          </div>
+        )}
         <p className="text-sm" style={{ color: "#bfc3c7" }}>
           The verifier is ~100 lines of dependency-free code served from this site (
           <a href="/verify_ledger.mjs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#B08D57" }}>
@@ -311,5 +377,57 @@ curl -s https://app.zentorylabs.com/forward_ledger.jsonl | node verify_ledger.mj
         </ul>
       </section>
     </div>
+  );
+}
+
+// ─── CopyButton ─────────────────────────────────────────────────────────────
+// A tiny copy-to-clipboard helper used by the "Verify in 60 seconds" block
+// so the investor can paste the curl + node commands into a terminal without
+// typing them. The button swaps its label to "Copied" for ~1.5s and falls back
+// to a hidden textarea + execCommand for browsers without async clipboard.
+function CopyButton({
+  label,
+  text,
+  testId,
+}: {
+  label: string;
+  text: string;
+  testId?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers / headless test contexts.
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="inline-flex items-center gap-1 rounded-lg border border-[#2a2f3a] bg-black/40 px-3 py-1.5 text-xs transition hover:border-[#B08D57]"
+      style={{ color: "#B08D57" }}
+      data-test={testId}
+      aria-label={label}
+    >
+      {copied ? "✓ Copied" : label}
+    </button>
   );
 }
