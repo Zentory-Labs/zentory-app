@@ -1,7 +1,7 @@
 ═══════════════════════════════════════════════════════════════
   ZENTORY — INVESTOR DEMO LOOP SUMMARY
 ═══════════════════════════════════════════════════════════════
-  Base dApp URL:  https://app.zentorylabs.com
+  Base dApp URL:  http://localhost:3001
   Base Mkt URL:   https://zentorylabs.com
   Total:    19
   Passed:   19
@@ -12,7 +12,7 @@
    [PASS ] VAL-FLOW-001  home hero + fees + where-we-are
              ↳ hero=true, fees=true, where-we-are=true, no-sample=true, activity-empty=true
    [PASS ] VAL-FLOW-002  wallet modal opens with connector list
-             ↳ fallback (modal flaky in headless): modalCount=0, connectButton=true, mockEth=true
+             ↳ modalVisible=true, hasConnectors=true
    [PASS ] VAL-FLOW-003  switch to chain 998 + ZENT symbol read
              ↳ eth={"hasEth":true,"isMetaMask":true,"selectedAddress":"0x2251F2D8541f5D5263316E2921611c74D6d30D94"}, chainPill=true, chainId=0x3e6, symbolLen=194, err=undefined
    [PASS ] VAL-FLOW-004  faucet WBTC contract + Mint button
@@ -26,15 +26,15 @@
    [PASS ] VAL-FLOW-008  NAV vs HOLD chart or honest empty state
              ↳ svg=4, nav=true, hold=true, empty=false
    [PASS ] VAL-FLOW-009  /signals renders rows or empty state
-             ↳ heading=true, rows=true, empty=false
+             ↳ heading=true, rows=false, empty=true
    [PASS ] VAL-FLOW-010  /leaderboard page + rows or empty state
              ↳ heading=true, empty=false, rows=true, footnote=false
    [PASS ] VAL-FLOW-011  /track-record verify-it-yourself block
-             ↳ verifyBlock=true, ledgerRow=true, empty=false, curl=true
+             ↳ verifyBlock=true, ledgerRow=true, empty=true, curl=true
    [PASS ] VAL-FLOW-012  Withdraw form wired (share input + submit, or connect prompt)
              ↳ connect=true, input=0, withdrawBtn=0, redeem=0
    [PASS ] VAL-FLOW-013  /risks disclosure: 4 named risks + testnet disclaimer
-             ↳ present=4/4, gaps=0/3 present=[], testnet=true
+             ↳ present=4/4, gaps=3/3 present=[Counterparty risk,Key-person risk,Regulatory risk], testnet=true
    [PASS ] VAL-FLOW-014  /govern admin powers + multisig plan
              ↳ adminPowers=true, multisigPlan=true
    [PASS ] VAL-FLOW-015  /why three-state matrix
