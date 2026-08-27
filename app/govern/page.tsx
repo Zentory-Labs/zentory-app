@@ -234,6 +234,82 @@ export default function GovernPage() {
               <strong className="text-white/80">it can never withdraw user funds</strong>.
             </li>
           </ul>
+
+          {/* Admin powers table — explicit enumeration of every privileged role */}
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full text-xs" style={{ color: "#bfc3c7" }}>
+              <thead>
+                <tr className="text-left" style={{ borderBottom: "1px solid #2a2f3a", color: "#6a6f75" }}>
+                  <th className="py-2 pr-3 font-semibold uppercase tracking-wider">Role</th>
+                  <th className="py-2 pr-3 font-semibold uppercase tracking-wider">Holders (testnet)</th>
+                  <th className="py-2 font-semibold uppercase tracking-wider">What it can do</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    role: "DEFAULT_ADMIN_ROLE",
+                    holders: "Timelock (single EOA underneath on testnet)",
+                    powers: "Transfer any role; final authority on every privileged action. Cannot bypass the 48-hour timelock delay.",
+                    color: "#b08d57",
+                  },
+                  {
+                    role: "GUARDIAN_ROLE",
+                    holders: "StrategyExecutor testnet guardian",
+                    powers: "Pause StrategyExecutor instantly (no timelock); pause vaults that share the breaker; does not withdraw funds.",
+                    color: "#c2353f",
+                  },
+                  {
+                    role: "MINTER_ROLE",
+                    holders: "Deployer (testnet only)",
+                    powers: "Mint the testnet-only MockERC20 underlying tokens for the faucet. Real ZENT is fixed-supply and never minted again.",
+                    color: "#bfc3c7",
+                  },
+                  {
+                    role: "PAUSER_ROLE",
+                    holders: "Zentroller",
+                    powers: "Pause protocol-wide operations in an emergency (vault deposits/withdrawals, signal submissions, rebalances). Reversible by governance.",
+                    color: "#bfc3c7",
+                  },
+                  {
+                    role: "KEEPER_ROLE",
+                    holders: "Railway cron service addresses",
+                    powers: "Sign EIP-712 rebalance commands. Cannot withdraw user funds; bounded to rotate vault exposure between asset and USDC.",
+                    color: "#34d399",
+                  },
+                  {
+                    role: "SCORING_ORACLE",
+                    holders: "EpochScoring contract",
+                    powers: "Resolve submitted signals to accuracy scores at each 4h epoch boundary.",
+                    color: "#bfc3c7",
+                  },
+                ].map((row) => (
+                  <tr key={row.role} style={{ borderTop: "1px solid #2a2f3a" }}>
+                    <td className="py-2 pr-3 font-mono whitespace-nowrap" style={{ color: row.color }}>
+                      {row.role}
+                    </td>
+                    <td className="py-2 pr-3 whitespace-nowrap" style={{ color: "#eaeaea" }}>
+                      {row.holders}
+                    </td>
+                    <td className="py-2">{row.powers}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs mt-4" style={{ color: "#6a6f75" }}>
+            Read more about the admin-powers disclosure in the{" "}
+            <a
+              href="https://zentorylabs.com/terms-of-service"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+              style={{ color: "#b08d57" }}
+            >
+              Terms of Service
+            </a>
+            .
+          </p>
         </div>
 
         {/* Proposals */}

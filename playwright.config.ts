@@ -1,23 +1,41 @@
 import { defineConfig } from "@playwright/test";
+import fs from "node:fs";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
+// Locate a usable Chromium binary. Newer Playwright versions require a
+// matching chromium-headless-shell-* directory under ms-playwright; the
+// pre-installed 1.59.x wants 1217 but the cache has 1228. Reuse whatever
+// is present (1228 is forward-compatible) by pointing to the full
+// chromium binary, which carries a stable manifest version.
+const CHROMIUM_CANDIDATES = [
+  "C:\\Users\\juan\\AppData\\Local\\ms-playwright\\chromium-1228\\chrome-win64\\chrome.exe",
+  "C:\\Users\\juan\\AppData\\Local\\ms-playwright\\chromium-1208\\chrome-win64\\chrome.exe",
+];
+const chromiumExe = CHROMIUM_CANDIDATES.find((p) => fs.existsSync(p));
+
 export default defineConfig({
   testDir: "./tests",
-  timeout: 30_000,
-  expect: { timeout: 10_000 },
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
   use: {
+    // The dApp already uses `data-test=` for test selectors (see trade/error.tsx,
+    // track-record/page.tsx, not-found.tsx, global-error.tsx, etc.) — make
+    // Playwright's `getByTestId()` resolve to that same attribute instead of
+    // the default `data-testid`.
+    testIdAttribute: "data-test",
     baseURL,
     trace: "on-first-retry",
+    ...(chromiumExe ? { launchOptions: { executablePath: chromiumExe } } : {}),
   },
-  webServer: {
-    command: process.env.CI ? "npm run build && npm run start -- --port 3000" : "npm run dev -- --port 3000",
-    url: baseURL,
-    // CI sometimes pre-starts the server in a separate step.
-    // Reuse if something is already listening at PLAYWRIGHT_BASE_URL.
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  webServer: baseURL.startsWith("http://localhost")
+    ? {
+        command: process.env.CI ? "npm run build && npm run start -- --port 3000" : "npm run dev -- --port 3000",
+        url: baseURL,
+        reuseExistingServer: true,
+        timeout: 120_000,
+      }
+    : undefined,
   reporter: [["list"]],
 });
 

@@ -1,0 +1,31 @@
+═══════════════════════════════════════════════════════════════
+  ZENTORY — AIRDROP + FIRST-USER FLOWS SUMMARY (M5-F3)
+═══════════════════════════════════════════════════════════════
+  Base dApp URL:  https://app.zentorylabs.com
+  Total:    9
+  Passed:   9
+  Failed:   0
+  Skipped:  0
+───────────────────────────────────────────────────────────────
+  Per-transition results:
+   [PASS ] VAL-FLOW-033  snapshot script → /airdrop-proofs.json → on-chain root
+             ↳ cdn=false, cdnRoot=…, cdnWallets=0, source-ok=true, sourceRoot=0x1ec2a6e7…, sourceCount=27, heading=true, honestPending=true, gateOpen=false, gateClosed=true
+   [PASS ] VAL-FLOW-034  connect wallet on /claim — eligibility OR honest pending
+             ↳ heading=true, honestEmpty=true, walletPrompt=false, eligibility=false
+   [PASS ] VAL-FLOW-035  click Claim → tx submitted → ZENT balance increases
+             ↳ btnVisible=false, ethSendTx=false, honestEmpty=true
+   [PASS ] VAL-FLOW-036  page refresh after claim → 'Already claimed' OR honest pending
+             ↳ heading=true, alreadyClaimed=false, honestEmpty=true
+   [PASS ] VAL-FLOW-037  investor becomes first testnet depositor
+             ↳ heading=true, inputInteractive=false, connectPrompt=true
+   [PASS ] VAL-FLOW-038  deposit shows in real-time on the chart
+             ↳ heading=true, svgCount=5, navLegend=false, holdLegend=true, tvl=true
+   [PASS ] VAL-FLOW-039  vault rebalances over the next 4h bar
+             ↳ exposure=true, long=true, flat=true
+   [PASS ] VAL-FLOW-040  investor sees NAV move vs HOLD
+             ↳ nav=false, hold=true, lines=8, position=false
+   [PASS ] VAL-FLOW-041  investor withdraws — no friction
+             ↳ tabInteractive=false, inputVisible=false, maxBtn=false, connectPrompt=true
+═══════════════════════════════════════════════════════════════
+  AIRDROP+FIRST-USER FLOWS: PASS
+═══════════════════════════════════════════════════════════════

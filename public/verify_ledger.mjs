@@ -136,4 +136,10 @@ if (entries === 0) {
   console.error("CHAIN BROKEN: no entries found in input");
   process.exit(1);
 }
-console.log(`CHAIN OK — ${entries} entries, ${assets.size} assets, head ${prev}`);
+// Success line is named "VERIFIED" — the canonical pass signal that the
+// investor playbook + validation contract (VAL-FLOW-053) read for. The
+// counts + chain head are printed next to it so a reviewer can see how
+// many entries + assets were checked and the head hash they should anchor
+// to. The detailed count + head line is preserved for human readers who
+// want the audit-quality summary; tooling can grep for "VERIFIED".
+console.log(`VERIFIED — ${entries} entries, ${assets.size} assets, head ${prev}`);

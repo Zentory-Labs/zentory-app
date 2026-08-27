@@ -1,8 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
 import { setLeaderboard, setMarketsSignals } from '@/lib/cache';
+import { createAdminClient } from '@/utils/supabase/admin';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 const HEARTBEAT_INTERVAL_HOURS = 5;
 
@@ -17,7 +15,17 @@ export async function GET(request: Request) {
     return Response.json({ error: 'KEEPER_ADDRESS not configured' }, { status: 500 });
   }
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  // M3-F7 audit consistency: route now goes through the canonical
+  // createAdminClient() helper instead of constructing a Supabase client
+  // inline. Behaviour is unchanged — service-role key, no RLS — but every
+  // server-side write path is now grep-greppable as a single chokepoint.
+  let supabase;
+  try {
+    supabase = createAdminClient();
+  } catch (err) {
+    console.error('[heartbeat cron] Supabase not configured:', String(err));
+    return Response.json({ error: 'Supabase not configured' }, { status: 503 });
+  }
 
   console.log(`[${new Date().toISOString()}] [heartbeat cron] Checking keeper ${KEEPER_ADDRESS}...`);
 

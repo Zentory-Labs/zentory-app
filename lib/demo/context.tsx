@@ -117,16 +117,22 @@ export function DemoBadge({ className = "" }: { className?: string }) {
  * Full-width banner anchored at the top of every page when demo mode is ON.
  * Explains what investors are seeing + gives them a one-click way to switch
  * back to live data.
+ *
+ * Rendered inside <main> in app/layout.tsx (rather than as a body-level
+ * sibling of <Nav />) so the fixed nav can't overlap it. The banner's exit
+ * button was previously untouchable because the nav is `position: fixed;
+ * z-index: 50` and stacked on top of the body-level banner.
  */
 export function DemoBanner() {
   const { enabled, setEnabled } = useDemoMode();
   if (!enabled) return null;
   return (
     <div
-      className="w-full text-center text-xs py-2 px-4"
+      data-test="demo-banner"
+      className="w-full text-center text-xs py-2 px-4 mb-6 rounded-xl"
       style={{
         background: "linear-gradient(90deg, rgba(176,141,87,0.18), rgba(176,141,87,0.10), rgba(176,141,87,0.18))",
-        borderBottom: "1px solid rgba(176,141,87,0.3)",
+        border: "1px solid rgba(176,141,87,0.3)",
         color: "#e6d3a0",
         fontFamily: "var(--font-montserrat), 'Montserrat', sans-serif",
       }}
@@ -137,6 +143,7 @@ export function DemoBanner() {
         onClick={() => setEnabled(false)}
         className="underline ml-1 hover:no-underline"
         style={{ color: "#e6d3a0" }}
+        data-test="demo-banner-exit"
       >
         Switch back to live data
       </button>
