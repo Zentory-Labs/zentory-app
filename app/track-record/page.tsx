@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import TrackRecordDay from "@/components/TrackRecordDay";
 
 // ─── /track-record ────────────────────────────────────────────────────────────
 // The protocol's proof asset: renders the REAL public forward ledger (the same
@@ -147,6 +148,18 @@ export default function TrackRecordPage() {
             )}
           </p>
         )}
+
+        {/* Mainnet-gate day counter — VAL-FLOW-068 requires the same "Day N of 90"
+            number to render on /track-record, the dApp homepage, and the
+            marketing /roadmap. This element is the canonical /track-record
+            surface; TrackRecordDay owns the formula. */}
+        <p
+          className="text-xs uppercase tracking-[0.2em]"
+            style={{ color: "#b08d57" }}
+            data-test="track-record-day-counter"
+        >
+          Mainnet-gate · <TrackRecordDay of90 testId="track-record-day-counter-value" />
+        </p>
 
         {isStale && headAgeMs !== null && (
           <div
