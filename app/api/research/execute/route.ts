@@ -7,6 +7,9 @@ import { addresses } from "@/lib/contracts";
 import { geoBlockCheck } from "@/lib/geo-blocking";
 import { rateLimit } from "@/lib/rateLimit";
 
+type ReadArgs = Parameters<ReturnType<typeof createPublicClient>["readContract"]>[0];
+type SupabaseErrorShape = { message?: string; code?: string };
+
 const RPC_URL = process.env.NEXT_PUBLIC_HYPEREVM_RPC ?? "https://rpc.hyperliquid-testnet.xyz/evm";
 const KEEPER_PRIVATE_KEY = process.env.KEEPER_PRIVATE_KEY ?? "";
 const API_KEY = process.env.KEEPER_API_KEY ?? "";
@@ -17,16 +20,26 @@ const HYPEREVM_MAINNET_CHAIN_ID = 999;
 // strategyExecutorABI is now pre-parsed in lib/contracts.ts — use directly.
 const EXECUTOR_ABI = strategyExecutorABI;
 
+type ErrorDetailShape = {
+  name?: string;
+  message?: string;
+  shortMessage?: string;
+  details?: string;
+  cause?: unknown;
+  metaMessages?: string[];
+};
+
 /** Convert an error to a plain JSON-safe object. */
 function errorToDetail(e: unknown) {
-  const any = e as any;
+  const err = e as ErrorDetailShape;
+  const cause = err?.cause as ErrorDetailShape | undefined;
   return {
-    name: any?.name,
-    message: any?.message,
-    shortMessage: any?.shortMessage ?? any?.cause?.shortMessage,
-    details: any?.details,
-    cause: any?.cause?.message,
-    metaMessages: any?.metaMessages,
+    name: err?.name,
+    message: err?.message,
+    shortMessage: err?.shortMessage ?? cause?.shortMessage,
+    details: err?.details,
+    cause: cause?.message,
+    metaMessages: err?.metaMessages,
   };
 }
 
@@ -197,14 +210,14 @@ export async function POST(req: NextRequest) {
         address: addresses.StrategyExecutor,
         abi: EXECUTOR_ABI,
         functionName: "KEEPER_ROLE",
-      } as any);
+      } as ReadArgs);
 
       const hasKeeperRole = await publicClient.readContract({
         address: addresses.StrategyExecutor,
         abi: EXECUTOR_ABI,
         functionName: "hasRole",
         args: [keeperRole, account.address],
-      } as any);
+      } as ReadArgs);
 
       if (!hasKeeperRole) {
         return safeJson(
@@ -222,11 +235,8 @@ export async function POST(req: NextRequest) {
       }
     } catch (e) {
       console.error("[research/execute] preflight failed", e);
-      const detail =
-        (e as any)?.shortMessage ??
-        (e as any)?.cause?.shortMessage ??
-        (e as any)?.message ??
-        "Unknown error";
+      const d = errorToDetail(e);
+      const detail = d.shortMessage ?? d.cause ?? d.message ?? "Unknown error";
       return safeJson(
         {
           error: "Preflight check failed",
@@ -249,11 +259,8 @@ export async function POST(req: NextRequest) {
       });
     } catch (e) {
       console.error("[research/execute] writeContract failed", e);
-      const detail =
-        (e as any)?.shortMessage ??
-        (e as any)?.cause?.shortMessage ??
-        (e as any)?.message ??
-        "Unknown error";
+      const d = errorToDetail(e);
+      const detail = d.shortMessage ?? d.cause ?? d.message ?? "Unknown error";
       return safeJson(
         {
           error: "On-chain execution failed",
@@ -297,7 +304,7 @@ export async function POST(req: NextRequest) {
           executor_address: addresses.StrategyExecutor,
         })
         .eq("id", researchId);
-      if (updateErr) warnings.signals_update = { message: updateErr.message, code: (updateErr as any).code };
+      if (updateErr) warnings.signals_update = { message: updateErr.message, code: (updateErr as SupabaseErrorShape).code };
     } catch (e) {
       warnings.signals_update = errorToDetail(e);
     }
@@ -310,7 +317,7 @@ export async function POST(req: NextRequest) {
         executor_address: addresses.StrategyExecutor,
         block_number: Number(receipt.blockNumber),
       });
-      if (insertErr) warnings.keeper_audit_insert = { message: insertErr.message, code: (insertErr as any).code };
+      if (insertErr) warnings.keeper_audit_insert = { message: insertErr.message, code: (insertErr as SupabaseErrorShape).code };
     } catch (e) {
       warnings.keeper_audit_insert = errorToDetail(e);
     }

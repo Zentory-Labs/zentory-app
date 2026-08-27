@@ -2,6 +2,13 @@ import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
+type JsonRpcCall = {
+  method: string;
+  id?: string | number | null;
+  params?: unknown;
+  jsonrpc?: string;
+};
+
 /**
  * Audit D-09 fix. This route is the dApp's transport for read-only JSON-RPC
  * calls to HyperEVM (the wagmi `transport: http("/api/rpc")` wiring in
@@ -129,17 +136,17 @@ export async function POST(req: Request) {
   }
 
   // Allow batched calls — same allowlist applied to each.
-  const calls = Array.isArray(body) ? body : [body];
+  const calls: JsonRpcCall[] = Array.isArray(body) ? body : [body as JsonRpcCall];
   for (const call of calls) {
-    if (!call || typeof call !== "object" || typeof (call as any).method !== "string") {
-      return rpcError(-32600, "Invalid request: missing method", 400, (call as any)?.id ?? null);
+    if (!call || typeof call !== "object" || typeof call.method !== "string") {
+      return rpcError(-32600, "Invalid request: missing method", 400, call?.id ?? null);
     }
-    const method = (call as any).method as string;
+    const method = call.method;
     if (REJECTED_METHODS.has(method)) {
-      return rpcError(-32601, `Method '${method}' not supported via this proxy`, 405, (call as any).id ?? null);
+      return rpcError(-32601, `Method '${method}' not supported via this proxy`, 405, call.id ?? null);
     }
     if (!ALLOWED_METHODS.has(method)) {
-      return rpcError(-32601, `Method '${method}' not on allowlist`, 405, (call as any).id ?? null);
+      return rpcError(-32601, `Method '${method}' not on allowlist`, 405, call.id ?? null);
     }
   }
 

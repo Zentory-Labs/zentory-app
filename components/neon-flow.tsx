@@ -10,20 +10,27 @@ const randomColors = (count: number) => {
     .map(() => "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'));
 };
 
+type TubesCursorHandle = {
+  tubes: {
+    setColors: (colors: string[]) => void;
+    setLightsColors: (colors: string[]) => void;
+  };
+};
+
 interface TubesBackgroundProps {
   children?: React.ReactNode;
   className?: string;
   enableClickInteraction?: boolean;
 }
 
-export function TubesBackground({ 
-  children, 
+export function TubesBackground({
+  children,
   className,
-  enableClickInteraction = true 
+  enableClickInteraction = true
 }: TubesBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const tubesRef = useRef<any>(null);
+  const tubesRef = useRef<TubesCursorHandle | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -36,7 +43,7 @@ export function TubesBackground({
         const scriptUrl: string =
           'https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js';
         const module = await import(/* webpackIgnore: true */ scriptUrl);
-        const TubesCursor = (module as { default: (el: HTMLCanvasElement, opts: object) => { tubes: { setColors: (c: string[]) => void; setLightsColors: (c: string[]) => void } } }).default;
+        const TubesCursor = (module as { default: (el: HTMLCanvasElement, opts: object) => TubesCursorHandle }).default;
 
         if (!mounted) return;
 

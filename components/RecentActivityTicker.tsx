@@ -40,7 +40,6 @@ interface Props {
 
 export default function RecentActivityTicker({ limit = 8, title = "Recent Activity" }: Props) {
   const { enabled: demoMode } = useDemoMode();
-  const [items, setItems] = useState<DemoActivityItem[]>([]);
 
   // Refresh fmtTimeAgo every 30s so timestamps stay current without
   // re-rendering the data itself.
@@ -50,13 +49,13 @@ export default function RecentActivityTicker({ limit = 8, title = "Recent Activi
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    if (demoMode) {
-      setItems(demoActivity(limit + 4)); // pull a few extra so older rows feel real
-    } else {
-      setItems([]);
-    }
-  }, [demoMode, limit]);
+  // Items are a pure derivation of (demoMode, limit) — no need for a
+  // separate `useState` + sync `setState` in an effect. Deriving during
+  // render also keeps the list in lock-step with its inputs.
+  const items = useMemo(
+    () => (demoMode ? demoActivity(limit + 4) : []),
+    [demoMode, limit],
+  );
 
   const rows = useMemo(() => items.slice(0, limit), [items, limit]);
 

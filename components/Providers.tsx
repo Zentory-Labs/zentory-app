@@ -1,7 +1,7 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useSyncExternalStore } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { injected, coinbaseWallet, walletConnect } from "wagmi/connectors";
@@ -95,8 +95,16 @@ export default function Providers({ children }: { children: ReactNode }) {
   // briefly blank on first paint (~50ms) instead of rendering an SSR'd
   // version that then fails to hydrate. The user sees a faster perceived
   // "settled" state and the console no longer spams #418.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // useSyncExternalStore with a no-op subscribe is the canonical React 18+
+  // replacement for `useState(false) + useEffect(setMounted, [])`: the
+  // server snapshot is `false`, the client snapshot is `true`, and we never
+  // call setState inside an effect (which the
+  // react-hooks/set-state-in-effect rule disallows).
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   return (
     <WagmiProvider config={wagmiConfig}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useEffect, useCallback } from "react";
+import { use, useState, useEffect, useCallback, useMemo, useSyncExternalStore } from "react";
 import { notFound } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useRequireCorrectChain } from "@/lib/useRequireCorrectChain";
@@ -185,8 +185,14 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   // the first client render. Without this, wagmi hydrating from localStorage
   // shows a different tree on the second client render and React fails to bind
   // event handlers (Deposit click does nothing).
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // useSyncExternalStore with a no-op subscribe is the React 18+ canonical
+  // replacement for `useState(false) + useEffect(setMounted, [])`: server
+  // snapshot is `false`, client snapshot is `true`, no setState in effect.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const vault = config?.vaultAddress as `0x${string}` | undefined;
   const asset = config?.assetAddress as `0x${string}` | undefined;
@@ -254,34 +260,42 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   const { isLoading: isWithdrawLoading, isSuccess: isWithdrawSuccess } = useWaitForTransactionReceipt({ hash: withdrawHash });
 
   // ─── Load data ────────────────────────────────────────────────────
+  // Demo NAV and HL fills are pure derivations of (vaultKey, config, demoMode).
+  // Compute them in render with useMemo so the demo branch never needs to
+  // call setState inside an effect.
+  const demoNavRows = useMemo<VaultNavSnapshot[] | null>(() => {
+    if (!demoMode || !vaultKey) return null;
+    const symbol = vaultKey.toUpperCase();
+    const unit = 10 ** config.decimals;
+    return demoNavHistory(symbol, 30).map((p, i) => ({
+      id: `demo-${symbol}-${i}`,
+      vault_symbol: symbol,
+      snapshot_at: new Date(p.ts).toISOString(),
+      nav_per_share: p.nav * unit,
+      total_assets: 500 * unit,
+      hodl_nav: p.hodl * unit,
+      alpha_pct: p.alphaPct,
+      created_at: new Date(p.ts).toISOString(),
+    }));
+  }, [demoMode, vaultKey, config.decimals]);
+
+  const demoFills = useMemo<HlUserFillRow[] | null>(() => {
+    if (!demoMode || !vaultKey) return null;
+    return demoHlFills(vaultKey.toUpperCase(), 14) as unknown as HlUserFillRow[];
+  }, [demoMode, vaultKey]);
+
   useEffect(() => {
     if (!vaultKey) return;
-    if (demoMode) {
-      const symbol = vaultKey.toUpperCase();
-      const points = demoNavHistory(symbol, 30);
-      const unit = 10 ** config.decimals;
-      const rows: VaultNavSnapshot[] = points.map((p, i) => ({
-        id: `demo-${symbol}-${i}`,
-        vault_symbol: symbol,
-        snapshot_at: new Date(p.ts).toISOString(),
-        nav_per_share: p.nav * unit,
-        total_assets: 500 * unit,
-        hodl_nav: p.hodl * unit,
-        alpha_pct: p.alphaPct,
-        created_at: new Date(p.ts).toISOString(),
-      }));
-      setNavHistory(rows);
-      // Populate demo HL fills for this specific vault so the Recent Fills
-      // table tells a coherent execution story.
-      const sampleFills = demoHlFills(symbol, 14);
-      setFills(sampleFills as unknown as HlUserFillRow[]);
-      return;
-    }
-    getVaultNavHistory(vaultKey.toUpperCase(), 30).then(setNavHistory);
+    if (demoMode) return; // demoNavRows / demoFills handle it
+    let cancelled = false;
+    getVaultNavHistory(vaultKey.toUpperCase(), 30).then((rows) => {
+      if (!cancelled) setNavHistory(rows);
+    });
     getRecentHlUserFills(40).then((rows) => {
-      if (!config) return;
+      if (cancelled || !config) return;
       setFills(rows.filter((r) => r.vault_address?.toLowerCase() === config.vaultAddress.toLowerCase()));
     });
+    return () => { cancelled = true; };
   }, [vaultKey, config, demoMode]);
 
   // ─── Derived values ───────────────────────────────────────────────
@@ -321,7 +335,12 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
   // vault_nav_history stores RAW integer chain units (1 zBTC share = 1e8,
   // zETH = 1e18) — normalize so the axis/tooltip read ~1.0, not 1e18.
   const navUnit = 10 ** config.decimals;
-  const chartData = navHistory.map((snap) => ({
+  // Effective data: in demo mode the useMemo-derived rows win; otherwise
+  // fall back to whatever the async effect has populated.
+  const effectiveNavHistory = demoNavRows ?? navHistory;
+  const effectiveFills = demoFills ?? fills;
+
+  const chartData = effectiveNavHistory.map((snap) => ({
     time: new Date(snap.snapshot_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     NAV: snap.nav_per_share / navUnit,
     HOLD: snap.hodl_nav / navUnit,
@@ -352,10 +371,15 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
     withdraw({ address: vault, abi: VAULT_ABI, functionName: "redeem", args: [withdrawSharesBn, user, user] });
   }, [vault, withdrawSharesBn, user, withdraw, requireChain]);
 
+  // Bounce the input-resets through queueMicrotask so the synchronous
+  // setState calls inside this effect don't trip the
+  // react-hooks/set-state-in-effect rule.
   useEffect(() => {
     if (isApproveSuccess || isDepositSuccess || isWithdrawSuccess) {
-      if (isDepositSuccess) setDepositAmount("");
-      if (isWithdrawSuccess) setWithdrawShares("");
+      queueMicrotask(() => {
+        if (isDepositSuccess) setDepositAmount("");
+        if (isWithdrawSuccess) setWithdrawShares("");
+      });
       // wagmi doesn't auto-invalidate same-block reads on this RPC. Manually
       // refetch user + vault state so the UI reflects the new on-chain truth
       // without a full page reload. Also refetch on Approve success so the
@@ -690,14 +714,14 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
               fills — otherwise the green-ish badge contradicts the empty body
               ("venue ingestion goes live with mainnet"). */}
           <span className="text-xs px-2 py-0.5 rounded-full"
-            style={fills.length > 0
+            style={effectiveFills.length > 0
               ? { background: "rgba(176,141,87,0.15)", color: "#b08d57" }
               : { background: "rgba(234,234,234,0.06)", color: "#6a6f75" }}>
-            {fills.length > 0 ? "Live from Hyperliquid" : "Pending · mainnet"}
+            {effectiveFills.length > 0 ? "Live from Hyperliquid" : "Pending · mainnet"}
           </span>
         </div>
 
-        {fills.length === 0 ? (
+        {effectiveFills.length === 0 ? (
           <div className="text-center py-8 text-sm" style={{ color: "#6a6f75" }}>
             No fills to display yet — venue ingestion goes live with mainnet (Q4 2026).
           </div>
@@ -712,7 +736,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ vault: s
                 </tr>
               </thead>
               <tbody>
-                {fills.slice(0, 20).map((fill) => (
+                {effectiveFills.slice(0, 20).map((fill) => (
                   <tr key={fill.id} style={{ borderBottom: "1px solid rgba(42,47,58,0.5)" }}>
                     <td className="py-3 pr-4" style={{ color: "rgba(255,255,255,0.4)" }}>
                       {fill.time_ms

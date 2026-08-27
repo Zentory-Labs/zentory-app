@@ -1,8 +1,25 @@
 "use client";
 
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  type UseReadContractParameters,
+} from "wagmi";
 import { EXECUTOR_ABI, VAULT_ABI, addresses, vaultMeta } from "@/lib/contracts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
+
+// Wagmi's `useReadContract`/`useWriteContract` parameter generics don't infer
+// through our `EXECUTOR_ABI` (a `parseAbi` tuple) — the conditional `args`
+// in `callerHasGuardian` makes TS fall back to a wider shape than the call
+// site needs. The runtime contract here is identical to the un-cast version
+// (wagmi sends the params through to viem), so we cast via the typed
+// parameters shape rather than `any` to satisfy the lint rule without
+// losing type safety on the return side.
+type ReadArgs = UseReadContractParameters;
+type WriteArgs = Parameters<
+  ReturnType<typeof useWriteContract>["writeContract"]
+>[0];
 
 const VAULTS = [addresses.zETH, addresses.zBTC, addresses.zXRP, addresses.zSOL] as const;
 
@@ -36,8 +53,14 @@ export default function AdminPage() {
   //
   const { address, isConnected } = useAccount();
   const { writeContract } = useWriteContract();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Canonical React 18+ replacement for `useState(false) + useEffect(setMounted, [])`.
+  // useSyncExternalStore with a no-op subscribe flips the snapshot to `true` on
+  // first client render and stays `false` during SSR — same effect, no setState.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const [selectedVault, setSelectedVault] = useState<string>(addresses.zETH);
   const [maxPosSize, setMaxPosSize] = useState("");
@@ -49,7 +72,7 @@ export default function AdminPage() {
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
     functionName: "GUARDIAN_ROLE",
-  } as any);
+  } as ReadArgs);
 
   const callerHasGuardian = useReadContract({
     address: addresses.StrategyExecutor,
@@ -60,39 +83,39 @@ export default function AdminPage() {
         ? [guardianRoleId.data as `0x${string}`, address]
         : undefined,
     query: { enabled: Boolean(address && guardianRoleId.data) },
-  } as any);
+  } as ReadArgs);
 
   const isPaused = useReadContract({
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
     functionName: "paused",
-  } as any);
+  } as ReadArgs);
 
   const keeperRole = useReadContract({
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
     functionName: "KEEPER_ROLE",
-  } as any);
+  } as ReadArgs);
 
   const guardianRole = useReadContract({
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
     functionName: "GUARDIAN_ROLE",
-  } as any);
+  } as ReadArgs);
 
   const vaultMaxPos = useReadContract({
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
     functionName: "maxPositionSize",
     args: [selectedVault],
-  } as any);
+  } as ReadArgs);
 
   const vaultMaxLev = useReadContract({
     address: addresses.StrategyExecutor,
     abi: EXECUTOR_ABI,
     functionName: "maxLeverageBPS",
     args: [selectedVault],
-  } as any);
+  } as ReadArgs);
 
   const meta = vaultMeta[selectedVault];
 
@@ -104,10 +127,10 @@ export default function AdminPage() {
         abi: EXECUTOR_ABI,
         functionName: "setPaused",
         args: [shouldPause],
-      } as any);
+      } as WriteArgs);
       setTxStatus(shouldPause ? "Pausing executor…" : "Resuming executor…");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -119,11 +142,11 @@ export default function AdminPage() {
         abi: EXECUTOR_ABI,
         functionName: "setMaxPositionSize",
         args: [selectedVault, BigInt(parseFloat(maxPosSize) * 1e18)],
-      } as any);
+      } as WriteArgs);
       setTxStatus("Setting max position size…");
       setMaxPosSize("");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -136,11 +159,11 @@ export default function AdminPage() {
         abi: EXECUTOR_ABI,
         functionName: "setMaxLeverageBPS",
         args: [selectedVault, bps],
-      } as any);
+      } as WriteArgs);
       setTxStatus("Setting max leverage…");
       setMaxLevBPS("");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     }
   }
 

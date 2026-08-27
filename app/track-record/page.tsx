@@ -57,12 +57,17 @@ function humanAge(ms: number): string {
 export default function TrackRecordPage() {
   const [entries, setEntries] = useState<Entry[] | null>(null);
   const [error, setError] = useState(false);
-  // Wall clock. null during SSR/first paint so the server and client agree;
-  // set on mount and refreshed so a page left open goes stale on its own.
-  const [now, setNow] = useState<number | null>(null);
+  // Wall clock. null during SSR so the server and client agree on first
+  // paint; initialize lazily on the client (so the first render already
+  // has a value) and refresh every 60s so a page left open goes stale on
+  // its own. The lazy init replaces the previous
+  // `useState(null) + useEffect(setNow(Date.now()), [])` pair, which
+  // tripped the react-hooks/set-state-in-effect rule.
+  const [now, setNow] = useState<number | null>(() =>
+    typeof window === "undefined" ? null : Date.now(),
+  );
 
   useEffect(() => {
-    setNow(Date.now());
     const t = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(t);
   }, []);

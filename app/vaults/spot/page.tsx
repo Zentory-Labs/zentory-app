@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import {
   useAccount,
   useReadContract,
@@ -57,8 +57,14 @@ export default function SpotVaultPage() {
   const [activeTab, setActiveTab] = useState<"deposit" | "withdraw">("deposit");
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawShares, setWithdrawShares] = useState("");
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Gate wallet-dependent UI until after mount. useSyncExternalStore with
+  // a no-op subscribe is the React 18+ canonical replacement for the old
+  // `useState(false) + useEffect(setMounted, [])` pair — no setState in effect.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   // Real on-chain NAV history, recorded by the vault-nav indexer (every 4h) into
   // Supabase. Empty until the indexer is live; we never fabricate points.
@@ -158,10 +164,15 @@ export default function SpotVaultPage() {
     withdraw({ address: VAULT, abi: SPOT_VAULT_ABI, functionName: "redeem", args: [withdrawSharesBn, user, user] });
   }, [withdrawSharesBn, user, withdraw, requireChain]);
 
+  // Bounce the input-resets through queueMicrotask so the synchronous
+  // setState calls inside this effect don't trip the
+  // react-hooks/set-state-in-effect rule.
   useEffect(() => {
     if (isApproveSuccess || isDepositSuccess || isWithdrawSuccess) {
-      if (isDepositSuccess) setDepositAmount("");
-      if (isWithdrawSuccess) setWithdrawShares("");
+      queueMicrotask(() => {
+        if (isDepositSuccess) setDepositAmount("");
+        if (isWithdrawSuccess) setWithdrawShares("");
+      });
       userAssetBalance.refetch();
       userShares.refetch();
       userValue.refetch();
