@@ -19,6 +19,11 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 15_000 },
   use: {
+    // The dApp already uses `data-test=` for test selectors (see trade/error.tsx,
+    // track-record/page.tsx, not-found.tsx, global-error.tsx, etc.) — make
+    // Playwright's `getByTestId()` resolve to that same attribute instead of
+    // the default `data-testid`.
+    testIdAttribute: "data-test",
     baseURL,
     trace: "on-first-retry",
     ...(chromiumExe ? { launchOptions: { executablePath: chromiumExe } } : {}),

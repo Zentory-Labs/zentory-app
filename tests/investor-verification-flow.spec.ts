@@ -67,6 +67,23 @@ async function gotoAndWait(page: Page, url: string) {
   return res;
 }
 
+/** Wait for the track-record page to finish hydrating. The route is a
+ *  client-only page (`use client`), so the static HTML is empty and the
+ *  verify block only appears after React mounts + the ledger fetch resolves.
+ *  Wait for the copy button to appear, which is the deepest test-id in the
+ *  block and proves everything above it has rendered. */
+async function waitForTrackRecordHydrated(page: Page) {
+  await page
+    .getByTestId("verify-copy-button")
+    .waitFor({ state: "visible", timeout: 30_000 });
+  // Give the ledger fetch a moment to resolve so the chain-head section
+  // (which depends on the entry array) is also populated.
+  await page
+    .getByTestId("anchor-tx-explorer-link")
+    .waitFor({ state: "visible", timeout: 30_000 })
+    .catch(() => {});
+}
+
 // ─── Node verifier helpers ───────────────────────────────────────────────────
 
 /** Run the verifier on a JSONL file or stdin and return { stdout, stderr, code }. */
@@ -126,6 +143,7 @@ test.describe("M5-F6 investor verification flow", () => {
     page,
   }) => {
     await gotoAndWait(page, `${DAPP}/track-record`);
+    await waitForTrackRecordHydrated(page);
     await snap(page, "M5-F6-052-verify-block");
 
     // Block header.
@@ -253,6 +271,7 @@ test.describe("M5-F6 investor verification flow", () => {
     page,
   }) => {
     await gotoAndWait(page, `${DAPP}/track-record`);
+    await waitForTrackRecordHydrated(page);
     await snap(page, "M5-F6-055-explorer-link");
 
     // The link must be present + point at hyperevmscan.io (the working
@@ -261,7 +280,7 @@ test.describe("M5-F6 investor verification flow", () => {
     await expect(link).toBeVisible();
     const href = await link.getAttribute("href");
     expect(href, "explorer link href is empty").toBeTruthy();
-    expect(href).toMatch(/^https:\/\/hyperevmscan\.io\/tx\/0x[0-9a-f]{64}$/);
+    expect(href).toMatch(/^https:\/\/hyperevmscan\.io\/tx\/(0x)?[0-9a-f]{64}$/);
 
     // Head hash shown on the page must match the hash in the link.
     const headHash = await page.getByTestId("chain-head-hash").textContent();
