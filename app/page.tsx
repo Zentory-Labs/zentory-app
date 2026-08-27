@@ -9,6 +9,7 @@ import { addresses, ZENT_ABI, VAULT_ABI, STAKING_ABI, vaultMeta, HYPEREVM_TESTNE
 import { useDemoMode } from "@/lib/demo/context";
 import { demoProtocolStats } from "@/lib/demo/data";
 import RecentActivityTicker from "@/components/RecentActivityTicker";
+import TrackRecordDay from "@/components/TrackRecordDay";
 
 const VAULTS = [addresses.zBTC, addresses.zETH, addresses.zSOL, addresses.zXRP] as const;
 
@@ -596,6 +597,44 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {VAULTS.map((v) => <VaultCard key={v} vault={v} />)}
+        </div>
+      </section>
+
+      {/* ── Where we are ──────────────────────────────────────────────────────
+          The dApp's mainnet-gate strip. The day counter here MUST stay
+          numerically identical to /track-record and the marketing site's
+          /roadmap + homepage — that's VAL-FLOW-068 in the validation
+          contract. The canonical source is TrackRecordDay (see
+          components/TrackRecordDay.tsx); keep marketing + dApp in sync. */}
+      <section
+        className="bg-[#0b0b0d] border-y"
+        style={{ borderColor: "rgba(42,47,58,0.6)" }}
+        data-test="where-we-are"
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-light" style={{ color: "#bfc3c7" }}>
+            <span className="text-[10px] uppercase tracking-[0.3em] font-semibold" style={{ color: "#b08d57" }}>
+              Where we are
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#c2353f] animate-pulse" />
+              Testnet live
+            </span>
+            <span className="text-[#2a2f3a]">|</span>
+            <span>
+              Mainnet-gate <TrackRecordDay of90 testId="home-track-record-day" />
+            </span>
+            <span className="text-[#2a2f3a]">|</span>
+            <span>
+              <a href="/track-record" className="underline-offset-2 hover:underline" style={{ color: "#bfc3c7" }}>
+                Live track record ↗
+              </a>
+            </span>
+            <span className="text-[#2a2f3a]">|</span>
+            <span>External audit pending</span>
+            <span className="text-[#2a2f3a]">|</span>
+            <span>Multisig before mainnet</span>
+          </div>
         </div>
       </section>
 
