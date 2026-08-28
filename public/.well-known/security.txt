@@ -1,0 +1,6 @@
+Contact: mailto:security@zentorylabs.com
+Contact: https://github.com/Zentory-Labs/zentory-app/security/advisories/new
+Encryption: https://keybase.io/zentory/pgp_keys.asc
+Expires: 2027-09-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://github.com/Zentory-Labs/zentory-app/blob/main/SECURITY.txt

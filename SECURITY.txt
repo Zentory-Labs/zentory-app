@@ -1,0 +1,37 @@
+# Zentory Labs — dApp Security Disclosure Policy
+# (RFC 9116 draft format — github.com/zentries/securitytxt)
+
+Contact:        mailto:security@zentorylabs.com
+Contact:        https://github.com/Zentory-Labs/zentory-app/security/advisories/new
+Encryption:     https://keybase.io/zentory/pgp_keys.asc
+Expires:        2027-09-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical:      https://github.com/Zentory-Labs/zentory-app/blob/main/SECURITY.txt
+
+# Scope — in-scope assets
+#   Zentory dApp frontend at https://app.zentorylabs.com
+#   Client-side integration with smart contracts under
+#     https://github.com/Zentory-Labs/zentory-protocol
+#   Wallet onboarding flow, transaction signing UX, RPC proxy
+
+# Out-of-scope
+#   - The underlying smart contracts (report to zentory-protocol repo)
+#   - Off-chain engine (zentory-engine) and keeper infrastructure
+#   - Vendored packages under node_modules/
+#   - Marketing site (zentorylabs.com) — separate SECURITY.txt
+#   - Rate limiting / spam of public endpoints (handled by infra layer)
+
+# Rules of engagement
+#   - No XSS payloads, no destructive state changes beyond proof.
+#   - No automated scanning that exceeds 5 req/sec against production.
+#   - Do not attempt to drain, even momentarily, any user funds.
+
+# Severity response targets (business days)
+#   Critical (private key exposure, wallet hijack):    24 hours
+#   High (XSS, CSP bypass, account takeover):          3 days
+#   Medium (info disclosure, header misconfig):       7 days
+#   Low / informational:                              14 days
+
+# Safe harbor + recognition
+#   Researchers acting in good faith per this policy are protected from
+#   legal action. Coordinated disclosure by mutual agreement.
