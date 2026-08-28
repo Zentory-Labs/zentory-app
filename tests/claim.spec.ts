@@ -22,7 +22,11 @@ import { test, expect, type Page } from "@playwright/test";
  * not the wallet).
  */
 
-const DEPLOYER = "0x0dF78A7dFb84F93E0BC6500AA90a27617aF89dDA";
+// Deployer slot (index 0, 6M ZENT allocation) — a test placeholder address,
+// NOT the founder's EOA. The founder's real EOA is intentionally not
+// recorded anywhere in the testnet snapshot or its docs. See
+// docs/AIRDROP_CLAIM.md §"Why this address" for context.
+const DEPLOYER = "0x9aF23a4a8aB5d2dE5fA1c1cC7e8E3b4A5b6C7D8E";
 const NOT_IN_SNAPSHOT = "0x1111111111111111111111111111111111111111";
 
 // ─── Test wallet stub (EIP-1193 + EIP-6963) ────────────────────────────

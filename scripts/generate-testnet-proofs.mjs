@@ -39,7 +39,11 @@ const OUTPUT_PATH = path.resolve(
 const ZENT_TOTAL_SUPPLY = 1_000_000_000n * 10n ** 18n;
 const AIRDROP_ALLOCATION = 30_000_000n * 10n ** 18n; // 30M ZENT (3% of 1B)
 
-const DEPLOYER = "0x0dF78A7dFb84F93E0BC6500AA90a27617aF89dDA";
+// Deployer slot (index 0, 6M ZENT allocation) — a test placeholder address,
+// NOT the founder's EOA. The founder's real EOA is intentionally not
+// recorded anywhere in the testnet snapshot or its docs. See
+// docs/AIRDROP_CLAIM.md §"Why this address" for context.
+const DEPLOYER = "0x9aF23a4a8aB5d2dE5fA1c1cC7e8E3b4A5b6C7D8E";
 
 // 27 deterministic test wallets (Anvil/Hardhat #0-25 + 1 deployer = 26, plus 1 multisig).
 // All lowercase to match viem's getAddress lowercase normalization that the dApp uses.
