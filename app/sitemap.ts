@@ -15,6 +15,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/vaults/zETH', priority: 0.85, changeFrequency: 'daily' as const },
     { path: '/vaults/zSOL', priority: 0.85, changeFrequency: 'daily' as const },
     { path: '/vaults/zXRP', priority: 0.85, changeFrequency: 'daily' as const },
+    // Airdrop claim page — gated on MerkleDistributor deployment + proofs.json.
+    // The "airdrop snapshot pending" panel renders when the gate is closed.
+    { path: '/claim', priority: 0.7, changeFrequency: 'weekly' as const },
     // Research / governance / staking surface
     { path: '/research', priority: 0.7, changeFrequency: 'weekly' as const },
     { path: '/signals', priority: 0.7, changeFrequency: 'daily' as const },
