@@ -1,4 +1,5 @@
 import { rateLimit } from "@/lib/rateLimit";
+import { HYPEREVM_TESTNET_FALLBACK_RPC } from "@/lib/contracts";
 
 export const runtime = "nodejs";
 
@@ -42,7 +43,7 @@ const UPSTREAM_RPC_URLS: string[] = (() => {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
-  const publicRpc = "https://rpc.hyperliquid-testnet.xyz/evm";
+  const publicRpc = HYPEREVM_TESTNET_FALLBACK_RPC;
   return [...new Set([primary, ...extra, publicRpc].filter(Boolean))];
 })();
 

@@ -55,6 +55,15 @@ export const addresses = {
   // on the staking; BTC feed re-registered). Supersedes the 2026-06-01 set
   // (0x9685/0x31b7) and the 2026-05-27 set (0xFA50/0x78d38).
   // Verified on-chain: registry.currentEpochId() == scoring.currentEpochId() == 1.
+  //
+  // ─── M2-F13 PENDING REDEPLOY (founder action required) ─────────────────────────
+  // The current SignalRegistry bytecode (8,858 B) does NOT match the current source
+  // (10,487 B; Δ = 1,629 B of un-shipped source). The fresh redeploy script lives at
+  // `zentory-protocol/contracts/script/RedeploySignalRegistry.s.sol`
+  // (PR branch `chore/m2-f13-redeploy-signal-registry-script`). After the founder
+  // broadcasts it on chain 998, REPLACE the value below with the printed
+  // `SIGNAL_REGISTRY=0x...` and ship a follow-up commit + Vercel preview to pick
+  // up the new address (NEXT_PUBLIC_ values are baked at build time).
   SignalRegistry:    "0xA71cfdA74fc0BB7bE3f95aB806197286549e82e7",
   EpochScoring:      "0x659569A6f195698745779E59fef88e3B5Fe0484A",
   SubscriptionVault: "0xb053b9a1A82D57B2BEa7cC4a472924Fb6926933E",
@@ -343,13 +352,21 @@ export const SUBSCRIPTION_TIERS = [
 
 // ─── Chain config ────────────────────────────────────────────────────────────
 
+// Single source of truth for the public HyperEVM testnet RPC fallback.
+// Env vars (NEXT_PUBLIC_HYPEREVM_RPC, HYPEREVM_RPC_URL, RPC_FALLBACK_URLS) still
+// override at every call site — this is only the LAST-RESORT default when nothing
+// else is configured. Imported wherever a hardcoded "https://rpc.hyperliquid-testnet.xyz/evm"
+// would otherwise live (wagmi transport, /api/rpc upstream list, /api/research/execute,
+// Research-execute keeper, etc.) so we don't end up with N copies that drift.
+export const HYPEREVM_TESTNET_FALLBACK_RPC = "https://rpc.hyperliquid-testnet.xyz/evm";
+
 export const HYPEREVM_TESTNET = defineChain({
   id: 998,
   name: "Hyperliquid Testnet",
   nativeCurrency: { name: "Hyperliquid", symbol: "HYPE", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://rpc.hyperliquid-testnet.xyz/evm"] },
-    public: { http: ["https://rpc.hyperliquid-testnet.xyz/evm"] },
+    default: { http: [HYPEREVM_TESTNET_FALLBACK_RPC] },
+    public: { http: [HYPEREVM_TESTNET_FALLBACK_RPC] },
   },
   blockExplorers: {
     default: {
