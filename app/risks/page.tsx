@@ -61,10 +61,11 @@ export default function RisksPage() {
           <Link href="/backtest" className="underline" style={LINK}>
             6-year walk-forward backtest
           </Link>{" "}
-          discloses this honestly: out-of-sample,{" "}
-          <strong style={STRONG}>XRP underperformed holding on return</strong> and won only on
-          drawdown. There is no leverage and no shorting, so in a straight parabolic bull run,
-          holding can also win on return.
+          discloses this honestly: across every possible entry day, a deposit made into a{" "}
+          <strong style={STRONG}>dip right before a rally usually lags simply holding</strong> until
+          the trend re-establishes. Over a full cycle BTC, ETH and SOL beat holding and XRP roughly
+          matches it — all four win on drawdown — but there is no leverage and no shorting, so in a
+          straight parabolic run, holding can win on return.
         </p>
       </RiskCard>
 
